@@ -1,0 +1,1 @@
+cc song.o songmail.o cgi-util.o mail.o songout.o songprin.o cmdline.o chords.o string.o -osongmail

@@ -1,0 +1,107 @@
+song e' un fantastico programma per visualizzare le canzoni scritte
+nel formato omonimo. 
+
+
+DISTRIBUZIONE
+-------------
+
+Tra i sorgenti ci sono anche vari script che non mi ricordo piu' a
+cosa servono. Boh. Inizialmente il programma era scritto per essere
+compilato col compilatore BORLAND sotto DOS. Funziona pero' sotto UNIX
+con una interfaccia meno colorata (e meno amichevole).
+
+Forse insieme alla distribuzione hai ricevuto anche un po' di file
+*.sng
+
+DOS
+---
+
+A parte i sorgenti che non so piu' come compilare ci sono alcuni
+eseguibili (*.exe) che dovrebbero forse funzionare
+
+COMPILAZIONE UNIX
+------------------
+
+make
+
+
+INSTALLAZIONE UNIX
+------------------
+
+cp sng2ps song /usr/local/bin
+
+
+USO
+---
+
+Si vedano anche i file
+	song.hlp	
+	songstan.hlp
+che contengono rispettivamente le istruzioni per l'uso (della versione
+DOS, pero') e la descrizione del formato sng. Per usare l'interfaccia
+spartana (versione Unix) si veda sotto.
+
+song [sng-files]
+================
+
+Si scelgono le voci dai menu
+mettendo il numero (e poi premendo 'invio'). Per scorrere gli elenchi
+di canzoni (e degli autori) sono utili i seguenti comandi:
+	'n': canzone successiva
+	'p': canzone precedente
+	'spazio': seleziona/deseleziona
+	'47': vai alla canzone #47 
+	'v': visualizza a schermo
+	'N': avanti 10
+	'P': indietro 10
+	'H': inizio elenco
+	'E': fine elenco
+	'x': torna al menu' precedente
+	
+Nel menu' opzioni puoi scegliere le modalita' con cui stampare le
+canzoni. L'output di stampa sara' meglio metterlo su "file", le altre
+opzioni erano per la versione DOS. Il linguaggio di stampa indica il
+tipo di conversione, e' puo' essere:
+	txt: file ASCII
+	sng-originario: il file originale
+	sng-sorgente: sng re-interpretato
+	ps: PostScript
+	html: HTML
+
+E' possibile stampare piu' canzoni di seguito, questo e' utile
+soprattutto con la stampa PostScript che cerca di sistemare al meglio
+le canzoni nella pagina di stampa.
+
+La "modalita' degli accordi" indica quanti accordi stampare. In
+particolare "senza accordi" non stampa niente, "solo accordi segnati"
+stampa solo gli accordi inseriti nel file originario, "accordi sia nei
+riferimenti che nelle copie" stampa gli accordi anche nelle strofe (e
+nei ritornelli) dove era indicato che c'erano gli stessi accordi di
+una strofa (o un ritornello) precedente.
+
+La "trasposizione" serve per modificare la tonalita' degli accordi di
+un determinato numero di semitoni.
+
+Le opzioni di default possono essere memorizzate nel file "song.cfg"
+
+sng2ps [sng-files]
+==================
+
+Questa e' una utility presente solo per comodita' visto che la stampa
+in PostScript si puo' fare anche col song, ma almeno cosi' non bisogna
+spippolare coi menu'. In breve se vuoi stampare TOT canzoni usi questo
+comando e poi lui ti chiede il nome di un file su cui salvare il
+PostScript e il numero da mettere alla prima pagina.
+
+
+BUGS CONOSCIUTI
+---------------
+
+La conversione in PostScript ogni tanto si pianta. Difficilmente si
+riuscira' a stampare molte canzoni in una volta, meglio stamparne un
+po' per volta...
+
+BUGS SCONOSCIUTI
+----------------
+
+Non sono a conoscenza di nessun bug sconosciuto!
