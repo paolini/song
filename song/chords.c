@@ -1,12 +1,6 @@
-#define UNIX
-
-
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef BORLAND_C
-#include <alloc.h>
-#endif
 
 
 #include "song.h"

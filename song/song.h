@@ -3,33 +3,12 @@
 #include <stdio.h>
 #include "chords.h"
 
-#ifdef __TURBOC__
-#define DOS
-#define BORLAND
-#endif
-
-#ifdef DJGPP
-#define DOS
-#undef index
-#define index Index
-#endif
-
-#ifndef DOS
-#define UNIX
-#undef index
-#define index Index
-#endif
-
 #include "string.h"
 
 extern char *two_voices;
 
-#ifdef UNIX
-
 char * strlwr(char *s);
 char * strupr(char *s);
-
-#endif
 
 
 extern char *lang_list[];
@@ -41,29 +20,8 @@ extern char *mode_list[];
 extern int mode_value[];
 
 
-/*settaggio variabili globali:*/
-
-
-void set_alzo(int new);
-void set_mode_alzo(int new);
-void set_mode_chords(int new);
-int get_alzo(void);
-int get_mode_alzo(void);
-int get_mode_chords(void);
-
-
-
 void strsubst(char *s,char from,char to);
 
-
-struct file
-{
-  char *name;
-  char *descr;
-  FILE *p;
-/*  struct ftime;*/ /*ultima modifica del file*/
-  struct file *next;
-};
 
 struct line
 {
@@ -111,7 +69,6 @@ struct song
   struct author *author;
   struct part *main;
   unsigned long offset;
-  struct file *file;
   unsigned char flag;
 };
 /*costanti per song.flag*/
@@ -124,38 +81,33 @@ struct song_list
   struct song_list *next;
 };
 
-int setfile(struct file *);
-struct file* searchfile(char *);
-void closefile(void);
+void myreset(void);
+struct song_list *new_list(struct song *p);
 
 void freesong(struct song*);
-void freeindex(struct song_list*); /*libera indice e canzoni*/
-void freemain(struct song*);
+void freeindexx(struct song_list*); /*libera indice e canzoni*/
 void freelist(struct song_list*); /*libera solo la lista*/
 
 int bibliolen(void);
 char *surname(char *);
-struct song_list* select_author(struct author*,struct song_list *index);
+struct song_list* select_author(struct author*,struct song_list *indexx);
 struct author* biblioauthor(int n);
 struct song *get_song_of_author(struct author *);
 int has_written(struct author *a,struct song *s);
 
-struct song_list *sort_index(struct song_list *index);
-void check_all(struct song_list *index);
-struct song_list* readfile(struct song_list **index);
-int indexlen(struct song_list *index);
-struct song* indexsong(int,struct song_list *index);
-struct song_list* indexsonglist(int,struct song_list *index);
-struct song *readsong(int all);
-int rereadsong(struct song*);
+struct song_list *sort_indexx(struct song_list *indexx);
+int indexxlen(struct song_list *indexx);
+struct song* indexxsong(int,struct song_list *indexx);
+struct song_list* indexxsonglist(int,struct song_list *indexx);
+struct song *readsong(FILE *fp);
 void readend(void);
 void add_file(void);
 struct song_list *selected(struct song *p,struct song_list *selection);
 struct song_list* toggle_selection(struct song *p,struct song_list *selection);
 struct song_list* add_to_selection(struct song *p,struct song_list *selection);
-struct song_list* copy_list(struct song_list *index);
-struct song_list* findsong(char *key,struct song_list *index);
-struct song_list* getsong(char *key,struct song_list *index);
+struct song_list* copy_list(struct song_list *indexx);
+struct song_list* findsong(char *key,struct song_list *indexx);
+struct song_list* getsong(char *key,struct song_list *indexx);
 struct song_list** end_of_list(struct song_list **);
 STRING song_key(struct song *p);
 STRING author_key(struct author *p);
@@ -182,7 +134,7 @@ struct part * fill_in_chords(struct part *p);
 
 struct author* split_authors(struct line* author);
 
-void writeindex(struct song_list *list,FILE *output);
+void writeindexx(struct song_list *list,FILE *output);
 void writesong(struct song *p,FILE *output);
 void writeline(struct line *,FILE *output);
 

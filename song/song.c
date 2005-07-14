@@ -8,7 +8,7 @@
 #include "string.h"
 
 
-char *lang_list[]={"con","html","sng","ps","src","txt",NULL};
+char *lang_list[]={"con","html","sng","ps","src","txt","list","xng",NULL};
 char *lang_desc[]={"console","html","song","PostScript.ps","sorgente.sng","FileTesto.txt",NULL};
 char *chord_list[]={"off","on","ref","copyoff","copy","copyref",NULL};
 int chord_value[]={0,1,3,4,5,7};
@@ -32,13 +32,6 @@ int mode_value[]={
   ENGLISH|MAIUSCOLO|TUTTO_MAIUSCOLO|MINORE_MENO|BASSO_MAIUSCOLO
 };
 
-#ifdef DOS
-#include <dir.h>
-#endif
-#ifdef UNIX
-char *searchpath(char *s)
-{return s;}
-
 char *strlwr(char *s)
 {
 for (;*s!='\0';s++) *s=tolower(*s);
@@ -50,35 +43,7 @@ for (;*s!='\0';s++) *s=toupper(*s);
 return s;
 }
 
-#endif
-
-
-static int alzo,mode_alzo,mode_chords;
-
-void set_alzo(int new)
-{
-  alzo=new;
-}
-void set_mode_alzo(int new)
-{
-  mode_alzo=new;
-}
-void set_mode_chords(int new)
-{
-  mode_chords=new;
-}
-int get_alzo(void)
-{
-  return alzo;
-}
-int get_mode_alzo(void)
-{
-  return mode_alzo;
-}
-int get_mode_chords(void)
-{
-  return mode_chords;
-}
+int alzo=0,mode_alzo=LASCIA,mode_chords=1;
 
 char *two_voices="&";
 
@@ -93,65 +58,61 @@ void strsubst(char *s,char from,char to)
     if (*s==from) *s=to;
 }
 
-
-
-void freeline(struct line *p)
-	{
-	if (p)
-		{
-		if (p->s!=two_voices || p->ctrl!=two_voices)
-			{
-			free(p->s);
-			free(p->ctrl);
-			}
-		free(p);
-		}
-	}
+void freeline(struct line *p)	{
+  if (p){
+    if (p->s!=two_voices || p->ctrl!=two_voices)
+      {
+	free(p->s);
+	free(p->ctrl);
+      }
+    free(p);
+  }
+}
 void freephrase(struct phrase *p)
-	{
-	struct phrase *q;
-	while (p!=NULL)
-		{
-		if (p->p!=NULL && p->level!=5) freephrase(p->p);
-		if (p->l!=NULL) freeline(p->l);
-		q=p;
-		p=p->next;
-		free (q);
-		}
-	}
+{
+  struct phrase *q;
+  while (p!=NULL)
+    {
+      if (p->p!=NULL && p->level!=5) freephrase(p->p);
+      if (p->l!=NULL) freeline(p->l);
+      q=p;
+      p=p->next;
+      free (q);
+    }
+}
 void freeverse(struct verse *p)
-	{
-	struct verse *q;
-	while(p!=NULL)
-		{
-		freephrase(p->list);
-		q=p;
-		p=p->next;
-		free(q);
-		}
-	}
+{
+  struct verse *q;
+  while(p!=NULL)
+    {
+      freephrase(p->list);
+      q=p;
+      p=p->next;
+      free(q);
+    }
+}
 void freepart(struct part *p)
-	{
-	struct part *q;
-	while(p!=NULL)
-		{
-		if (p->refmode!=3) /*senno' l'ho gia' liberato*/
-			freeverse(p->list);
-		q=p;
-		p=p->next;
-		free(q);
-		}
-	}
+{
+  struct part *q;
+  while(p!=NULL)
+    {
+      if (p->refmode!=3) /*senno' l'ho gia' liberato*/
+	freeverse(p->list);
+      q=p;
+      p=p->next;
+      free(q);
+    }
+}
 void freeauthor(struct author *p)
-	{
-	struct author *q;
-	while (p!=NULL)
-		{
-		q=p;
-		p=p->next;
-		free(q);
-		}
-	}
+{
+  struct author *q;
+  while (p!=NULL)
+    {
+      q=p;
+      p=p->next;
+      free(q);
+    }
+}
 void freeinfo(struct info *p)
 {
   if (p)
@@ -184,7 +145,7 @@ void freemain(struct song *p)
   if (p->main!=NULL) freepart(p->main);
   p->main=NULL;
 }
-void freeindex(struct song_list *p)
+void freeindexx(struct song_list *p)
 {
   struct song_list *q;
   for (q=p;q!=NULL;q=q->next)
@@ -192,23 +153,8 @@ void freeindex(struct song_list *p)
   freelist(p);
 }
 
-void free_file(struct file *p)
-	{
-	struct file *q;
-	while (p!=NULL)
-		{
-		if (p->name) free(p->name);
-		if (p->descr) free(p->descr);
-		if (p->p) fclose(p->p);
-		q=p;
-		p=p->next;
-		free(q);
-		}
-	}
 /*READING INPUT FILE*/
-static struct file *current_file=NULL;
-struct file *file_list=NULL;
-
+FILE *current_fp=0;
 
 void errore(char *);
 
@@ -224,8 +170,8 @@ void buff_check(void)
 {
 if (*buffp=='\0')
   {
-    position=ftell(current_file->p);
-    if ((buffp=(signed char *)fgets(buff,MAXLINE/2,current_file->p))==NULL)
+    position=ftell(current_fp);
+    if ((buffp=(signed char *)fgets(buff,MAXLINE/2,current_fp))==NULL)
       {
 	buff[0]=-1;buff[1]='\0';
 	buffp=buff;
@@ -254,21 +200,12 @@ void myungetc(char c)
   else
     errore("Can't put back character...");
 }
-void myseek(unsigned long pos)
-{
-  fseek(current_file->p,position=pos,SEEK_SET);
-  buff[0]='\0';
-  buffp=buff;
-  if (pos!=0)
-    nriga=-1; 
-  else
-    nriga=0;
-}
-void myseek_set(void)
-{
-  myseek(0);
-}
 
+void myreset(void) {
+  buff[0]=0;
+  buffp=buff;
+  nriga=0;
+}
 
 #define MAXLABELS 40
 static int label[MAXLABELS];
@@ -295,65 +232,15 @@ void fatal(char *error)
 }
 
 
-int setfile(struct file *f)
-{
-  if (f==NULL) return 0;
-  if (f==current_file) return 1;
-  if (current_file && current_file->p)
-    fclose(current_file->p);
-  current_file=f;
-  current_file->p=NULL;
-  if (f->p==NULL)
-    {
-      f->p=fopen(f->name,"rb");
-      if (f->p==NULL)
-	{
-	error("Non riesco ad aprire il file");
-	return 0;
-	}
-    }
-  myseek_set();
-  return 1;
-}
-struct file* searchfile(char *path)
-{
-  struct file *f;
-  for (f=file_list;f && !!strcmp(path,f->name);f=f->next);
-  if (f==NULL)
-    {
-      f=(struct file *)malloc(sizeof(struct file));
-      if (f==NULL)
-	{
-	  error("Memoria insufficiente");
-	  return NULL;
-	}
-      f->next=NULL;
-      f->name=strdup(path);
-      f->descr=NULL;
-      if (f->name==NULL)
-	{
-	  free_file(f);
-	  error("Memoria insufficiente");
-	  return NULL;
-	}
-      f->p=NULL;
-      f->next=file_list;
-      file_list=f;
-    }
-  return f;
-}
-
-
-
 static char *commands[]={
 	"ssong",
-	"ttitle","aauthor","ffile",
+	"ttitle","aauthor",
 	"xkeys","gpage","ooffset",
 	"sstrophe","rrefrain","kspoken","btab","nnotes",
 	"llabel","ycopy","frefer",
 	"cchords","mstrum",""};
 static char *command_msg[]=
-	{"ttitolo","aautore","ffile","xchiavi","gpagina","ooffset",NULL};
+	{"ttitolo","aautore","xchiavi","gpagina","ooffset",NULL};
 
 char *head_name(char type)
   {
@@ -979,177 +866,107 @@ void newhead(struct song *p, char type, struct line *l)
     }
 }
 
-struct song *readsong(int all)
-	{
-	char c;
-	char esci;
-	long l;
-	struct song *p;
-	struct line *ln;
-
-	l=position;
-	skip_spaces();
-	nlabels=0;
-	p=(struct song*)malloc(sizeof(struct song));
-	if (p==NULL)
-		{error("Memoria insufficiente");
-		return NULL;
-		}
-	p->head.l=NULL;
-	p->head.type='t';
-	p->head.next=NULL;
-	p->author=NULL;
-	p->flag=SONG_NOOFFSET|SONG_INDEX;
-	p->file=NULL;
-	skip_spaces();
-	buff_check();
-	if (!(buff[0]=='\\' && (buff[1]=='t' || buff[1]=='T')))
-	  return NULL;
-	if (mygetc()!='\\')
-	  errore("Mi aspettavo un '\\'");
-	c=getcommand();
-	if (c!='t')
-	  errore("Mi aspettavo un titolo");
-	p->head.l=readlinea();
-	do
-	  {
-	    esci=1;
-	    skip_spaces();
-	    l=position+(buffp-buff);
-	    c=mygetc();
-	    if (c=='\\')
-	      {
-		esci=0;
-		c=getcommand();
-		switch(c)
-		  {
-		  case 'a':
-		    if (p->author==NULL)
-		      p->author=split_authors(readlinea());
-		    break;
-		  case 'f':/*	file */
-		    ln=readlinea();
-		    p->file=searchfile(ln->s);
-		    freeline(ln);
-		    if (p->file==NULL)
-		      errore("Non trovo il file indicato");
-		    break;
-		  case 'o':
-		    ln=readlinea();
-		    sscanf(ln->s,"%lu",&(p->offset));
-		    p->flag&=~SONG_NOOFFSET;
-		    break;
-		  case 's':
-		  case 'r':
-		  case 'k':
-		  case 'b':
-		    if (p->file!=NULL)
-		      error("C'era \\file ma anche il testo");
-		    p->file=current_file;
-		    p->offset=l;
-		    p->flag&=~(SONG_INDEX|SONG_NOOFFSET);
-		    myungetc(c);
-		    myungetc('\\');
-		    esci=1;
-		    break;
-		  case 't':
-		    myungetc(c);
-		    myungetc('\\');
-		    esci=1;
-		    break;
-		  default:
-		    newhead(p,c==0?'x':c,readlinea());
-		    break;
-		  }
-	      }
-	    else
-	      {
-	      myungetc(c);
-	      }
-	  } while (!esci);
-
-	if (all)
-	  p->main=readmain();
-	else
-	  {
-	    skip_main();
-	    p->main=NULL;
-	  }
-	if (p->main==NULL && all)
-	  {
-	    fprintf(stderr,"C'e` stato un errore alla riga %d\n",nriga);
-	    errore("Non sono riuscito a leggere la canzone");
-	    freesong(p);
-	    return NULL;
-	  }
-	return p;
-	}
-void writesource(struct song *p,FILE *out)
-{
-	long i;
-	int c;
-	setfile(p->file);
-	myseek(p->offset);
-	do
-	  {
-	    c=mygetc();
-	  }while (isspace(c));
-	putc(c,out);
-	while (1)
-	  {
-	    c=mygetc();
-	    if (c==EOF)
-	      break;
-	    if (c=='\\')
-	      {
-		c=mygetc();
-		if (c=='t'||c=='T')
-		  break;
-		putc('\\',out);
-		putc(c,out);
-	      }
-	    else
-	      putc(c,out);
-	  }
-	fprintf(out,"\n\n");
-}
-int songequal(struct song *p, struct song *q)
-  {
-  if (!strcmp(p->head.l->s,q->head.l->s)
-   && (p->file==q->file || p->file==NULL || q->file==NULL))
-    {
-    struct author *a,*b;
-    for (a=p->author,b=q->author;a!=NULL && b!=NULL && a->name==b->name;a=a->next,b=b->next);
-    return (a==NULL && b==NULL);
-    }
-  else return 0;
+struct song *readsong(FILE *fp)	{
+  char c;
+  char esci;
+  long l;
+  struct song *p;
+  struct line *ln;
+  if (current_fp) {
+    fprintf(stderr,"Concurrent reading not implemented!\n");
+    abort();
   }
-int rereadsong(struct song *p)
+  current_fp=fp;
+  myreset();
+  
+  l=position;
+  skip_spaces();
+  nlabels=0;
+  p=(struct song*)malloc(sizeof(struct song));
+  if (p==NULL) {
+    error("Memoria insufficiente");
+    current_fp=0;
+    return NULL;
+  }
+  p->head.l=NULL;
+  p->head.type='t';
+  p->head.next=NULL;
+  p->author=NULL;
+  p->flag=SONG_NOOFFSET|SONG_INDEX;
+  skip_spaces();
+  buff_check();
+  if (!(buff[0]=='\\' && (buff[1]=='t' || buff[1]=='T'))) {
+    current_fp=0;
+    return NULL;
+  }
+  if (mygetc()!='\\')
+    errore("Mi aspettavo un '\\'");
+  c=getcommand();
+  if (c!='t')
+    errore("Mi aspettavo un titolo");
+  p->head.l=readlinea();
+  do
+    {
+      esci=1;
+      skip_spaces();
+      l=position+(buffp-buff);
+      c=mygetc();
+      if (c=='\\')
 	{
-	struct song *q;
-	struct song_list *l;
-	if (p->main!=NULL) return 0;
-	if (p->file==NULL)
-	  {
-	  /*  error("Non c'e' il testo della canzone");*/
-	    return 0;
-	  }
-	if (p->flag&SONG_NOOFFSET)
-	  {
-	    /*error("Non c'e' l'offset della canzone");*/
-	    return 0;
-	  }
-	setfile(p->file);
-	myseek(p->offset);
-	buff_check();
-	nlabels=0;
-	p->main=readmain();
-	return 1;
+	  esci=0;
+	  c=getcommand();
+	  switch(c)
+	    {
+	    case 'a':
+	      if (p->author==NULL)
+		p->author=split_authors(readlinea());
+	      break;
+	    case 'o':
+	      ln=readlinea();
+	      sscanf(ln->s,"%lu",&(p->offset));
+	      p->flag&=~SONG_NOOFFSET;
+	      break;
+	    case 's':
+	    case 'r':
+	    case 'k':
+	    case 'b':
+	      p->flag&=~(SONG_INDEX|SONG_NOOFFSET);
+	      myungetc(c);
+	      myungetc('\\');
+	      esci=1;
+	      break;
+	    case 't':
+	      myungetc(c);
+	      myungetc('\\');
+	      esci=1;
+	      break;
+	    default:
+	      newhead(p,c==0?'x':c,readlinea());
+	      break;
+	    }
 	}
+      else
+	{
+	  myungetc(c);
+	}
+    } while (!esci);
+  
+  p->main=readmain();
+  if (p->main==NULL)
+    {
+      fprintf(stderr,"C'e` stato un errore alla riga %d\n",nriga);
+      errore("Non sono riuscito a leggere la canzone");
+      freesong(p);
+      current_fp=0;
+      return NULL;
+    }
+  current_fp=0;
+  return p;
+}
 void readend(void)
 	{
 	skip_spaces();
-	if (!feof(current_file->p))
+	if (!feof(current_fp))
 		errore("Pensavo che il file fosse finito");
 	}
 char *no_NULL(char *s)
@@ -1162,7 +979,7 @@ int song_cmp(struct song *p,struct song *q)
 }
 /* gestione indice e selezione */
 
-struct song_list *sort_index(struct song_list *index)
+struct song_list *sort_indexx(struct song_list *indexx)
 {
   struct song_list **p;
   struct song_list *to;
@@ -1171,8 +988,8 @@ struct song_list *sort_index(struct song_list *index)
   for (to=NULL;!ok;to=*p)
     {
       ok=1;
-      /*ordino la lista index sapendo che da to in poi sono giusti*/
-      for (p=&index;(*p)!=NULL && (*p)->next!=to;p=&((*p)->next))
+      /*ordino la lista indexx sapendo che da to in poi sono giusti*/
+      for (p=&indexx;(*p)!=NULL && (*p)->next!=to;p=&((*p)->next))
 	{
 	  if (song_cmp((*p)->first,(*p)->next->first)>0)
 	    {
@@ -1185,7 +1002,7 @@ struct song_list *sort_index(struct song_list *index)
 	    }
 	}
     }
-  return index;
+  return indexx;
 }
 
 struct song_list *new_list(struct song *p)
@@ -1202,111 +1019,19 @@ struct song_list **end_of_list(struct song_list **x)
   for (;*x!=NULL;x=&((*x)->next));
   return x;
 }
-/*torna una lista delle canzoni presenti sul file e aggiorna old se!=NULL*/
-struct song_list* readfile(struct song_list **old)
-	{
-	struct song_list *index,**p,**pp;
-	struct song_list *l;
-	struct song *q;
-        static int tot=0;
-        
-	if (current_file==NULL)
-		{
-		error("Il file non e` stato aperto");
-		return NULL;
-		}
-	index=NULL;
-	if (old!=NULL)
-	  pp=end_of_list(old);
-	for (p=&index;(q=readsong(0))!=NULL;p=&((*p)->next))
-	  {
-	    if (old)
-	      for(l=*old;l!=NULL && !songequal(q,l->first);l=l->next);
-	    else l=NULL;
-	    if (l!=NULL )
-	      {
-	      struct info *i;
 
-	      if (((l->first->flag&SONG_INDEX)==0) && (q->flag&SONG_INDEX)==0 && l->first->offset!=q->offset)
-		{
-		fprintf(stderr,"=");
-		}
-	      else
-		{
-		if (l->first->file==NULL)
-		  l->first->file=q->file;
-		if ((l->first->flag&SONG_NOOFFSET) || ((q->flag&SONG_INDEX)==0))
-		  {
-		  l->first->offset=q->offset;
-		  if ((q->flag&SONG_NOOFFSET)==0)
-		    l->first->flag&=~SONG_NOOFFSET;
-		  #ifdef DOS
-		  fprintf(stderr,":");
-		  #endif
-		  }
-		if ((q->flag&SONG_INDEX)==0)
-		  l->first->flag&=~SONG_INDEX;
-		#ifdef DOS
-		else fprintf(stderr,",");
-		#endif
-		for (i=q->head.next;i!=NULL;i=i->next)
-		  {
-		  if (heading_line(l->first,i->type)==NULL)
-		  newhead(l->first,i->type,i->l);
-		  i->l=NULL;
-		  }
-		freesong(q);
-		q=l->first;
-		}
-	      }
-	    else
-	      {
-		if (old!=NULL)
-		{
-		*pp=new_list(q);
-		pp=&((*pp)->next);
-		}
-              tot++;
-              #ifdef DOS
-              if (tot%10==0)
-	        fprintf(stderr,"%d  %c",tot,13);
-              #endif
-	      }
-	    *p=new_list(q);
-	  }
-	readend();
-	return index;
-      }
-     
-
-void check_all(struct song_list *p)
-{
-  for (;p!=NULL;p=p->next)
-    {
-      if (p->first->main==NULL)
-	{
-	  printf("Checking %s...",p->first->head.l->s);
-	  rereadsong(p->first);
-	  if (p->first->main==NULL)
-	    printf("senza corpo...");
-	  freemain(p->first);
-	  printf("\n");
-	}
-    }
-
-}
-int indexlen(struct song_list *p)
+int indexxlen(struct song_list *p)
 {
   int n;
   for (n=0;p!=NULL;p=p->next,n++);
   return n;
 }
-struct song* indexsong(int n,struct song_list *p)
+struct song* indexxsong(int n,struct song_list *p)
 {
   for (;n>0 && p!=NULL;n--,p=p->next);
   return p!=NULL?p->first:NULL;
 }
-struct song_list *indexsonglist(int n,struct song_list *p)
+struct song_list *indexxsonglist(int n,struct song_list *p)
 {
   for (;n>0 && p!=NULL;n--,p=p->next);
   return p;  
@@ -1325,12 +1050,12 @@ struct song_list *add_to_selection(struct song *p,struct song_list *selection)
     *end_of_list(&selection)=new_list(p);
   return selection;
 }
-struct song_list *copy_list(struct song_list *index)
+struct song_list *copy_list(struct song_list *indexx)
 {
 struct song_list *l;
 struct song_list *p;
 l=NULL;
-for (p=index;p!=NULL;p=p->next)
+for (p=indexx;p!=NULL;p=p->next)
   l=add_to_selection(p->first,l);
 return l;
 }
@@ -2051,7 +1776,7 @@ void writetitles(struct song *p,FILE *fp)
     fprintf(fp,"\n");
     }
 }
-void writeindexentry(struct song *p,FILE *fp)
+void writeindexxentry(struct song *p,FILE *fp)
   {
   struct info *h;
   fprintf(fp,"\\t{");
@@ -2069,28 +1794,20 @@ void writeindexentry(struct song *p,FILE *fp)
     writeline(h->l,fp);
     fprintf(fp,"}");
     }
-  if (p->file)
-    fprintf(fp,"\\f{%s}",p->file->name);
   if ((p->flag&SONG_NOOFFSET)==0)
     fprintf(fp,"\\o{%lu}",p->offset);
   fprintf(fp,"\n");
   }
-void writeindex(struct song_list *list,FILE *fp)
+void writeindexx(struct song_list *list,FILE *fp)
   {
   for (;list!=NULL;list=list->next)
-    writeindexentry(list->first,fp);
+    writeindexxentry(list->first,fp);
   }
 void writesong(struct song *p,FILE *fp)
 {
   int rere;
   writetitles(p,fp);
     fprintf(fp,"\n");
-  if (p->main==NULL)
-    {
-      rere=1;
-      if (!rereadsong(p))
-	return;
-    }
   writepart(p->main,fp);
   if (rere)
     freemain(p);

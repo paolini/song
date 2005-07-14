@@ -14,21 +14,19 @@ void ps_verbose(int on)
 
 #define ps_out output
 
-float col_width;
+static float col_width;
 
-float verse_width;  /*se e' 1000 si sta cercando la larghezza*/
-float verse_max_width; /*la riga + lunga */
-float first_voice_max_width;
-float second_voice_max_width;
-float last_voice_change; /*posizione dell'ultimo &*/
-float current_height;
-float current_width;
-float chords_width;
+static float verse_width;  /*se e' 1000 si sta cercando la larghezza*/
+static float verse_max_width; /*la riga + lunga */
+static float first_voice_max_width;
+static float second_voice_max_width;
+static float last_voice_change; /*posizione dell'ultimo &*/
+static float current_height;
+static float current_width;
+static float chords_width;
 
 
 static int try; /*se 1 non stampa veramente*/
-
-char* PS_INDEX_FILE="SONGPAGE.IND";
 
 #define INTERCHORD 0.1
 #define NORMAL_INTERLINEA 0.4
@@ -41,10 +39,10 @@ char* PS_INDEX_FILE="SONGPAGE.IND";
 #define INTER_VOICES_SPACE 0.3
 #define RAPP (1.0/0.8)
 
-float MIN_FILL_PAGE=0.5;
-int FILL_LAST_PAGE=0;
-int DO_LINES=0;
-int PRINT_PAGE_NUMBERS=1;
+static float MIN_FILL_PAGE=0.5;
+static int FILL_LAST_PAGE=0;
+static int DO_LINES=0;
+static int PRINT_PAGE_NUMBERS=1;
 
 
 #define MAX_SONGS_PER_PAGE 4
@@ -60,33 +58,8 @@ int PRINT_PAGE_NUMBERS=1;
 #define PAGE_WIDTH (TOTAL_PAGE_WIDTH-LEFT_MARGIN-RIGHT_MARGIN-ASYMMETRIC_MARGIN)
 #define NUMBER_WIDTH 1.5
 
-int songprin_options_load(char *name,char *value)
-	{
-	if (!strcmp(name,"PS_MINIMUM_FILLING"))
-		sscanf(value,"%f",&MIN_FILL_PAGE);
-	else if (!strcmp(name,"PS_FILL_LAST_PAGE"))
-		FILL_LAST_PAGE=atoi(value);
-	else if (!strcmp(name,"PS_DRAW_LINES"))
-		DO_LINES=atoi(value);
-	else if (!strcmp(name,"PS_FIRST_PAGE_NUMBER"))
-		PRINT_PAGE_NUMBERS=atoi(value);
-	else if (!strcmp(name,"PS_INDEX_FILE"))
-		PS_INDEX_FILE=strdup(value);
-	else return 0;
-	return 1;
-	}
 
-void songprin_options_save(FILE *fp)
-	{
-	fprintf(fp,"PS_MINIMUM_FILLING=%f\n",MIN_FILL_PAGE);
-	fprintf(fp,"PS_FILL_LAST_PAGE=%d\n",FILL_LAST_PAGE);
-	fprintf(fp,"PS_DRAW_LINES=%d\n",DO_LINES);
-	fprintf(fp,"PS_FIRST_PAGE_NUMBER=%d\n",PRINT_PAGE_NUMBERS);
-	fprintf(fp,"PS_INDEX_FILE=%s\n",PS_INDEX_FILE);
-	}
-
-
-int char_size[3][96]={
+static int char_size[3][96]={
 	{250,333,408,500,500,833,778,333,333,333,500,564,250,333,250,278,500,500,500,500,500,500,500,500,500,500,278,278,564,564,564,444,
 	921,722,667,667,722,611,556,722,722,333,389,722,611,889,722,722,556,722,667,556,611,722,722,944,722,722,611,333,278,333,469,500,
 	333,444,500,444,500,444,333,500,500,278,278,500,278,778,500,500,500,500,333,389,278,500,500,722,500,500,444,480,200,480,541,250},
@@ -104,16 +77,16 @@ int char_size[3][96]={
 #define IS_STRUM 4
 #define IS_TITLE 8
 #define IS_AUTHOR 16
-int level;
+static int level;
 
-int font_size[]=
+static int font_size[]=
 	{10,8,10,8,10,8,10,8,
 	20,0,0,0,0,0,0,0,
 	12,0,0,0,0,0,0,0}; /*indicizzato da level*/
-int current_font_type;/* Roman, Italic, Bold*/
-int current_font_size;
-int current_part; /*rit, strophe, spok*/
-float ps_interlinea;
+static int current_font_type;/* Roman, Italic, Bold*/
+static int current_font_size;
+static int current_part; /*rit, strophe, spok*/
+static float ps_interlinea;
 
 float mymax(float a,float b)
 	{return a>b?a:b;}
@@ -158,15 +131,15 @@ int ps_code(char c,char ctrl)
   return 128+i+j*14;
 }
 
-float ps_char_width(char a,char b) {
-  if (b=='&')
-    return INTER_VOICES_SPACE;
-  if (a>=32 && a<=126)
-    return char_size[current_font_type][a-32]
-      *((float)current_font_size/10.0)*(1.0/100.0/72.0*2.54);
-  else
-    return 5.0/30.0*current_font_size/10.0; /*30 caratteri in 5 cm col font 10*/
-}
+float ps_char_width(char a,char b)
+	{
+	if (b=='&')
+		return INTER_VOICES_SPACE;
+	if (a>=32 && a<=126)
+		return char_size[current_font_type][a-32]*((float)current_font_size/10.0)*(1.0/100.0/72.0*2.54);
+	else
+		return 5.0/30.0*current_font_size/10.0; /*30 caratteri in 5 cm col font 10*/
+	}
 
 void ps_char_out(char c,char ctrl)
 {
@@ -183,7 +156,7 @@ void ps_char_out(char c,char ctrl)
 	  fprintf(ps_out,"%c",c);
 	}
       break;
-o    case '&':
+    case '&':
       fprintf(ps_out," %f cm 0 rmoveto",INTER_VOICES_SPACE);
       break;
     default:
@@ -765,9 +738,9 @@ void ps_layout_out(char *layout,float posx,float posy,float width,float height)
 		error("internal error #4376");
 	}
 
-void ps_save_index(char *layout,int page)
+void ps_save_indexx(char *layout,int page)
 	{
-	FILE *fp;
+	  /*	FILE *fp;
 	int i,n;
 	struct line *l;
 	char line[10];
@@ -785,11 +758,12 @@ void ps_save_index(char *layout,int page)
 			  strcpy(l->s,line);
 			  l->ctrl=NULL;
 			  newhead(ps[i].p,'g',l);
-			  writeindexentry(ps[i].p,fp);
+			  writeindexxentry(ps[i].p,fp);
 			  }
 			}
 		fclose (fp);
 		}
+	  */
 	}
 void ps_layout_page(char *layout,int page)
 	{
@@ -806,7 +780,7 @@ void ps_layout_page(char *layout,int page)
                 fprintf(ps_out,"\n%%%%Page: %d %d\n\n",++printed_page,page);
 		if (page%2)
 			fprintf(ps_out," %f cm 0 translate",ASYMMETRIC_MARGIN);
-		ps_save_index(layout,page);
+		ps_save_indexx(layout,page);
 		ps_layout_out(layout,0,0,PAGE_WIDTH,PAGE_HEIGHT);
 		if (PRINT_PAGE_NUMBERS)
 			{
@@ -954,13 +928,12 @@ indice n) con la n+2+roll-esima canzone (con indice n+1+roll).
       if (list==NULL) return 0;
       p=list->first;
       list->first=ps[n].p;
-      rereadsong(p);
       ps_song_try(p,&(ps[n]));
     }
   return 1;
 }
 
-struct song_list *get_index(char *layout)
+struct song_list *get_indexx(char *layout)
 {
   struct song_list *l;
   int i,n;
@@ -999,7 +972,6 @@ struct song_list* ps_songs(struct song_list *selection,int page,FILE *fp)
     {
       while (n_ps<MAX_SONGS_PER_PAGE && rest!=NULL)
 	{
-	  rereadsong(rest->first);
 	  ps_song_try(rest->first,&ps[n_ps]);
 	  n_ps++;
 	  p=rest->next;
@@ -1051,7 +1023,7 @@ struct song_list* ps_songs(struct song_list *selection,int page,FILE *fp)
 	  if (interact)
 	    printf("rolled %d (%s:%d%%): ",roll,layout,(int)(v*100));
 	  ps_layout_page(layout,page++);
-	  p=get_index(layout);
+	  p=get_indexx(layout);
 	  if (interact)
 	    {
 	    for (q=p;q!=NULL;q=q->next)
@@ -1091,7 +1063,7 @@ void ps_title_author(struct song *p)
 		ps_line_trunc(&v);
 		}
 	}
-void ps_authors_index(FILE *fp,struct song_list *index)
+void ps_authors_indexx(FILE *fp,struct song_list *indexx)
 {
   int n;
   char* empty="             ";
@@ -1122,7 +1094,7 @@ void ps_authors_index(FILE *fp,struct song_list *index)
   n=0;
   for (a=biblio;a!=NULL;a=a->next)
     {
-      list=select_author(a,index);
+      list=select_author(a,indexx);
       for (s=list;s!=NULL;s=s->next)
 	{
 	  if (current_height+ps_interlinea>PAGE_HEIGHT)
@@ -1162,7 +1134,7 @@ void ps_authors_index(FILE *fp,struct song_list *index)
     }
   fprintf(ps_out," showpage");
 }
-void ps_index(FILE *fp,struct song_list *s)
+void ps_indexx(FILE *fp,struct song_list *s)
 	{
 	int n;
 	char* empty="             ";

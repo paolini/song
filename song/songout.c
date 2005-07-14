@@ -9,7 +9,7 @@
 static FILE *output;
 static char *HREF;
 
-static int language;/*1 html, 5 txt, 10: xsg*/
+static int language;/*1 html, 5 txt, 7: xsg*/
 
 #define MAXWORD 	30
 
@@ -30,8 +30,7 @@ static int nlines;
 static void (*more)(void); /* funzione da chiamare per il cambio pagina */
 
 static char *html_acc[]={"'acute","`grave","\"uml","^circ","~tilde",",cedil",NULL};
-#ifdef DOS
-static char *acc[]={
+static char *dosacc[]={
 	" aeiouAEIOUnNcC",
 	"`\x85\x8A\x8D\x95\x97         ",
 	"'\xA0\x82\xA1\xA2\xA3 \x90       ",
@@ -40,8 +39,6 @@ static char *acc[]={
 	"~          \xA4\xA5  ",
 	",            \x87\x80",
 	""};
-#endif
-#ifdef UNIX
 static char *acc[]={
   " " "a"   "e"   "i"   "o"   "u"   "A"   "E"   "I"   "O"   "U"   "nNcC",
   "`" "\xE0""\xE8""\xEC""\xF2""\xF9""\xC0""\xC8""\xCC""\xD2""\xD9""    ",
@@ -51,7 +48,6 @@ static char *acc[]={
   "\"""\xE4""\xEB""\xEF""\xF6""\xFC""\xC4""\xCB""\xCF""\xD6""\xDC""    ",
   "," " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  \xE7\xC7",
   ""};
-#endif
 
 char* word_to_string(char *s,char *ctrl,int *n,int *l)
 {
@@ -69,7 +65,7 @@ char* word_to_string(char *s,char *ctrl,int *n,int *l)
 	  error("interno #2351");
 	  break;
 	default: /*un accento*/
-	  if (language==1 || language==10)
+	  if (language==1 || language==7)
 	    {
 	      for (x=0;html_acc[x]!=NULL && html_acc[x][0]!=ctrl[j];x++);
 	      if (html_acc[x]==NULL)
@@ -118,7 +114,7 @@ void clr_line(void)
 void out_out(void)
 {
   int i;
-  if (language==10) return;
+  if (language==7) return;
   for (i=MAXLINE-1;i>0 && chords[i-1]==' ';i--);
   if (i>0)
     {
@@ -217,7 +213,7 @@ void out_xml_author(struct line *p) {
 
 void out_line(struct line *p)
 {
-  if (language==10) {
+  if (language==7) {
     int i;
     for (i=0;p->s[i];++i) {
       switch(p->ctrl[i]) {
@@ -282,58 +278,55 @@ void out_line_cont(struct line *p)
   clr_line();
 }
 
-void out_phrase(struct phrase *p, struct phrase *parent)
-{
-  for (;p!=NULL;p=p->next)
-    {
-      switch(p->level)
-	{
-	case 1:
-	  is_chord=1;
-	  if (language==10) { 
-	    /*	    if (parent && parent->next && parent->next->l 
-		&& isspace(parent->next->l->s[0]))
-	      fprintf(output,"<c prev>");
-	      else */ 
-	    fprintf(output,"<c>");
-	  }
-	  break;
-	case 2:
-	  is_strum++;
-	  if (language==10) {
-	    if (is_strum==1) fprintf(output,"<note>");
-	  }
-	  else
-	    out_string("[",1);
-	  break;
-	case 3:
-	  is_strum++;
-	  if (language==10 && is_strum==1) fprintf(output,"<strum>");
-	  break;
-	}
-      if (p->p)
-	out_phrase(p->p,p);
+void out_phrase(struct phrase *p, struct phrase *parent) {
+  for (;p!=NULL;p=p->next) {
+    switch(p->level) {
+    case 1:
+      is_chord=1;
+      if (language==7) { 
+	/*	    if (parent && parent->next && parent->next->l 
+		    && isspace(parent->next->l->s[0]))
+		    fprintf(output,"<c prev>");
+		    else */ 
+	fprintf(output,"<c>");
+      }
+      break;
+    case 2:
+      is_strum++;
+      if (language==7) {
+	if (is_strum==1) fprintf(output,"<note>");
+      }
       else
-	out_line(p->l);
-      switch(p->level)
-	{
-	case 1:
-	  is_chord=0;
-	  if (language==10) fprintf(output,"</c>");
-	  break;
-	case 2:
-	  is_strum--;
-	  if (language==10) {
-	    if (is_strum==0) fprintf(output,"</note>");
-	  } else out_string("]",1);
-	  break;
-	case 3:
-	  is_strum--;
-	  if (language==10 && is_strum==0)
-	    fprintf(output,"</strum>");
-	  break;
-	}
+	out_string("[",1);
+      break;
+    case 3:
+      is_strum++;
+      if (language==7 && is_strum==1) fprintf(output,"<strum>");
+      break;
     }
+    if (p->p)
+      out_phrase(p->p,p);
+    else
+      out_line(p->l);
+    switch(p->level)
+      {
+      case 1:
+	is_chord=0;
+	if (language==7) fprintf(output,"</c>");
+	break;
+      case 2:
+	is_strum--;
+	if (language==7) {
+	  if (is_strum==0) fprintf(output,"</note>");
+	} else out_string("]",1);
+	break;
+      case 3:
+	is_strum--;
+	if (language==7 && is_strum==0)
+	  fprintf(output,"</strum>");
+	break;
+      }
+  }
 }
 
 int line_is_empty(struct line *l) {
@@ -355,10 +348,10 @@ void out_verse(struct verse *p)
   for (;p!=NULL;p=p->next)
     {
       if (phrase_is_empty(p->list)) continue;
-      if (language==10)
+      if (language==7)
 	fprintf(output,"<v>");
       out_phrase(p->list,0);
-      if (language==10) fprintf(output,"</v>\n");
+      if (language==7) fprintf(output,"</v>\n");
       out_out();
     }
 }
@@ -372,7 +365,7 @@ void out_part(struct part *p)
     {
       if (language==1 && p->type==0)
 	fprintf(output,"<em>");
-      if (language==10) {
+      if (language==7) {
 	char *s[]={"refrain","strophe","talking","tabular"};
 	fprintf(output,"<p");
 	if (p->type>=0 && p->type<=3 && p->type!=1) 
@@ -393,7 +386,7 @@ void out_part(struct part *p)
       out_verse(p->list);
       if (language==1 && p->type==0)
 	fprintf(output,"</em>");
-      if (language==10) fprintf(output,"</p>\n");
+      if (language==7) fprintf(output,"</p>\n");
     }
 }
 void out_titles(struct song *p)
@@ -402,79 +395,60 @@ void out_titles(struct song *p)
   if (p->head.l) {
     if (language==1)
       fprintf(output,"<H2>");
-    else if (language==10) 
+    else if (language==7) 
       fprintf(output,"<title>");
     out_line(p->head.l);
     out_out();
     if (language==1) fprintf(output,"</H2>");
-    else if (language==10) fprintf(output,"</title>\n");
+    else if (language==7) fprintf(output,"</title>\n");
   }
   if (p->author)
     {
       if (language==1)
 	fprintf(output,"<H3>");
-      else if (language==10) fprintf(output,"<author>");
+      else if (language==7) fprintf(output,"<author>");
       else
 	out_string("(",1);
-      if (language==10) 
+      if (language==7) 
 	out_xml_author(p->author->name);
       else
 	out_line(p->author->name);
-      if (language==10) fprintf(output,"</author>\n");
+      if (language==7) fprintf(output,"</author>\n");
       for (a=p->author->next;a!=NULL;a=a->next)
 	{
-	  if (language==10) fprintf(output,"<author>");
+	  if (language==7) fprintf(output,"<author>");
 	  else out_string(", ",2);
-	  if (language==10) out_xml_author(a->name);
+	  if (language==7) out_xml_author(a->name);
 	  else out_line(a->name);
-	  if (language==10) fprintf(output,"</author>\n");
+	  if (language==7) fprintf(output,"</author>\n");
 	}
-      if (language!=1 && language!=10)
+      if (language!=1 && language!=7)
 	out_string(")",1);
       out_out();
       if (language==1)
 	fprintf(output,"</H3>");
-    }
-  if (p->file)
-    {
-      if (language==1)
-	{
-	  if (HREF)
-	    fprintf(output,
-		    "<H4> file: <A HREF=\"%sVOID=%s;search=;\">%s</A></H4>",
-		    HREF,p->file->name,p->file->name);
-	  else
-	    fprintf(output,"<H4> source: %s</H4>\n",p->file->name);
-	}
-      else if (language==10) {
-	// nop
-      } else {
-	fprintf(output,"source: %s\n",p->file->name);
-      }
     }
 }
 
 void out_song(struct song *p)
 	{
 	nlines=0;
-	rereadsong(p);
 	clr_line();
-	if (language==10)
+	if (language==7)
 	  fprintf(output,"<song>\n<head>\n");
 	out_titles(p);
 	if (language==1)
 	  fprintf(output,"<PRE>");
-	else if (language==10) {
+	else if (language==7) {
 	  fprintf(output,"</head>\n");
 	  fprintf(output,"<log>\n<item>converted from sng file");
-	  if (p->file) fprintf(output," %s",p->file->name);
 	  fprintf(output,"</item>\n");
 	  fprintf(output,"</log>\n<body>\n");
 	}
 	out_part(p->main);
 	if (language==1)
 	  fprintf(output,"</PRE>");
-	else if (language==10)
+	else if (language==7)
 	  fprintf(output,"</body>\n</song>\n");
 	freemain(p);
 	}
@@ -502,7 +476,7 @@ void out_songs_html(struct song_list *p,FILE *fp)
 
 void out_songs_xml(struct song_list *p,FILE *fp)
 {
-  language=10;
+  language=7;
   output=fp;
   more=NULL;
   fprintf(output,"<?xml version='1.0' encoding='ISO-8859-1' ?>\n");
@@ -512,10 +486,7 @@ void out_songs_xml(struct song_list *p,FILE *fp)
 
 void out_songs_src(struct song_list *p, FILE *fp)
 {
-  for (;p!=NULL;p=p->next)
-    {
-    writesource(p->first,fp);
-    }
+  fprintf(stderr,"out_songs_src NO MORE IMPLEMENTED!\n");
 }
 void out_song_con(struct song *p,void (*f)(void))
 {
@@ -548,7 +519,7 @@ int is_format(char *s,char *format)
   return strchr(s,'%')==NULL;
 }
 
-void out_index_titles(struct song *p,int n)
+void out_indexx_titles(struct song *p,int n)
 {
   struct author *a;
   struct info *h;
@@ -561,7 +532,7 @@ void out_index_titles(struct song *p,int n)
 	  {
 	    s=song_key(p);
 	    s=htmlconv(s);
-	    fprintf(output,HREF,p->file->name,s.s);
+	    fprintf(output,HREF,"",s.s);
 	    delete_string(s);
 	  }
       else
@@ -664,7 +635,7 @@ void out_authors_con(void (*f)(void))
   more=f;
   my_out_authors();
 }
-void out_index(FILE *fp,struct song_list *p)
+void out_indexx(FILE *fp,struct song_list *p)
   {
   int i;
   output=fp;
@@ -672,10 +643,10 @@ void out_index(FILE *fp,struct song_list *p)
   language=5;
   for (i=0;p!=NULL;p=p->next,i++)
     {
-      out_index_titles(p->first,i+1);
+      out_indexx_titles(p->first,i+1);
     }
   }
-void out_index_html(FILE *fp,struct song_list *p)
+void out_indexx_html(FILE *fp,struct song_list *p)
   {
   int i;
   output=fp;
@@ -683,7 +654,7 @@ void out_index_html(FILE *fp,struct song_list *p)
   more=NULL;
   for (i=0;p!=NULL;p=p->next,i++)
       {
-      out_index_titles(p->first,i+1);
+      out_indexx_titles(p->first,i+1);
       }
   }
 
