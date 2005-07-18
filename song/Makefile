@@ -1,42 +1,23 @@
-CC= gcc -g
-CPP= g++ -c -g
 
-VERSION=cmd-2.4
+CPPFLAGS=-g -I/usr/include/libxml2
+CXX=g++
+CC=gcc
 
-#all: songweb song
 
 all: song
 
-song: song.o songmain.o songout.o songprin.o chords.o string.o
-	$(CC) $^  -o song
-
-songmain.o: songmain.c song.h songout.h songprin.h 
-	$(CC) -c -DVERSION=\"$(VERSION)\" songmain.c 
-
-song.o: song.c song.h chords.h string.h
-	$(CC) -c song.c
-
-songout.o: songout.c songout.h song.h
-	$(CC) -c songout.c
-
-songprin.o: songprin.c song.h
-	$(CC) -c songprin.c
-
-chords.o: chords.c song.h chords.h
-	$(CC) -c chords.c
-
-string.o: string.c
-	$(CC) -c string.c
-
-install: song 
+install: song
 	cp song /usr/local/bin
 
-clear:: clean
+sources=$(shell ls Makefile Makefile.common *.cc *.hh)
 
-clean:
-	-rm -fr *~
-	-rm -fr *.o	
+-include Makefile.common
 
-tar:: clear
-	tar -C .. -czf ../song-$(VERSION).tgz song-$(VERSION)
-	@echo written tar in ../song-$(VERSION).tgz 
+song: main.o layout.o util.o textmedia.o psmedia.o print.o \
+	plugin.o sngplugin.o xngplugin.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -lxml2 -o $@
+
+clean: clear.common
+	-rm -f *.o *~ delme*
+
+clear: clean
