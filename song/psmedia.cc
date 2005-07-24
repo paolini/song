@@ -1,13 +1,9 @@
-#include <ostream>
+#include <iostream>
 #include <cassert>
 #include "psmedia.hh"
 
 #define CM * int(6000 / 2.54)
 #define OUT (*out)
-
-// normal, refrain, chord, title, author, nofont
-static const int font_size[]={10,10,10,20,12,0};
-static const int font_font[]={ 0, 1, 0, 2, 2,0}; // roman, italic, bold
 
 int PsMedia::lineSkip(font f) {return font_size[f]*100;};
 
@@ -88,22 +84,13 @@ static char *unicode[]={
   0};
 
 PsMedia::PsMedia(ostream &the_out, int start_page): 
-  Media(),
+  VectorMedia(),
   x(0), y(0), chord_x(0),
   out(&the_out), 
   font_type(NOFONT),
   page(start_page-1) {
-  static const int a4x=594, a4y=842; 
-  static const int left=30, bottom=60, top=30;
-  
-  my_width=100*(a4x-2*left);
-  my_height=100*(a4y-bottom-top);
 
 
-  stanza_sep=font_size[Media::NORMAL]*100;
-  column_sep=3*stanza_sep;
-  body_sep=font_size[Media::AUTHOR]*100;
-  song_sep=4*stanza_sep;
 
   OUT<<
     "%!PS-Adobe-2.0\n"

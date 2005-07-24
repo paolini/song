@@ -1,4 +1,4 @@
-#include <ostream>
+#include <iostream>
 #include "textmedia.hh"
 bool TextMedia::valid(int x, int y) const {
     return x>=0 && x<my_width && y>=0 && y<my_height;};

@@ -9,18 +9,18 @@
 first_tag: first
 
 version:
-	echo package $(DIRNAME) CPPFLAGS $(CPPFLAGS)
+	@echo package $(DIRNAME) CPPFLAGS $(CPPFLAGS)
 
 DIRNAME=$(notdir $(CURDIR))
 
 CPPFLAGS+= -Wall
 
-ifeq ($(findstring -,$DIRNAME),)
+ifeq ($(findstring -rev,$DIRNAME),)
   ## WORKING VERSION 
-  CPPFLAGS+= -g
+  COMMON_CPPFLAGS+= -g
 else
   ## FINAL VERSION
-  CPPFLAGS+= -DNDEBUG -O3
+  COMMON_CPPFLAGS+= -DNDEBUG -O3
 endif
 
 TAR=$(DIRNAME).tgz

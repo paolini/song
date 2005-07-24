@@ -8,6 +8,8 @@
 #include "util.hh"
 #include "print.hh"
 
+//#define SequenceBox SequenceBox2
+
 string getTitle(xmlNodePtr p) {
   if (p) p=p->children;
   while (p && strcmp((char *)p->name,"title")) p=p->next;
@@ -69,7 +71,7 @@ void ParseNodeList(SequenceBox *verse, SequenceBox **word,
       if (p->parent && p->parent->name 
 	  && !(strcmp((char*)p->parent->name,"v"))) {
 	(*word)->push_back(new ChordBox(utf8(s)));
-      } else PutString(verse, word, s, f);
+      } else PutString(verse, word, s, Media::CHORD);
       xmlFree(s);
     } else if (!strcmp((char*)(p->name),"note")) {
       int l=(*word)->size();
@@ -110,7 +112,7 @@ Box *VerseBox(Media &m, xmlNodePtr p, Media::font f) {
 
 Box* StanzaBox(Media &m, xmlNodePtr p) {
   Media::font f=Media::NORMAL;
-  assert(!strcmp((char *)(p->name),"p"));
+  assert(!strcmp((char *)(p->name),"stanza"));
   SequenceBox *stanza=new SequenceBox(false);
   stanza->test=stanza_debug;
   unsigned char *type=xmlGetProp(p,(xmlChar *)"type");
@@ -135,7 +137,7 @@ Box* BodyBox(Media &m, xmlNodePtr p) {
   body->sup_space=m.column_sep;
   body->test=body_debug;
   for (p=p->children;p;p=p->next) {
-    if (!strcmp((char *)(p->name),"p"))
+    if (!strcmp((char *)(p->name),"stanza"))
       body->push_back(StanzaBox(m, p));
   }
   CompressBox *ret=new CompressBox(body,false);
@@ -231,7 +233,6 @@ public:
 
 // layout e' una stringa in notazione polacca
 // operatori '|' e '-', operandi le lettere minuscole
- 
 Box* LayoutBoxProgressive(const char *&layout, Box **&list, 
 			  int song_sep, bool temptative=true) {
   if (isalpha(layout[0])) { // single box

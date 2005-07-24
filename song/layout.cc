@@ -5,6 +5,8 @@
 #include "layout.hh"
 #include "util.hh"
 
+typedef unsigned int uint;
+
 static int get_align(int total, int part,int align) {
     if (align==0) return (total-part)/2;
     if (align>0) return (total-part);
@@ -25,9 +27,13 @@ ostream& operator<<(ostream& o, const Badness &b) {
 
 DimNBad FixedBox::dim(Dim space) {
   if (space.x>=my_dim.x && space.y >= my_dim.y) 
-    return DimNBad(my_dim);
-  else
-    return DimNBad(my_dim,Badness::Spills());
+    return DimNBad(my_dim); // ci sta
+  else {
+    DimNBad ret(my_dim);
+    if (ret.x>space.x) {ret.x=space.x;ret.bad+=Badness::Spills();}
+    if (ret.y>space.y) {ret.y=space.y;ret.bad+=Badness::Spills();}
+    return ret;
+  }
 };
 
 //Helper class: remembers last width computation:
@@ -349,6 +355,184 @@ SequenceBox::~SequenceBox() {
 };
 
 SequenceBox::SequenceBox(bool horizontal,bool Break,bool adjust): 
+  test(false), 
+  hor(horizontal), 
+  breakable(Break),
+  adjustable(adjust) 
+{
+  space=0;
+  halign=-1;valign=-1;
+  sup_space=0;
+  word_align=-1;
+};
+
+void SequenceBox2::current_write() {
+  int nline;
+  
+  //  cerr<<"\nwrite "<<last_space<<" at "<<m->get_x()<<","<<m->get_y()<<"\n";
+
+  if (test) {
+    cerr<<"\nwrite in "<<last_space<<" "<<my_dim<<"\n";
+    m->frame(my_dim.x,my_dim.y);
+  }
+  
+  int savex=m->get_x();
+  int savey=m->get_y();
+
+
+  // cerr<<"Writing hor="<<hor<<" sequence box at "<<savex<<", "<<savey
+  //	<<" dim "<<d.x<<","<<d.y<<"\n";
+    
+  if (breakable) m->chordReset(); //inizio vers
+    
+  if (hor) {
+    nline=-1;
+    int y=savey+my_dim.y;
+    m->goto_xy(savex,y);
+    for (unsigned int i=0;i<list.size();++i) {
+      if (nline<0 || next_item[nline]==i) { //prepara nuova riga
+	nline++;
+	y-=line_dim[nline].get(!hor)+(nline>0?sup_space:0);
+	m->goto_xy(savex,y);
+	if (nline)
+	  m->chordReset();
+      }
+      list[i]->write(Dim(given_space[i].get(hor),line_dim[nline].get(!hor)));
+      m->move_xy(this->space,0);
+    }
+  } else {
+    nline=0;
+    int x=savex;
+    int y=savey+my_dim.y;
+    for (unsigned int i=0;i<list.size();++i) {
+      if (next_item[nline]==i) { //prepara nuova colonna
+	x+=line_dim[nline].get(hor)+sup_space;
+	y=savey+my_dim.y;
+	nline++;
+      }	
+      DimNBad itdim=list[i]->dim(given_space[i]);
+      y-=itdim.y;
+      m->goto_xy(x,y);
+      list[i]->write(Dim(line_dim[nline].get(hor),given_space[i].y));
+      //	list[i]->write(given_space[i]);
+      y-=this->space;
+    }
+  }
+    
+  m->goto_xy(savex+my_dim.x,savey);
+
+  //  cerr<<"written "<<last_space<<"\n";
+
+}
+
+static const char *lc(bool hor) {
+  if (hor) return "line";
+  else return "column";
+};
+
+void SequenceBox2::recalculate() {
+  static int level=0;
+  level++;
+  
+//   given_space.resize(list.size());
+//   next_line.resize(1);
+//   next_line[0]=1000;
+//   for (uint i=0;i<given_space.size();++i) {
+//     given_space[i].x=10000;
+//     given_space[i].y=10000;
+//   };
+//   return;
+  
+
+  int savex=m->get_x();
+  int savey=m->get_y();
+  //  cerr<<"Pos: "<<savex<<" "<<savey<<"\n";
+    
+
+  if (test)
+    cerr<<"\nrecalculate "<<last_space<<" (level "<<level<<") \n";
+
+  // start new line
+  int nlines=0;
+  int current_line=0;
+  
+  given_space.resize(list.size());
+
+  line_dim.resize(1);
+  next_item.resize(1);
+  line_dim[0]=DimNBad(); // tutto 0
+  
+  for (uint i=0;i<list.size();++i) { 
+    // calcola la dimensione di tutti gli oggetti
+    // con il massimo spazio a disposizione
+    given_space[i]=list[i]->dim(last_space); //quanto spazio occupa?
+    assert(given_space[i].x<= last_space.x 
+	   && given_space[i].y<= last_space.y);
+    int new_width=
+      line_dim[current_line].get(hor)+space
+      +given_space[i].get(hor)+list[i]->chord_width();
+    if (new_width>last_space.get(hor)  // non sta
+	&& breakable                   // posso cambiare riga
+	&& line_dim[current_line].get(hor)>0 // ho usato la riga attuale
+	) { 
+      cerr<<"newline\n";
+      // cambio riga
+      assert(i>0);
+      next_item[current_line]=i;
+      current_line++;
+      next_item.resize(current_line+1);
+      line_dim.resize(current_line+1);
+      line_dim[current_line]=DimNBad();
+      new_width=given_space[i].get(hor);
+    }
+    line_dim[current_line].get(hor)=new_width;
+    line_dim[current_line].bad+=given_space[i].bad;
+    if (given_space[i].get(!hor)>line_dim[current_line].get(!hor)) 
+      line_dim[current_line].get(!hor)=given_space[i].get(!hor);
+    if (new_width<=last_space.get(hor)) {
+      line_dim[current_line].bad+=Badness::Spills();
+    }
+
+    if (test) {
+      cerr<<"item["<<i<<"]: given "<<last_space<<" uses "<<given_space[i]<<
+	" line["<<current_line<<"]: "<<line_dim[current_line]<<"\n";
+    }
+  };
+  next_item[current_line]=list.size();
+
+  nlines=current_line+1;
+
+  my_dim=DimNBad();
+
+  assert(my_dim.x == 0 && my_dim.y==0);
+  
+  for (uint j=0;j<nlines;++j) {
+    if (line_dim[j].get(hor)>my_dim.get(hor)) 
+      my_dim.get(hor)=line_dim[j].get(hor);
+    my_dim.get(!hor)+=line_dim[j].get(!hor);
+  }
+  
+  if (my_dim.get(!hor)>last_space.get(!hor)) {
+    my_dim.get(!hor)=last_space.get(!hor);
+    my_dim.bad+=Badness::Spills();
+  }
+  
+  if (my_dim.get(hor)>last_space.get(hor)) {
+    my_dim.get(hor)=last_space.get(hor);
+    my_dim.bad+=Badness::Spills();
+  }
+
+  m->goto_xy(savex,savey);
+  level--;
+  if (test)
+    cerr<<"Result: "<<my_dim<<"\n";
+};
+    
+SequenceBox2::~SequenceBox2() {
+  for (unsigned int i=0;i<list.size();++i) delete list[i];
+};
+
+SequenceBox2::SequenceBox2(bool horizontal,bool Break,bool adjust): 
   test(false), 
   hor(horizontal), 
   breakable(Break),

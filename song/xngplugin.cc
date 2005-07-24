@@ -30,7 +30,8 @@ public:
 	cerr<<"Warning: ignore unknown <"<<(p->name)<<" item\n";
 	continue;
       } 
-      list.push_back(p);
+      if (p->children)
+	list.push_back(p);
       count++;
     }
     return count;

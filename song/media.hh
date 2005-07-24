@@ -47,4 +47,20 @@ public:
   virtual void frame(int dx,int dy) const {};
 };
 
+class VectorMedia: public Media {
+  // dimensioni in centesimi di punto
+public:
+  // normal, refrain, chord, title, author, nofont
+  static const int font_size[];
+  static const int font_font[]; // roman, italic, bold
+
+  int left, bottom,top;
+  int my_width, my_height;
+  int chord_sep;
+
+  virtual int page_height() const {return my_height;};
+  virtual int page_width() const {return my_width;};
+  VectorMedia();
+};
+
 #endif

@@ -102,7 +102,7 @@ int myisalpha(unsigned char c) {
   return isalpha(c) || c>128+64;
 }
 char* get_author(const char *s,const char *end) {
-  char *ret=(char *)malloc(sizeof(char)*(strlen(s)+4));
+  char *ret=(char *)malloc(sizeof(char)*(end-s+4));
   const char *cog=surname(s);
   const char *p;
   char *r;
@@ -122,8 +122,9 @@ char* get_author(const char *s,const char *end) {
     *(r++)=','; *(r++)=' ';
   for (p=s;p<cog;++p)
     *(r++)=*p;
-  while (r>s && isspace(*(r-1))) r--;
+  while (r>ret && isspace(*(r-1))) r--;
   *r=0;
+  //  cerr<<" AUTHOR ["<<ret<<"] ("<<int(*(r-1))<<")\n";
   
   return ret;
 }
@@ -622,7 +623,7 @@ public:
 
   xmlNodePtr readonepart(void)
   {
-    xmlNodePtr Stanza=xmlNewNode(NULL,BAD_CAST "p");
+    xmlNodePtr Stanza=xmlNewNode(NULL,BAD_CAST "stanza");
     char c;
     int type;
     int lab=0,ref=0;
@@ -667,7 +668,7 @@ public:
       s[0]='A'+lab-1;
       assert(s[0]<='Z');
       s[1]=0;
-      xmlNewProp(Stanza, BAD_CAST "label", BAD_CAST s);
+      xmlNewProp(Stanza, BAD_CAST "id", BAD_CAST s);
     }
     if (ref) {
       char s[2];

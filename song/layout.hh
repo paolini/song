@@ -167,6 +167,49 @@ public:
   int size() const {return list.size();};
 };
 
+class SequenceBox2: public CacheBox {
+public:
+  bool test;
+  unsigned int space; //spazio di separazione tra gli oggetti
+  int sup_space; // spazio tra le righe/colonne
+  int word_align; // allineamento degli oggetti  -1,0,1
+
+protected:
+  vector<Box *> list;
+  bool hor; //orizzontale / verticale
+  // tutti i nomi sono come nel caso orizzontale
+  //  int align; //0: center, -1: inf, 1: sup
+  //  int sup_align; // allineamento tra le righe/colonne
+
+  bool breakable; // posso spezzarlo su piu' righe/colonne
+  bool adjustable; // tenta di modificare l'altezza delle righe
+
+  vector<DimNBad> line_dim; 
+  //contiene le altezze/larghezze/badness
+  //delle singole righe/colonne
+  vector<unsigned int> next_item; //primo oggetto della riga seguente
+
+  vector<DimNBad> given_space; //spazio dato a ogni elemento
+
+protected:
+  virtual void current_write();
+  virtual void recalculate();
+
+public:
+  virtual ~SequenceBox2();
+  SequenceBox2(bool horizontal=true, 
+	      bool Break=false, 
+	      bool adjust=false);
+  
+  void push_back(Box *ptr) {list.push_back(ptr);};
+
+  Box* get(int n) {return list[n];};
+
+  void free(int n) {delete list[n];list.erase(list.begin()+n);};
+  
+  int size() const {return list.size();};
+};
+
 // Helper class: le dimensioni non dipendono dall'ambiente:
 class FixedBox: public Box {
 protected:

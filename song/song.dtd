@@ -1,0 +1,18 @@
+<!ELEMENT song (head,log?,body)>
+<!ELEMENT head (title,author)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT log (item)*>
+<!ELEMENT item (#PCDATA)>
+<!ELEMENT body (stanza+)>
+<!ELEMENT stanza (v+)>
+<!ELEMENT v (#PCDATA|c|strum|note|tab)*>
+<!ELEMENT tab EMPTY>
+<!ELEMENT c (#PCDATA)>
+<!ELEMENT strum (#PCDATA|c|note)*>
+<!ELEMENT note (#PCDATA|strum)*>
+<!ATTLIST song version CDATA "0.1">
+<!ATTLIST stanza type (strophe|refrain|talking|tab) "strophe">
+<!ATTLIST stanza label ID #IMPLIED>
+<!ATTLIST stanza copy IDREF #IMPLIED>
+<!ATTLIST stanza chords IDREF #IMPLIED>

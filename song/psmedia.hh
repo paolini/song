@@ -2,10 +2,10 @@
 #define _PSMEDIA_HH_
 #include "media.hh"
 
-class PsMedia: public Media {
+class PsMedia: public VectorMedia {
   // tutte le dimensioni in centesimi di punto
 protected:
-  int my_width,my_height;
+  //  int my_width,my_height;
   int x,y;
   int chord_x;
   ostream *out;
@@ -25,8 +25,8 @@ public:
   virtual int get_x() {return x;};
   virtual int get_y() {return y;};
   PsMedia(ostream &out, int start_page=1);
-  virtual int page_width() const {return my_width;};
-  virtual int page_height() const {return my_height;};
+  //  virtual int page_width() const {return my_width;};
+  //  virtual int page_height() const {return my_height;};
   virtual ~PsMedia();
   virtual void wordWrite(const string &s, font f);
   virtual void chordWrite(const string &s);
