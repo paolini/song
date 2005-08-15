@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <libxml/tree.h>
-#include "media.hh"
+#include "media.h"
 
 //extern bool stanza_debug, verse_debug, song_debug, body_debug;
 

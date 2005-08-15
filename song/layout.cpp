@@ -2,8 +2,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
-#include "layout.hh"
-#include "util.hh"
+#include "layout.h"
+#include "util.h"
 
 typedef unsigned int uint;
 

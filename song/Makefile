@@ -6,7 +6,7 @@ all: song
 install: song
 	cp song /usr/local/bin
 
-sources=$(shell ls Makefile Makefile.common *.cc *.hh *.xng *.dtd)
+sources=$(shell ls Makefile Makefile.common README *.cpp *.h *.xng *.dtd test.sng test.xng README.sng-format)
 
 -include Makefile.common
 VERSION=$(DIRNAME)
@@ -16,8 +16,11 @@ LDFLAGS=-lxml2 -lz -lpng  -lharu
 #CXX=g++
 #CC=gcc
 
-song: main.o layout.o util.o textmedia.o psmedia.o print.o \
-	plugin.o sngplugin.o xngplugin.o pdfmedia.o media.o
+song: main.o layout.o util.o \
+	textmedia.o txtplug.o lstplug.o \
+	psmedia.o psplug.o print.o \
+	plug.o sngplug.o xngplug.o pdfmedia.o pdfplug.o media.o \
+	chord.o
 	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 clean: clear.common

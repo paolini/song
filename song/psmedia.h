@@ -1,6 +1,6 @@
 #ifndef _PSMEDIA_HH_
 #define _PSMEDIA_HH_
-#include "media.hh"
+#include "media.h"
 
 class PsMedia: public VectorMedia {
   // tutte le dimensioni in centesimi di punto

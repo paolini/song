@@ -1,4 +1,4 @@
-#include "media.hh"
+#include "media.h"
 
 // normal, refrain, chord, title, author, nofont
 

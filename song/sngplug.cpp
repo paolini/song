@@ -5,13 +5,33 @@
 #include <cstring>
 #include <cassert>
 #include <sstream>
-
 #include <vector>
 #include <libxml/tree.h>
 
-#include "plugin.hh"
-
 using namespace std;
+
+#include "plug.h"
+
+// class SngPlugin:public Plugin {
+// private:
+//   static const bool dummy;
+//   static bool plugin_startup();
+
+//   static const int MAXLINE;
+//   istream *current_in;
+//   int nriga;
+//   char *buff;
+//   char *buffp;
+// public:
+//   virtual int Read(std::istream &, std::vector<xmlNodePtr> &list);
+//   SngPlugin(): 
+//     Plugin("song","sng","song sng TeX-like format [manu-fatto]"),
+//     current_in(0)
+//   {buff=new char[MAXLINE+1];};
+//   virtual ~SngPlugin() {delete buff;};
+
+//   friend class Sng;
+// };
 
 // utility functions
 
@@ -424,7 +444,7 @@ public:
       case 'c':
 	return 1;
       default:
-	assert(0);
+	errore("comando sconosciuto");
 	return 10; /*non dovrebbe mai arrivare qui*/
       }
   }

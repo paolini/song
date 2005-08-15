@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cassert>
-#include "psmedia.hh"
+#include "psmedia.h"
 
 #define CM * int(6000 / 2.54)
 #define OUT (*out)

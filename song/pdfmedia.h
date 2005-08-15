@@ -1,7 +1,7 @@
 #ifndef _pdfmedia_hh_
 #define _pdfmedia_hh_
 #include <libharu.h>
-#include "media.hh"
+#include "media.h"
 
 // questa classe astrae il formato di stampa
 // dovrebbe adattarsi a txt a PS e altro...
@@ -11,6 +11,7 @@ protected:
   // dimensioni in centesimi di punto
   int x,y,chord_x;
   string filename;
+  int page_no;
   PdfDoc* doc;
   PdfPage *page;
   PdfContents *canvas;
@@ -34,8 +35,10 @@ public:
   void closePage();
 
   virtual ~PdfMedia()  ;
-  PdfMedia(const string &filename);
+  PdfMedia(const string &filename, int start_page=1);
   virtual void frame(int dx,int dy) const;
 };
+
+
 
 #endif

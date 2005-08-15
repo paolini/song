@@ -1,7 +1,7 @@
 #common directives
 
 #
-# set $(sources) to list all source files (*.h *.cc Makefile...)
+# set $(sources) to list all source files (*.h *.cpp Makefile...)
 # first: be the first TAG
 # $(TAR) file di TAR
 #
@@ -25,9 +25,9 @@ endif
 
 TAR=$(DIRNAME).tgz
 
--include $(filter %.d, $(sources:.cc=.d))
+-include $(filter %.d, $(sources:.cpp=.d))
 
-%.d: %.cc
+%.d: %.cpp
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
 	| sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@; \
 	[ -s $@ ] || rm -f $@

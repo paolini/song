@@ -4,9 +4,9 @@
 #include <cstring>
 #include <libxml/tree.h>
 
-#include "layout.hh"
-#include "util.hh"
-#include "print.hh"
+#include "layout.h"
+#include "util.h"
+#include "print.h"
 
 //#define SequenceBox SequenceBox2
 

@@ -1,7 +1,7 @@
 #ifndef _TEXTMEDIA_HH_
 #define _TEXTMEDIA_HH_
 
-#include "media.hh"
+#include "media.h"
 
 class TextMedia: public Media {
 private:

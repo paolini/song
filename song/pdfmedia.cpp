@@ -2,14 +2,14 @@
 #include <cassert>
 #include <libharu.h>
 #include <libharu_ISO8859.h>
-#include "pdfmedia.hh"
-
 #include <iostream>
+#include <sstream>
+#include "pdfmedia.h"
 
 static const char *font_name[3]={"FR","FI","FB"};
 // roman, italic, bold
 
-PdfMedia::PdfMedia(const string &name): filename(name) {
+PdfMedia::PdfMedia(const string &name, int start_page): filename(name) {
   doc=new PdfDoc();
   doc->NewDoc();
   PdfEncodingDef* encoding=new PdfEncoding_ISO8859_3();
@@ -23,6 +23,7 @@ PdfMedia::PdfMedia(const string &name): filename(name) {
   
   page=0;
   canvas=0;
+  page_no=start_page-1;
   newPage();
 };
 
@@ -35,11 +36,16 @@ PdfMedia::~PdfMedia() {
 void PdfMedia::newPage() {
   if (page) closePage();
   page=doc->AddPage();
+  page_no++;
   canvas=page->Canvas();
   x=-1;
   y=-1;
+  stringstream s;
+  s<<page_no;
+  goto_xy((my_width-wordWidth(s.str().c_str(),AUTHOR))/2,
+	  -100*(font_size[NORMAL]+font_size[AUTHOR]));
+  wordWrite(s.str().c_str(),AUTHOR);
   goto_xy(0,0);
-  
 };
 
 void PdfMedia::goto_xy(int xx,int yy) {
