@@ -7,8 +7,10 @@
 #include "layout.h"
 #include "util.h"
 #include "print.h"
+#include "debug.h"
 
-//#define SequenceBox SequenceBox2
+// COMMENTA LA RIGA SEGUENTE:
+#define SequenceBox SequenceBox2
 
 string getTitle(xmlNodePtr p) {
   if (p) p=p->children;
@@ -199,10 +201,10 @@ Box* HeadBox(Media &m, xmlNodePtr p) {
 Box* SongBox(Media &m, xmlNodePtr p) {
   assert(!strcmp((char *)(p->name), "song"));
   Box::setMedia(m);
-  SequenceBox *song=new SequenceBox(false);
-  song->space=m.body_sep;
-  song->halign=-1; song->valign=1;
-  if (song_debug) song->test=true;
+  //  StackBox *song=new StackBox();
+  //  song->space=m.body_sep;
+  //  song->halign=-1; song->valign=1;
+  //  if (song_debug) song->test=true;
   
   Box *body=0;
   Box *head=0;
@@ -213,10 +215,11 @@ Box* SongBox(Media &m, xmlNodePtr p) {
       head=HeadBox(m,p);
     }
   }
-  if (head) song->push_back(head);
-  if (body) song->push_back(body);
+  //  if (head) song->push_back(head);
+  //  if (body) song->push_back(body);
   // song->test=true;
-  return song;
+  assert(head && body);
+  return new StackBox(head,body,m.body_sep);
 };
 
 // helper class: contiene una box, ma quando viene distrutta non distrugge
@@ -243,8 +246,8 @@ Box* LayoutBoxProgressive(const char *&layout, Box **&list,
   } else if (layout[0]=='|' || layout[0]=='-') {
     char c=layout[0];
     layout++;
-    Box *left=LayoutBoxProgressive(layout,list,temptative);
-    Box *right=LayoutBoxProgressive(layout,list,temptative);
+    Box *left=LayoutBoxProgressive(layout,list,song_sep,temptative);
+    Box *right=LayoutBoxProgressive(layout,list,song_sep,temptative);
     SequenceBox *ret;
     if (c=='|') {
       ret= new SequenceBox(true);
@@ -254,10 +257,12 @@ Box* LayoutBoxProgressive(const char *&layout, Box **&list,
       ret= new SequenceBox(false);
     }
     ret->space=song_sep;
+    //    assert(song_sep>0);
     ret->halign=-1;
     ret->valign=1;
     ret->push_back(left);
     ret->push_back(right);
+    if (layout_debug) ret->test=true;
     return ret;
   } else {
     assert(false);
@@ -274,8 +279,9 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(vector<xmlNodePtr> &songlist,Media &m) {
+void PrintSongs(const vector<xmlNodePtr> &songlist,Media &m) {
   vector<Box *> list;
+  int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {
     list.push_back(SongBox(m,songlist[i]));
   }
@@ -289,6 +295,7 @@ void PrintSongs(vector<xmlNodePtr> &songlist,Media &m) {
 	 trylayout[i] && (strlen(trylayout[i])+1)/2 <= list.size();i++) {
       Box *box=LayoutBox(trylayout[i],&list[0],m.song_sep,true); // try
       DimNBad dim=box->dim(Dim(m.page_width(),m.page_height()));
+      //      cerr<<"trying layout "<<trylayout[i]<<": "<<dim<<"\n";
       delete box;
       
       if (bestlayout==0 || 
@@ -299,13 +306,25 @@ void PrintSongs(vector<xmlNodePtr> &songlist,Media &m) {
     }
     assert(bestlayout!=0);
     Box **bptr=&(list[0]);
+
+    string layout=bestlayout;
+    
     Box *box=LayoutBoxProgressive(bestlayout,bptr,m.song_sep,false);
-    list.erase(list.begin(),list.begin()+(bptr-&(list[0])));
+    unsigned int n=bptr-&(list[0]); // numero di canzoni utilizzate
+    list.erase(list.begin(),list.begin()+n);
     DimNBad dim=box->write(Dim(m.page_width(),m.page_height()));
+
+    cerr<<n<<" songs in page "<<page<<
+      ", dim[bad]: "<<dim<<" lay: "
+	<<layout<<"\n  ";
+    for (int i=0;i<n;++i) {
+      if (i) cerr<<", ";
+      cerr<<getTitle(songlist[count++]->children);
+    }
+    cerr<<"\n";
+
     if (list.size())
       m.newPage();
-    cerr<<origsize-list.size()<<" songs in page "<<page<<
-      ", dim: "<<dim.x<<"x"<<dim.y<<", bad: "<<dim.bad<<"\n";
     delete box;
   }
 }

@@ -9,8 +9,6 @@
 //extern bool stanza_debug, verse_debug, song_debug, body_debug;
 
 
-// Base class (empty box)
-
 class Dim {
 public:
   unsigned int x,y;
@@ -23,6 +21,7 @@ public:
   bool operator!=(const Dim &d) const {
     return !operator==(d);};
   unsigned int area() const {return x*y;};
+  friend ostream &operator<<(ostream &, const Dim&);
 };
 
 class Badness {
@@ -46,6 +45,10 @@ public:
     return bad<=b.bad;
   };
 
+  bool operator<(const Badness &b) const {
+    return bad<b.bad;
+  };
+
   static Badness BrokenLine() {return Badness(10);};
   static Badness Spills() {return Badness(1000);};
 
@@ -58,7 +61,11 @@ public:
   DimNBad(): Dim(0,0), bad() {};
   DimNBad(int x, int y, Badness b=Badness()): Dim(x,y), bad(b) {};
   DimNBad(Dim d, Badness b=Badness()): Dim(d), bad(b) {};
+
+  friend ostream& operator<<(ostream &,const DimNBad &);
 };
+
+// Base class (empty box)
 
 class Box {
 protected:
@@ -117,13 +124,28 @@ protected:
 public:
   int valign, halign; //allineamento (-1,0,1)
 
-  CacheBox(): last_space(0,0), my_dim(1,1) {};
+  CacheBox(): last_space(0,0), my_dim(0,0,Badness(99999)) {};
   virtual ~CacheBox(){};
 
   virtual DimNBad dim(Dim space);
   virtual DimNBad write(Dim space);
 };
 
+
+class StackBox: public CacheBox {
+ public:
+  unsigned int space;
+  virtual void current_write();
+  virtual void recalculate();
+  StackBox(Box *first, Box *second, int the_space){
+    list[0]=first;list[1]=second;space=the_space;
+  };
+  ~StackBox() {delete list[0];delete list[1];}
+
+ protected:
+  Box *list[2];
+  unsigned int header;
+};
 
 class SequenceBox: public CacheBox {
 public:

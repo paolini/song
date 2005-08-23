@@ -17,9 +17,9 @@ VectorMedia::VectorMedia() {
   my_height=100*(a4y-bottom-top);
   
   stanza_sep=font_size[NORMAL]*100;
-  column_sep=3*stanza_sep;
+  column_sep=1*stanza_sep;
   body_sep=font_size[AUTHOR]*30;
-  song_sep=4*stanza_sep;
+  song_sep=2*stanza_sep;
   
   chord_sep=font_size[CHORD]*30; //40%
 };

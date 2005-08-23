@@ -7,9 +7,7 @@
 #include "media.h"
 #include "layout.h"
 
-extern bool stanza_debug, verse_debug, song_debug, body_debug;
-
 Box* SongBox(Media &m, xmlNodePtr p);
 
-void PrintSongs(vector<xmlNodePtr> &,Media &);
+void PrintSongs(const vector<xmlNodePtr> &,Media &);
 #endif

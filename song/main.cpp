@@ -3,15 +3,12 @@
 #include <cassert>
 #include <vector>
 #include <string>
-//#include <fstream>
 
-//#include "textmedia.h"
-//#include "psmedia.h"
-//#include "pdfmedia.h"
-#include "print.h"
+//#include "print.h"
+#include "debug.h"
 #include "plug.h"
-//#include "util.h"
 #include "chord.h"
+
 
 #ifndef VERSION
 #define VERSION "unknow song version"
@@ -30,8 +27,9 @@ string usage(
 #define OPT0(x,y) usage+=" " x " "  y "\n"; if (!strcmp(argv[i],(x)))
 #define OPT1(x,y) usage+=" " x " "  y "\n"; if (!strcmp(argv[i],(x)) && i+1<argc )
 
-//enum {DEFAULT=0, TXT, PS, PDF, XML, LIST} lang;
 string lang=string();
+char* supported_lang[]={"txt","lst","ps","pdf","xng",0};
+
 enum {SNG,XNG} format=SNG;
 
 vector<xmlNodePtr> song_list;
@@ -51,8 +49,7 @@ int main(int argc, char *argv[]) {
     chord chord_mode;
     
     PlugoutOptions opt;
-    
-    
+        
     for (int i=1;i<argc;++i) {
       OPT0("-ps","forces PostScript output") {lang="ps";continue;}
       OPT0("-pdf","forces PDF output") {lang="pdf";continue;}
@@ -80,10 +77,7 @@ int main(int argc, char *argv[]) {
 	if (n>0) opt.height=n;
 	continue;
       }
-      OPT0("-help","print this help lines") {
-	cout<<usage;
-	exit(0);
-      }
+      OPT0("-help","print this help lines") {cout<<usage;exit(0);}
       OPT1("-pag","<page> starting page number") {
 	++i;
 	opt.start_page=atoi(argv[i]);
@@ -103,6 +97,7 @@ int main(int argc, char *argv[]) {
 	else if (!strcmp(argv[i],"verse")) verse_debug=true;
 	else if (!strcmp(argv[i],"song")) song_debug=true;
 	else if (!strcmp(argv[i],"body")) body_debug=true;
+	else if (!strcmp(argv[i],"layout")) layout_debug=true;
 	else {
 	  cerr<<"opzione sconosciuta "<<argv[i]<<"\n";
 	  cout<<usage;
@@ -117,8 +112,10 @@ int main(int argc, char *argv[]) {
       }
       
       // assume che argv[i] sia il nome di un file da leggere
-      
+
       char *name=argv[i];
+
+      // legge il file "name"
       try {
 	string ext="sng";
 	
@@ -134,24 +131,9 @@ int main(int argc, char *argv[]) {
 	  abort();
 	}
 	reader->Read(name,song_list);
-	if (false) {
-	  xmlDocPtr doc=xmlParseFile(argv[i]);
-	  if (!doc) {
-	    cerr<<"non riesco a leggere il file "<<argv[i]<<"\n";
-	    abort();
-	  }
-	  for (xmlNodePtr p=doc->children;p;p=p->next) {
-	    if (strcmp((char*)(p->name),"song")!=0) {
-	      cerr<<"ignore unknown <"<<(p->name)<<" item\n";
-	      continue;
-	    } 
-	    song_list.push_back(p);
-	    // discard doc !?!?
-	  }
-	} 
       } catch (runtime_error &e) {
 	cerr<<"Error reading file "<<name<<"\n"<<e.what();
-	abort();
+	cerr<<"!! file skipped....\n";
       }
     }
     
@@ -165,10 +147,17 @@ int main(int argc, char *argv[]) {
     
     {
       if (lang==string()) lang="txt";
-      
+      {
+	int i;
+	for (i=0;supported_lang[i] && supported_lang[i]!=lang;++i);
+	if (supported_lang[i]==0) {
+	  cerr<<"Format "<<lang<<" unknown (file "<<output_file<<").\n";
+	  abort();
+	}
+      }
       Plugout *writer=Plugout::Construct(lang);
       if (!writer) {
-	cerr<<"unknown format "<<lang<<" for file "<<output_file<<"\n";
+	cerr<<"Known format "<<lang<<" not supported.\n";
 	abort();
       } 
       if (output_file==string()) 
