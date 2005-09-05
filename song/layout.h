@@ -132,21 +132,6 @@ public:
 };
 
 
-class StackBox: public CacheBox {
- public:
-  unsigned int space;
-  virtual void current_write();
-  virtual void recalculate();
-  StackBox(Box *first, Box *second, int the_space){
-    list[0]=first;list[1]=second;space=the_space;
-  };
-  ~StackBox() {delete list[0];delete list[1];}
-
- protected:
-  Box *list[2];
-  unsigned int header;
-};
-
 class SequenceBox: public CacheBox {
 public:
   bool test;

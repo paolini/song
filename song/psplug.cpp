@@ -22,7 +22,7 @@ public:
     PrintSongs(list,m);
   };
 
-  PsPlugout(): Plug("Postscript","ps","Adobe Postscript document") {};
+  PsPlugout(): Plugout("Postscript","ps","Adobe Postscript document") {};
 };
 
 // registra il plugout

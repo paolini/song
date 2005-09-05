@@ -3,7 +3,7 @@ all: song
 install: song
 	cp song /usr/local/bin
 
-sources=$(shell ls Makefile Makefile.common README* *.cpp *.h *.xng *.dtd test.sng test.xng)
+sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng)
 
 -include Makefile.common
 VERSION=$(DIRNAME)

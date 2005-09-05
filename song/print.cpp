@@ -9,8 +9,7 @@
 #include "print.h"
 #include "debug.h"
 
-// COMMENTA LA RIGA SEGUENTE:
-#define SequenceBox SequenceBox2
+// #define SequenceBox SequenceBox2
 
 string getTitle(xmlNodePtr p) {
   if (p) p=p->children;
@@ -201,10 +200,10 @@ Box* HeadBox(Media &m, xmlNodePtr p) {
 Box* SongBox(Media &m, xmlNodePtr p) {
   assert(!strcmp((char *)(p->name), "song"));
   Box::setMedia(m);
-  //  StackBox *song=new StackBox();
-  //  song->space=m.body_sep;
-  //  song->halign=-1; song->valign=1;
-  //  if (song_debug) song->test=true;
+  SequenceBox *song=new SequenceBox(false);
+  song->space=m.body_sep;
+  song->halign=-1; song->valign=1;
+  if (song_debug) song->test=true;
   
   Box *body=0;
   Box *head=0;
@@ -215,11 +214,10 @@ Box* SongBox(Media &m, xmlNodePtr p) {
       head=HeadBox(m,p);
     }
   }
-  //  if (head) song->push_back(head);
-  //  if (body) song->push_back(body);
+  if (head) song->push_back(head);
+  if (body) song->push_back(body);
   // song->test=true;
-  assert(head && body);
-  return new StackBox(head,body,m.body_sep);
+  return song;
 };
 
 // helper class: contiene una box, ma quando viene distrutta non distrugge

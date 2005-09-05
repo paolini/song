@@ -14,16 +14,12 @@ class Plug {
   const string name; // name of format
   const string ext; // default file extension
   const string description; // brief description  
-  Plug(string the_name, string the_ext, string the_description):
-    name(the_name),
-    ext(the_ext),
-    description(the_description) {};
-  Plug(){};
+  Plug(string the_name, string the_ext, string the_description);
   virtual ~Plug(){};
 };
 
 // instanzia questa classe per avere un nuovo formato di input
-class Plugin: virtual public Plug {
+class Plugin: public Plug {
 public:
   typedef Plugin* ctor(void);
 protected:
@@ -39,10 +35,8 @@ public:
   
   virtual int Read(string filename, std::vector<xmlNodePtr> &list);
 
-  Plugin(string name,string ext,string descr): Plug(name,ext,descr){};
+  Plugin(string name,string ext,string descr);
   
-  Plugin() {};
-
   virtual ~Plugin(){};
 };
 
@@ -58,7 +52,7 @@ class PlugoutOptions {
     };
 };
 
-class Plugout: virtual public Plug {
+class Plugout: public Plug {
  public:
   typedef Plugout *ctor(void);
  protected:
@@ -78,8 +72,6 @@ class Plugout: virtual public Plug {
 		     const PlugoutOptions &opt);
 
   Plugout(string name,string ext, string descr): Plug(name,ext,descr) {};
-  
-  Plugout() {};
 
   virtual ~Plugout(){};
 };

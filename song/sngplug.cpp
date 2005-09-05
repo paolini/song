@@ -178,7 +178,10 @@ class SngPlugin:public Plugin {
 private:
   static const bool dummy;
   static Plugin *plugin_creator() {
-    return new SngPlugin();
+  Plugin *p=new SngPlugin();
+  cerr<<"create SngPlugin: "<<p<<" ["<<p->name<<"]\n";     
+  
+      return new SngPlugin();
   }
 
   static bool plugin_startup() {

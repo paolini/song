@@ -5,6 +5,18 @@
 #include "plug.h"
 using namespace std;
 
+Plug::Plug(string the_name, string the_ext, string the_description):
+    name(the_name),
+    ext(the_ext),
+    description(the_description) {
+      cerr<<"Plug("<<the_name<<"="<<name<<") "<<this<<"\n";
+    };
+
+Plugin::Plugin(string name,string ext,string descr): Plug(name,ext,descr)
+ {
+ cerr<<"Plugin("<<name<<"="<<this->name<<") "<<this<<"\n";
+ }
+
 int Plugin::Read(string filename, vector<xmlNodePtr> &list) {
   ifstream in(filename.c_str());
   if (!in) 

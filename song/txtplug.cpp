@@ -22,7 +22,7 @@ public:
     PrintSongs(list,m);
   };
 
-  TxtPlugout(): Plug("Text","txt","simple text") {};
+  TxtPlugout(): Plugout("Text","txt","simple text") {};
 };
 
 // registra il plugout

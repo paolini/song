@@ -70,8 +70,9 @@ public:
     fclose(out);
   };
 
-  XngPlug(): Plug("xsong","xng","xml song format [manu-fatto]"),
-	     Plugin(), Plugout()
+  XngPlug(): 
+             Plugin("xsong","xng","xml song format [manu-fatto]"),
+             Plugout("xsong","xng","xml song format [manu-fatto]")
 	     {};
 };
 

@@ -36,8 +36,8 @@ vector<xmlNodePtr> song_list;
 
 string extension(const string &filename) {
   string::size_type i;
-  for (i=filename.size()-1;i>=0 && filename[i]!='.';--i);
-  if (i>=0) return string(filename,i+1,string::npos);
+  for (i=filename.size();i>=1 && filename[i-1]!='.';--i);
+  if (i>=1) return string(filename,i,string::npos);
   else return string();
 };
 
@@ -113,24 +113,24 @@ int main(int argc, char *argv[]) {
       
       // assume che argv[i] sia il nome di un file da leggere
 
-      char *name=argv[i];
+    string name=argv[i];
 
       // legge il file "name"
-      try {
-	string ext="sng";
+    try {
+	string ext=extension(name);
 	
-	if (format==XNG || strstr(name,".xng")) {
+	if (format==XNG) {
 	  ext="xng";
-	} else if (format==SNG || strstr(name,".sng")) {
+	} else if (format==SNG) {
 	  ext="sng";
 	} 
-	
 	Plugin* reader=Plugin::Construct(ext);
 	if (!reader) {
 	  cerr<<"unknown format "<<ext<<" for file "<<name<<"\n";
 	  abort();
 	}
-	reader->Read(name,song_list);
+	cerr<<"Reading "<<name<<" with plugin "<<reader<<" ["<<reader->name<<"]\n";
+    reader->Read(name,song_list);
       } catch (runtime_error &e) {
 	cerr<<"Error reading file "<<name<<"\n"<<e.what();
 	cerr<<"!! file skipped....\n";

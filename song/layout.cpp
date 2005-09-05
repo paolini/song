@@ -79,25 +79,6 @@ void put(vector<T> &v, unsigned int n, const T &elem) {
   }
 }
 
-void StackBox::current_write() {
-  int savex=m->get_x();
-  int savey=m->get_y();
-  
-  m->goto_xy(savex,savey+last_space.y-header);
-  list[0]->write(Dim(last_space.x,header));
-  m->goto_xy(savex,savey);
-  list[1]->write(Dim(last_space.x,last_space.y-header));
-  m->goto_xy(savex+my_dim.x,savey);
-}
-
-void StackBox::recalculate() {
-  DimNBad dim=list[0]->dim(last_space);
-  header=dim.y;
-  my_dim=list[1]->dim(Dim(last_space.x,last_space.y-header));
-  my_dim.y+=header;
-  my_dim.bad+=dim.bad;
-}
-
 //questa classe gestisce le sequenze... (ma va'!)
 void SequenceBox::current_write() {
   int nline;
@@ -465,15 +446,12 @@ void SequenceBox2::recalculate() {
   if (test)
     cerr<<"\nrecalculate "<<last_space<<" (level "<<level<<") \n";
 
-  double excess=1.0;
-
-  for (uint iteration=0;iteration<2;++iteration) {
+  for (uint iteration=0;iteration<1;++iteration) {
     int nlines=0;
     int current_line=0;
     vector<DimNBad> try_line_dim;
     vector<uint> try_next_item;
     vector<DimNBad> try_given_space;
-
     DimNBad try_my_dim;
 
     try_given_space.resize(list.size());
@@ -481,7 +459,7 @@ void SequenceBox2::recalculate() {
     try_line_dim.resize(1);
     try_next_item.resize(1);
     try_line_dim[0]=DimNBad(); // tutto 0
-
+    
     Dim space_left=last_space;
 
     if (test) cerr<<"iteration "<<iteration<<"\n";
@@ -491,12 +469,8 @@ void SequenceBox2::recalculate() {
       if (iteration==0) {
 	space_left=last_space;
       } else if (iteration==1) {
-	space_left=last_space;
-	if (excess<1) continue; //non so far di meglio
-	space_left.get(!hor)=int(1.0/excess*line_dim[current_line].get(!hor));
-	space_left.get(hor)=last_space.get(hor)-try_line_dim[current_line].get(hor);
+	
       }
-    
       try_given_space[i]=list[i]->dim(space_left); //quanto spazio occupa?
       assert(try_given_space[i].x<= space_left.x 
 	     && try_given_space[i].y<= space_left.y);
@@ -530,13 +504,12 @@ void SequenceBox2::recalculate() {
 	try_line_dim[current_line].bad+=Badness::Spills();
       }
       
+      space_left.get(hor)=last_space.get(hor)-new_width;
+
       if (test) {
 	cerr<<"item["<<i<<"]: given "<<space_left<<" uses "<<try_given_space[i]<<
 	  " line["<<current_line<<"]: "<<try_line_dim[current_line]<<"\n";
       }
-
-      space_left.get(hor)=last_space.get(hor)-new_width;
-
     }
     try_next_item[current_line]=list.size();
     
@@ -552,8 +525,6 @@ void SequenceBox2::recalculate() {
       try_my_dim.get(!hor)+=try_line_dim[j].get(!hor);
       try_my_dim.bad+=try_line_dim[j].bad;
     }
-    excess=double(try_my_dim.get(!hor))/
-      double((last_space.get(!hor)-(nlines-1)*sup_space));
     try_my_dim.get(!hor)+=(nlines-1)*sup_space;
     
     if (try_my_dim.get(!hor)>last_space.get(!hor)) {
@@ -574,7 +545,7 @@ void SequenceBox2::recalculate() {
       my_dim=try_my_dim;
     }
 
-    if (my_dim.bad<=Badness(0)) break; // posso concludere immediatamente
+    if (my_dim.bad<=Badness()) break; // posso concludere immediatamente
   }
 
   m->goto_xy(savex,savey);
