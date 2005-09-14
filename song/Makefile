@@ -13,11 +13,26 @@ LDFLAGS=-lxml2 -lz -lpng  -lharu
 #CXX=g++
 #CC=gcc
 
-song: main.o layout.o util.o \
-	textmedia.o txtplug.o lstplug.o \
-	psmedia.o psplug.o print.o \
-	plug.o sngplug.o xngplug.o pdfmedia.o pdfplug.o media.o \
-	chord.o debug.o
+song: 	main.o \
+	layout.o \
+	media.o \
+	print.o \
+	plug.o \
+	debug.o \
+	song.o \
+	iso.o \
+	sngplug.o \
+	xngplugout.o \
+	psmedia.o \
+	psplug.o \
+	pdfmedia.o \
+	pdfplug.o \
+	textmedia.o \
+	txtplug.o \
+	lstplug.o \
+#	chord.o \
+#	xngplug.o \
+
 	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 clean: clear.common

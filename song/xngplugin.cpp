@@ -7,35 +7,59 @@
 
 #include "plug.h"
 
-#define XNG_VERSION "0.1"
-#define XNG_DTD "http://www.math.unifi.it/paolini/src/song/xng-" XNG_VERSION ".dtd"
+//#define XNG_VERSION "0.1"
+//#define XNG_DTD "http://www.math.unifi.it/paolini/src/song/xng-" XNG_VERSION ".dtd"
 
 using namespace std;
 
-class XngPlug:public Plugin, public Plugout {
+class XngPlug:public Plugin {
 private:
   static const bool dummy;
   static bool startup() {
     Plugin::Register("xng",&(XngPlug::Createin));
-    Plugout::Register("xng",&(XngPlug::Createout));
     return true;
   };
   static Plugin* Createin() {return new XngPlug();};
-  static Plugout* Createout() {return new XngPlug();};
 public:
 
-  virtual int Read(string filename, std::vector<xmlNodePtr> &list) {
+  warning(const string &msg) {
+    cerr<<"WARNING: "<<msg<<"\n";
+  };
+  
+  ignore(unsigned char *item) {
+    warning("ignore unknow <"+item+"> item");
+  };
+
+  Head* ReadHead(XmlNodePtr p) {
+    // ...........................
+    // ........................
+  };
+
+  Song* ReadSong(XmlNodePtr p) {
+    Song *song=new Song;
+    assert(!strcmp((char*)p->name,"song"));
+    for (p=p->children;p;p=p->next) {
+      if (!strcmp((char*)p->name,"head"))
+	song->head=ReadHead(p);
+      else if (!strcmp((char*)p->name,"body"))
+	song->body=ReadBody(p);
+      else ignore(p->name);
+    };
+  };
+
+  virtual int Read(string filename, std::vector<Song *> &list) {
     int count=0;
     xmlDocPtr doc=xmlParseFile(filename.c_str());
     if (!doc)
       throw runtime_error("non riesco a leggere il file "+filename);
     for (xmlNodePtr p=doc->children;p;p=p->next) {
+      if (strcmp((char*)(p->name),"songs")!=0) p=p->children;
       if (strcmp((char*)(p->name),"song")!=0) {
-	cerr<<"Warning: ignore unknown <"<<(p->name)<<" item\n";
+	ignore(p->name);
 	continue;
       } 
       if (p->children)
-	list.push_back(p);
+	list.push_back(ReadSong(p));
       count++;
     }
     return count;

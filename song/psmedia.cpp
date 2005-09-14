@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cassert>
+
+#include "iso.h"
 #include "psmedia.h"
 
 #define CM * int(6000 / 2.54)
@@ -213,15 +215,15 @@ void PsMedia::move_xy(int dx, int dy) {
 
 int PsMedia::wordWidth(const string &s, font f) const {
   int len=0;
-  unsigned int i;
-  for (i=0;i<s.size();++i) len+=char_width(s[i]);
+  size_t i;
+  for (i=0;i<s.size();) len+=char_width(iso(s,i));
   return len*font_size[f]/10;
 }
 
 void PsMedia::wordWrite(const string &s, font f) {
   set_font(f);
   OUT<<"(";
-  for (unsigned int i=0;i<s.size();++i) char_out(s[i]);
+  for (unsigned int i=0;i<s.size();) char_out(iso(s,i));
   OUT<<") s\n";
   x+=wordWidth(s,f);
 }
@@ -229,7 +231,7 @@ void PsMedia::wordWrite(const string &s, font f) {
 void PsMedia::chordWrite(const string &s) {
   set_font(CHORD);
   OUT<<"(";
-  for (unsigned int i=0;i<s.size();++i) char_out(s[i]);
+  for (unsigned int i=0;i<s.size();) char_out(iso(s,i));
   OUT<<") c\n";
 }
 

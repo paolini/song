@@ -3,9 +3,10 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <iostream>
+#include <cassert>
 
-#include "util.h"
-
+#include "song.h"
+#include "iso.h"
 #include "plug.h"
 
 using namespace std;
@@ -20,28 +21,23 @@ private:
   static Plugout* Create() {return new ListPlugout();};
 public:
 
-  virtual void Write(std::ostream &out, std::vector<xmlNodePtr> &song_list,
+  virtual void Write(std::ostream &out, std::vector<Song *> &song_list,
 		     const PlugoutOptions &opt) {
     unsigned int i;
     for (i=0;i<song_list.size();++i) {
-      xmlNodePtr p=song_list[i];
-      string title="no title",author="no author";
-      for (p=p->children;p && strcmp((const char *)p->name,"head");p=p->next);
-      if (p) {
-	for (p=p->children;p;p=p->next) {
-	  if (!strcmp((const char *)p->name,"title") && p->children) {
-		xmlChar *s=xmlNodeListGetString(NULL,p->children,1);
-		title=utf8(s);
-		xmlFree(s);
-	      }
-	      if (!strcmp((const char *)p->name,"author") && p->children) {
-		xmlChar *s=xmlNodeListGetString(NULL,p->children,1);
-		author=utf8(s);
-		xmlFree(s);
-	      }
-	    }
+      Song* p=song_list[i];
+      assert(p->head!=0);
+      out<<iso(p->head->title);
+      size_t j;
+      for (j=0;j<p->head->author.size();++j){
+	if (j==0) out<<" (";
+	else out<<", ";
+	string s=p->head->author[j]->firstName;
+	if (s.size()) s+=" ";
+	s+=p->head->author[j]->Name;
+	out<<iso(s);
       }
-	  out<<title<<" ("<<author<<")\n";
+      if (j) out<<")\n";
     }
   };
 

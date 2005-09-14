@@ -1,13 +1,15 @@
 #include <iostream>
-#include <libxml/parser.h>
 #include <cassert>
 #include <vector>
 #include <string>
 
 //#include "print.h"
+
 #include "debug.h"
 #include "plug.h"
-#include "chord.h"
+// #include <libxml/parser.h>
+#include "song.h"
+// #include "chord.h"
 
 
 #ifndef VERSION
@@ -32,7 +34,7 @@ char* supported_lang[]={"txt","lst","ps","pdf","xng",0};
 
 enum {SNG,XNG} format=SNG;
 
-vector<xmlNodePtr> song_list;
+vector<Song *> song_list;
 
 string extension(const string &filename) {
   string::size_type i;
@@ -46,7 +48,7 @@ int main(int argc, char *argv[]) {
     //int width=79,height=250;
     //int start_page=1;
     string output_file=string();
-    chord chord_mode;
+    //    chord chord_mode;
     
     PlugoutOptions opt;
         
@@ -129,7 +131,7 @@ int main(int argc, char *argv[]) {
 	  cerr<<"unknown format "<<ext<<" for file "<<name<<"\n";
 	  abort();
 	}
-	cerr<<"Reading "<<name<<" with plugin "<<reader<<" ["<<reader->name<<"]\n";
+	//	cerr<<"Reading "<<name<<" with plugin "<<reader<<" ["<<reader->name<<"]\n";
     reader->Read(name,song_list);
       } catch (runtime_error &e) {
 	cerr<<"Error reading file "<<name<<"\n"<<e.what();
@@ -139,9 +141,12 @@ int main(int argc, char *argv[]) {
     
     // convert chords
     
+    /* !!!!!!!!!!!!1
+
     for (int i=0;i<song_list.size();++i) {
       chord_mode.convert(song_list[i]);
     };
+    */ 
     
     // print all songs in song_list
     

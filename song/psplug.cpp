@@ -16,7 +16,7 @@ private:
   static Plugout* Create() {return new PsPlugout();};
 
 public:
-  virtual void Write(std::ostream &out, std::vector<xmlNodePtr> &list,
+  virtual void Write(std::ostream &out, std::vector<Song *> &list,
 		     const PlugoutOptions &opt) {
     PsMedia m(out,opt.start_page);
     PrintSongs(list,m);

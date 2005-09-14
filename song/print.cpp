@@ -2,107 +2,112 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
-#include <libxml/tree.h>
 
+#include "song.h"
+#include "iso.h"
 #include "layout.h"
-#include "util.h"
 #include "print.h"
 #include "debug.h"
 
-// #define SequenceBox SequenceBox2
-
-string getTitle(xmlNodePtr p) {
-  if (p) p=p->children;
-  while (p && strcmp((char *)p->name,"title")) p=p->next;
-  if (p) p=p->children;
-  if (p) {
-    xmlChar *s=xmlNodeListGetString(NULL,p,1);
-    string r=utf8(s);
-    xmlFree(s);
-    return r;
-  }
-  else return string("");
-}
-
-string getAuthor(xmlNodePtr p, int n) {
-  if (p) p=p->children;
-  do {
-    while (p && strcmp((char*)p->name,"author")) p=p->next;
-    if (n==0 || p==0) break;
-    p=p->next;
-    --n;
-  } while (1);
-  if (p) p=p->children;
-  if (p) {
-    xmlChar *s=xmlNodeListGetString(NULL,p,1);
-    string r=utf8(s);
-    xmlFree(s);
-    return r;
-  }
-  else return string();
-}
-
-void PutString(SequenceBox *verse, SequenceBox **word,xmlChar *s, Media::font f) {
-  xmlChar *start;
-  for (start=s;start && *start;) {
-    if (isspace(*start)) {
+void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8, 
+	       Media::font f) {
+  const string &s=utf8;
+  //xmlChar *start;
+  size_t i;
+  for (i=0;i<s.size();) {
+    if (isspace(s[i])) {
       if ((*word)->size()!=0) {
 	verse->push_back(*word);
 	(*word)=new SequenceBox(true);
       }
-      start++;
+      i++;
     } else {
-      unsigned char *end;
-      for (end=start;*end && !isspace(*end);++end);
-      if (end>start) {
-	(*word)->push_back(new StringBox(start,end,f));
+      //unsigned char *end;
+      size_t j;
+      for (j=i;j<s.size() && !isspace(s[j]);++j);
+      if (j>i) {
+	(*word)->push_back(new StringBox(string(s,i,j-i),f));
       }
-      start=end;
+      i=j;
     }
   }
 }
 
 void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
-		   xmlNodePtr p,Media::font f) {
-  for (;p;p=p->next) {
-    if (p->type == XML_TEXT_NODE) {
-      PutString(verse, word, p->content, f);
-    } else if (!strcmp((char *)(p->name),"c")) {
-      xmlChar *s=xmlNodeListGetString(NULL,p->children,1);
-      if (p->parent && p->parent->name 
-	  && !(strcmp((char*)p->parent->name,"v"))) {
-	(*word)->push_back(new ChordBox(utf8(s)));
-      } else PutString(verse, word, s, Media::CHORD);
-      xmlFree(s);
-    } else if (!strcmp((char*)(p->name),"note")) {
+		   const PhraseList *p,Media::font f, int level);
+
+void ParseNodeItem(SequenceBox *verse, SequenceBox **word, 
+		   const PhraseItem *item,Media::font f, int level) {
+  union {
+    const Word *w;
+    const Chord *c;
+    const Modifier *m;
+    const Tab *t;
+  } p;
+
+  p.w=dynamic_cast<const Word*>(item);
+  if (p.w) {
+    PutString(verse, word, p.w->word, f);
+    return;
+  } 
+  
+  p.c=dynamic_cast<const Chord *>(item);
+  if (p.c) {
+    if (level==0) {
+      (*word)->push_back(new ChordBox(p.c->modifier));
+    } else {
+      PutString(verse, word, p.c->modifier, Media::CHORD);
+    }
+    return;
+  }
+  
+  p.m=dynamic_cast<const Modifier *>(item);
+  if (p.m) {
+    if (p.m->attribute==Modifier::STRUM) {
+      ParseNodeList(verse,word,p.m->child,f,level+1);
+    }
+    else if (p.m->attribute==Modifier::NOTES) {
       int l=(*word)->size();
       Box* save=*word;
       
-      PutString(verse, word, (xmlChar *) "[", f);
-      ParseNodeList(verse,word,p->children, f);
+      PutString(verse, word, "[", f);
+      
+      ParseNodeList(verse,word,p.m->child, f, level+1);
       if (*word == save && (*word)->size()==l+1) {
 	(*word)->free(l);
       } else
-	PutString(verse, word, (xmlChar *) "]", f);
-    } else if (!strcmp((char *)(p->name), "strum")) {
-      ParseNodeList(verse,word,p->children, f);
-    } else if (!strcmp((char *)(p->name), "tab")) {
-      if ((*word)->size()) verse->push_back(*word);
-      verse->push_back(new TabBox());
-      (*word)=new SequenceBox(true);
+	PutString(verse, word, "]", f);
     }
-  }  
+    else assert(false);
+    return;
+  }
+  
+  p.t=dynamic_cast<const Tab *>(item); 
+  if (p.t) {
+    if ((*word)->size()) verse->push_back(*word);
+    verse->push_back(new TabBox());
+    (*word)=new SequenceBox(true);
+    return;
+  }
+  
+  assert(false);
 }
 
-Box *VerseBox(Media &m, xmlNodePtr p, Media::font f) {
-  assert(!strcmp((char *)(p->name),"v"));
+void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
+		   const PhraseList *p,Media::font f, int level) {
+  size_t i;
+  for (i=0;i<p->list.size();++i)
+    ParseNodeItem(verse,word,p->list[i],f,level);
+}
+Box *VerseBox(Media &m, const PhraseList *p, Media::font f) {
+  assert(p!=0);
   SequenceBox *verse=new SequenceBox(true, true);
   verse->space=m.spaceWidth(f);
   verse->test=verse_debug;
   verse->halign=-1;
   SequenceBox *word=new SequenceBox(true);
 
-  ParseNodeList(verse,&word,p->children, f);
+  ParseNodeList(verse,&word,p, f,0);
 
   if (word->size()) verse->push_back(word);
   else delete word;
@@ -111,35 +116,35 @@ Box *VerseBox(Media &m, xmlNodePtr p, Media::font f) {
   return ret;
 };
 
-Box* StanzaBox(Media &m, xmlNodePtr p) {
+Box* StanzaBox(Media &m, const Stanza* p) {
   Media::font f=Media::NORMAL;
-  assert(!strcmp((char *)(p->name),"stanza"));
+  assert(p!=0);
   SequenceBox *stanza=new SequenceBox(false);
   stanza->test=stanza_debug;
-  unsigned char *type=xmlGetProp(p,(xmlChar *)"type");
-  if (type && !strcmp((char *)type,"refrain"))
+  //  unsigned char *type=xmlGetProp(p,(xmlChar *)"type");
+  if (p->type==Stanza::REFRAIN) 
     f=Media::REFRAIN;
-  for (p=p->children;p;p=p->next) {
-    if (!strcmp((char *)(p->name),"v"))
-      stanza->push_back(VerseBox(m,p,f));
+  size_t i;
+  for (i=0;i<p->verse.size();++i) {
+    stanza->push_back(VerseBox(m,p->verse[i],f));
   }
   Box *r=stanza;
-  if (type && !strcmp((char *)type,"talking")) { 
+  if (p->type==Stanza::SPOKEN) { 
     r=new PleaseBox(stanza);
   }
-  free(type);
+  //  free(type);
   return /*new FrameBox*/ (r);
 };
 
-Box* BodyBox(Media &m, xmlNodePtr p) {
-  assert(!strcmp((char *)(p->name),"body"));
+Box* BodyBox(Media &m, const Body* p) {
+  assert(p!=0);
   SequenceBox *body=new SequenceBox(false,true,true);
   body->space=m.stanza_sep;
   body->sup_space=m.column_sep;
   body->test=body_debug;
-  for (p=p->children;p;p=p->next) {
-    if (!strcmp((char *)(p->name),"stanza"))
-      body->push_back(StanzaBox(m, p));
+  size_t i;
+  for (i=0;i<p->stanza.size();++i) {
+    body->push_back(StanzaBox(m, p->stanza[i]));
   }
   CompressBox *ret=new CompressBox(body,false);
   ret->halign=-1;
@@ -158,9 +163,9 @@ void addWordsToSequence(SequenceBox *seq, const string &s, Media::font f) {
   }
 };
 
-Box* HeadBox(Media &m, xmlNodePtr p) {
+Box* HeadBox(Media &m, Head* p) {
   SequenceBox *title=0;
-  string s=getTitle(p);
+  string s=p->title;
   if (s.size()) {
     if (m.uppercase_title)
       for (unsigned int i=0;i<s.size();++i)
@@ -171,21 +176,14 @@ Box* HeadBox(Media &m, xmlNodePtr p) {
   }
 
   SequenceBox *author=0;
-  for (int i=0;;++i) {
-    s=getAuthor(p,i);
-    if (s.size()==0) break;
+  for (int i=0;i<p->author.size();++i) {
+    s=p->author[i]->firstName+" "+p->author[i]->Name;
     
-    size_t comma=s.find(',');
-    if (comma!=string::npos) {
-      size_t end;
-      for (end=comma+1;end<s.size() && isspace(s[end]);++end);
-      s=string(s,end)+" "+string(s,0,comma);
-    }
-	
     if (author==0) {
       author=new SequenceBox(true);
       author->space=m.spaceWidth(Media::AUTHOR);
     }
+
     if (i>0) addWordsToSequence(author,"-",Media::AUTHOR);
     addWordsToSequence(author,s,Media::AUTHOR);
   }
@@ -197,8 +195,9 @@ Box* HeadBox(Media &m, xmlNodePtr p) {
   return head;
 };
 
-Box* SongBox(Media &m, xmlNodePtr p) {
-  assert(!strcmp((char *)(p->name), "song"));
+Box* SongBox(Media &m, Song* p) {
+  //  assert(!strcmp((char *)(p->name), "song"));
+  assert(p);
   Box::setMedia(m);
   SequenceBox *song=new SequenceBox(false);
   song->space=m.body_sep;
@@ -207,13 +206,10 @@ Box* SongBox(Media &m, xmlNodePtr p) {
   
   Box *body=0;
   Box *head=0;
-  for (p=p->children;p;p=p->next) {
-    if (!strcmp((char *)(p->name), "body")) {
-      body=BodyBox(m,p);
-    } else if (!strcmp((char *)(p->name), "head")) {
-      head=HeadBox(m,p);
-    }
-  }
+
+  if (p->head) head=HeadBox(m,p->head);
+  if (p->body) body=BodyBox(m,p->body);
+
   if (head) song->push_back(head);
   if (body) song->push_back(body);
   // song->test=true;
@@ -277,7 +273,7 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(const vector<xmlNodePtr> &songlist,Media &m) {
+void PrintSongs(const vector<Song *> &songlist,Media &m) {
   vector<Box *> list;
   int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {
@@ -317,7 +313,9 @@ void PrintSongs(const vector<xmlNodePtr> &songlist,Media &m) {
 	<<layout<<"\n  ";
     for (int i=0;i<n;++i) {
       if (i) cerr<<", ";
-      cerr<<getTitle(songlist[count++]->children);
+      assert(songlist[count]->head);
+      cerr<<iso(songlist[count]->head->title);
+      count++;
     }
     cerr<<"\n";
 
