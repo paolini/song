@@ -232,8 +232,7 @@ protected:
   Media::font f;
   void calculate();
 public:
-  StringBox(unsigned char *utf8_string,unsigned char *end,Media::font the_f);
-  StringBox(const string &s,Media::font the_f);
+  StringBox(const string & utf8_content, Media::font the_f);
   virtual ~StringBox(){};
   virtual DimNBad write(Dim space);
 };

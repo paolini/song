@@ -1,5 +1,7 @@
 #include <iostream>
 #include "textmedia.h"
+#include "iso.h"
+
 bool TextMedia::valid(int x, int y) const {
     return x>=0 && x<my_width && y>=0 && y<my_height;};
 
@@ -67,7 +69,15 @@ TextMedia::~TextMedia() {
   delete[] my_map;
 };
 
-void TextMedia::wordWrite(const string &s, font ) {
+int TextMedia::wordWidth(const string &s, font f) const {
+  size_t i;
+  for (i=0;i<s.size();) 
+    iso(s,i);
+  return i;
+}
+
+void TextMedia::wordWrite(const string &ss, font ) {
+  string s=iso(ss);
   for (unsigned int i=0;i<s.size();++i)
     set(x++,y,s[i]);
 };

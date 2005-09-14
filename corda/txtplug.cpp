@@ -16,7 +16,7 @@ private:
   static Plugout* Create() {return new TxtPlugout();};
 
 public:
-  virtual void Write(std::ostream &out, std::vector<xmlNodePtr> &list,
+  virtual void Write(std::ostream &out, std::vector<Song *> &list,
 		     const PlugoutOptions &opt) {
     TextMedia m(out,opt.width,opt.height);
     PrintSongs(list,m);

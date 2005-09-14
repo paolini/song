@@ -9,5 +9,5 @@
 
 Box* SongBox(Media &m, xmlNodePtr p);
 
-void PrintSongs(const vector<xmlNodePtr> &,Media &);
+void PrintSongs(const vector<Song *> &,Media &);
 #endif

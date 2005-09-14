@@ -6,6 +6,8 @@
 #include <sstream>
 #include "pdfmedia.h"
 
+#include "iso.h"
+
 static const char *font_name[3]={"FR","FI","FB"};
 // roman, italic, bold
 
@@ -67,7 +69,7 @@ int PdfMedia::wordWidth(const string &s, font f) const {
   string name;
   canvas->SetFontAndSize(font_name[font_font[f]], 
 			 font_size[f]);
-  return int(100.0*canvas->TextWidth(s.c_str()));
+  return int(100.0*canvas->TextWidth(iso(s).c_str()));
 };
 
 void PdfMedia::wordWrite(const string &s, font f) {
@@ -76,7 +78,7 @@ void PdfMedia::wordWrite(const string &s, font f) {
   canvas->SetFontAndSize(font_name[font_font[f]],
 			 font_size[f]);
   canvas->MoveTextPos(double(x)/100.0+left, double(y)/100.0+bottom);
-  canvas->ShowText(s.c_str());
+  canvas->ShowText(iso(s).c_str());
   x+=int(100.0*canvas->TextWidth(s.c_str()));
   canvas->EndText();
 };
