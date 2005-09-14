@@ -19,7 +19,7 @@ protected:
   virtual void out() const;
 
 public:
-  virtual int wordWidth(const string &s, font f=NORMAL) const {return s.size();};
+  virtual int wordWidth(const string &s, font f=NORMAL) const;
   virtual void goto_xy(int xx, int yy) {x=xx;y=yy;};
   virtual void move_xy(int xx, int yy) {x+=xx;y+=yy;};
   virtual int get_x() {return x;};

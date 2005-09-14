@@ -19,7 +19,7 @@ private:
 
 public:
   
-  virtual void Write(string filename, std::vector<xmlNodePtr> &list,
+  virtual void Write(string filename, std::vector<Song *> &list,
 		     const PlugoutOptions &opt) {
     try {
       PdfMedia m(filename,opt.start_page);

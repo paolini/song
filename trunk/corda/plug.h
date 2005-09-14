@@ -3,8 +3,11 @@
 
 #include <vector>
 #include <stdexcept>
-#include <libxml/tree.h>
 #include <string>
+
+
+//#include <libxml/tree.h>
+#include "song.h"
 
 // classe base per Plugin e Plugout. Descrive un formato di input e/o output
 class Plug {
@@ -28,12 +31,12 @@ public:
   // Costruisce un reader per il formato ext
   static Plugin* Construct(string ext);
 
-  virtual int Read(std::istream &in, std::vector<xmlNodePtr> &list) {
+  virtual int Read(std::istream &in, std::vector</*xmlNodePtr*/ Song *> &list) {
     throw std::logic_error("reading "+string(name)+
 			   " from stdin not implemented");
   };
   
-  virtual int Read(string filename, std::vector<xmlNodePtr> &list);
+  virtual int Read(string filename, std::vector</*xmlNodePtr*/ Song *> &list);
 
   Plugin(string name,string ext,string descr);
   
@@ -62,13 +65,13 @@ class Plugout: public Plug {
   // costruisce un writer per il formato ext
   static Plugout* Construct(string ext);
 
-  virtual void Write(std::ostream &out, std::vector<xmlNodePtr> &list, 
+  virtual void Write(std::ostream &out, std::vector</*xmlNodePtr*/ Song *> &list, 
 		     const PlugoutOptions &opt) {
     throw std::logic_error("writing "+string(name)+
 			   "to stdout not implemented");
   };
 
-  virtual void Write(string filename, std::vector<xmlNodePtr> &list,
+  virtual void Write(string filename, std::vector</*xmlNodePtr*/ Song*> &list,
 		     const PlugoutOptions &opt);
 
   Plugout(string name,string ext, string descr): Plug(name,ext,descr) {};

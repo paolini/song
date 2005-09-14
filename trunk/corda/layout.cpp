@@ -3,7 +3,6 @@
 #include <climits>
 #include <cstring>
 #include "layout.h"
-#include "util.h"
 
 typedef unsigned int uint;
 
@@ -608,12 +607,6 @@ void StringBox::calculate() {
   my_dim.x=m->wordWidth(my_s,f);
   my_dim.y=m->lineSkip(f);
 }
-StringBox::StringBox(unsigned char *utf8_string,unsigned char *end,
-		     Media::font the_f): 
-  my_s(utf8(utf8_string,end)), f(the_f) 
-{
-  calculate();
-};
 
 StringBox::StringBox(const string &s,Media::font the_f): 
   my_s(s), f(the_f) {
