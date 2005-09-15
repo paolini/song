@@ -17,10 +17,6 @@ void strlwr(string &s)
 {
   for (int i=0;i<s.size();++i) s[i]=tolower(s[i]);
 }
-void strupr(string &s)
-{
-  for (int i=0;i<s.size();++i) s[i]=toupper(s[i]);
-}
 
 static char *commands[]={
   "ssong",

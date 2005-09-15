@@ -6,7 +6,7 @@ install: song
 sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng)
 
 -include Makefile.common
-VERSION=$(DIRNAME)
+VERSION=corda-0.1.0
 CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/include/libxml2 -DVERSION=\"$(VERSION)\"
 LDFLAGS=-lxml2 -lz -lpng  -lharu
 
