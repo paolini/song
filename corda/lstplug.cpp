@@ -1,7 +1,5 @@
 #include <cstdio>
 #include <vector>
-#include <libxml/tree.h>
-#include <libxml/parser.h>
 #include <iostream>
 #include <cassert>
 
