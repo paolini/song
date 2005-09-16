@@ -20,6 +20,7 @@ char iso(const string &utf8, size_t &i) {
       return '!';
     }
     c=(((s[i] & 3)<<6) | (s[i+1] & 63));
+//    cerr<<"iso char "<<int(s[i])<<","<<int(s[i+1])<<" = ["<<c<<"]\n";
     i+=2;
     return c;
   }
