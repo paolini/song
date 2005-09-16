@@ -10,6 +10,7 @@ void delete_elements(vector<T> &list) {
   }
 };
 
+SongList::~SongList() {delete_elements(list);};
 Song::~Song() {delete body;delete head;};
 Head::~Head() {delete_elements(author);};
 Body::~Body() {
@@ -21,8 +22,6 @@ Body::~Body() {
 };
 
 Stanza::~Stanza() {
-    assert(chords==0);
-    assert(copy==0);
     delete_elements(verse);
   };
 

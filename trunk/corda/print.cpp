@@ -165,7 +165,7 @@ void addWordsToSequence(SequenceBox *seq, const string &s, Media::font f) {
   }
 };
 
-Box* HeadBox(Media &m, Head* p) {
+Box* HeadBox(Media &m, const Head* p) {
   SequenceBox *title=0;
   string s=p->title;
   if (s.size()) {
@@ -197,7 +197,7 @@ Box* HeadBox(Media &m, Head* p) {
   return head;
 };
 
-Box* SongBox(Media &m, Song* p) {
+Box* SongBox(Media &m, const Song* p) {
   //  assert(!strcmp((char *)(p->name), "song"));
   assert(p);
   Box::setMedia(m);
@@ -275,7 +275,7 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(const vector<Song *> &songlist,Media &m) {
+void PrintSongs(const SongList &songlist,Media &m) {
   vector<Box *> list;
   int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {

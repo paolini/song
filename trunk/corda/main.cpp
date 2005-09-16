@@ -32,9 +32,9 @@ string usage(
 string lang=string();
 char* supported_lang[]={"txt","lst","ps","pdf","xng",0};
 
-enum {SNG,XNG} format=SNG;
+string format="";
 
-vector<Song *> song_list;
+SongList song_list;
 
 string extension(const string &filename) {
   string::size_type i;
@@ -86,11 +86,11 @@ int main(int argc, char *argv[]) {
 	continue;
       }
       OPT0("-sng","default to sng format (default)") {
-	format=SNG;
+	format="sng";
 	continue;
       }
       OPT0("-xng","default to xng format") {
-	format=XNG;
+	format="xng";
 	continue;
       }
       OPT1("-debug","<what> only for testing") {
@@ -114,27 +114,24 @@ int main(int argc, char *argv[]) {
       }
       
       // assume che argv[i] sia il nome di un file da leggere
-
-    string name=argv[i];
-
+      
+      string name=argv[i];
+      
       // legge il file "name"
-    try {
-	string ext=extension(name);
-	
-	if (format==XNG) {
-	  ext="xng";
-	} else if (format==SNG) {
-	  ext="sng";
-	} 
-	Plugin* reader=Plugin::Construct(ext);
-	if (!reader) {
-	  cerr<<"unknown format "<<ext<<" for file "<<name<<"\n";
-	  abort();
-	}
-	//	cerr<<"Reading "<<name<<" with plugin "<<reader<<" ["<<reader->name<<"]\n";
-    reader->Read(name,song_list);
+      string ext=extension(name);
+      if (format!="") ext=format;
+
+      Plugin* reader=Plugin::Construct(ext);
+      if (!reader) {
+	cerr<<"unknown format "<<ext<<" for file "<<name<<"\n";
+	abort();
+      }
+      //	cerr<<"Reading "<<name<<" with plugin "<<reader<<" ["<<reader->name<<"]\n";
+      try {
+	reader->Read(name,song_list);
       } catch (runtime_error &e) {
-	cerr<<"Error reading file "<<name<<"\n"<<e.what();
+	cerr<<"Error reading file "<<name<<" with plugin "
+	    <<reader->name<<"\n"<<e.what();
 	cerr<<"!! file skipped....\n";
       }
     }
