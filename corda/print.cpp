@@ -9,22 +9,24 @@
 #include "print.h"
 #include "debug.h"
 
+bool myisspace(int x) {
+  return (x & 128) == 0 && isspace(x); 
+}
+
 void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8, 
 	       Media::font f) {
   const string &s=utf8;
-  //xmlChar *start;
   size_t i;
   for (i=0;i<s.size();) {
-    if (isspace(s[i])) {
+    if (myisspace(s[i])) {
       if ((*word)->size()!=0) {
-	verse->push_back(*word);
+        verse->push_back(*word);
 	(*word)=new SequenceBox(true);
       }
       i++;
     } else {
-      //unsigned char *end;
       size_t j;
-      for (j=i;j<s.size() && !isspace(s[j]);++j);
+      for (j=i;j<s.size() && !myisspace(s[j]);++j);
       if (j>i) {
 	(*word)->push_back(new StringBox(string(s,i,j-i),f));
       }

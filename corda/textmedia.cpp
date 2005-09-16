@@ -71,9 +71,12 @@ TextMedia::~TextMedia() {
 
 int TextMedia::wordWidth(const string &s, font f) const {
   size_t i;
-  for (i=0;i<s.size();) 
+  int n=0;
+  for (i=0;i<s.size();) {
     iso(s,i);
-  return i;
+    n++;
+    }
+  return n;
 }
 
 void TextMedia::wordWrite(const string &ss, font ) {
