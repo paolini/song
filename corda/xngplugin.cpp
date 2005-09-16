@@ -4,6 +4,7 @@
 #include <libxml/parser.h>
 #include <iostream>
 #include <cassert>
+#include <map>
 
 #include "plug.h"
 
@@ -12,30 +13,138 @@
 
 using namespace std;
 
-class XngPlug:public Plugin {
+class XngPlugin:public Plugin {
 private:
   static const bool dummy;
   static bool startup() {
-    Plugin::Register("xng",&(XngPlug::Createin));
+    Plugin::Register("xng",&(XngPlugin::Createin));
     return true;
   };
-  static Plugin* Createin() {return new XngPlug();};
+  static Plugin* Createin() {return new XngPlugin();};
 public:
 
-  warning(const string &msg) {
+  void warning(const string &msg) {
     cerr<<"WARNING: "<<msg<<"\n";
   };
   
-  ignore(unsigned char *item) {
-    warning("ignore unknow <"+item+"> item");
+  void ignore(xmlNodePtr p) {
+    if (p->type==XML_TEXT_NODE) return;
+    const char *item;
+    if (p && p->name) item=(char*)p->name;
+    else item="";
+    warning(string("ignore unknow <")+item+"> item");
   };
 
-  Head* ReadHead(XmlNodePtr p) {
-    // ...........................
-    // ........................
+  string ReadString(xmlNodePtr p) {
+    if (p==0 || p->children==0) return "";
+    xmlChar *s=xmlNodeListGetString(0,p->children,1);
+    string r=(char *)s;
+    xmlFree(s);
+    return r;
   };
 
-  Song* ReadSong(XmlNodePtr p) {
+  PhraseItem* ReadItem(xmlNodePtr p) {
+    if (p->type == XML_TEXT_NODE) 
+      return new Word((char*)p->content);
+    else if (!strcmp((char*)p->name,"strum")) 
+      return new Modifier(Modifier::STRUM,ReadList(p));
+    else if (!strcmp((char*)p->name,"note")) 
+      return new Modifier(Modifier::NOTES,ReadList(p));
+    else if (!strcmp((char*)p->name,"c"))
+      return new Chord(ReadString(p));
+    else if (!strcmp((char*)p->name,"tab"))
+      return new Tab;
+    else ignore(p);
+    return 0;
+  };
+
+  PhraseList* ReadList(xmlNodePtr p) {
+    PhraseList *list=new PhraseList;
+    for (p=p->children;p;p=p->next) {
+      PhraseItem *item=ReadItem(p);
+      if (item) list->list.push_back(item);
+    }
+    return list;
+  };
+
+  map<string,Stanza*> ids;
+
+  Stanza *ReadStanza(xmlNodePtr p) {
+    char *prop;
+    prop=(char*)xmlGetProp(p,(xmlChar *)"type");
+    Stanza::Type t=Stanza::STROPHE;
+    if (prop) {
+      if (!strcmp(prop,"strophe")) ;
+      else if (!strcmp(prop,"refrain")) t=Stanza::REFRAIN;
+      else if (!strcmp(prop,"talking")) t=Stanza::SPOKEN;
+      else if (!strcmp(prop,"tab")) t=Stanza::TAB;
+      else warning(string("unknown stanza type ")+prop);
+    }
+    
+    Stanza* stanza=new Stanza(t);
+
+    prop=(char*)xmlGetProp(p,(xmlChar *)"id");
+    if (prop) ids[prop]=stanza;
+    
+    prop=(char*)xmlGetProp(p,(xmlChar *)"chords");
+    if (prop) {
+      stanza->chords=ids[prop];
+      if (!stanza->chords) 
+	throw runtime_error(string("chords reference ")
+			    +prop+" not found");
+    }
+
+    prop=(char*)xmlGetProp(p,(xmlChar *)"copy");
+    if (prop) {
+      stanza->copy=ids[prop];
+      if (!stanza->copy) 
+	throw runtime_error(string("copy reference ")
+			    +prop+" not found");
+    }
+
+    for (p=p->children;p;p=p->next) {
+      if (!strcmp((char *) p->name,"v")) 
+	stanza->verse.push_back(ReadList(p));
+      else ignore(p);
+    };
+    return stanza;
+  };
+
+  Body* ReadBody(xmlNodePtr p) {
+    Body *body=new Body;
+    for (p=p->children;p;p=p->next) {
+      if (!strcmp((char *)p->name,"stanza"))
+	body->stanza.push_back(ReadStanza(p));
+      else ignore(p);
+    }
+    return body;
+  };
+
+  Author* ReadAuthor(xmlNodePtr p) {
+    Author *author=new Author;
+    for (p=p->children;p;p=p->next) {
+      if (!strcmp((char *)p->name,"name")) 
+	author->Name=ReadString(p);
+      else if (!strcmp((char *)p->name,"firstname"))
+	author->firstName=ReadString(p);
+      else ignore(p);
+    };
+    return author;
+  };
+
+  Head* ReadHead(xmlNodePtr p) {
+    Head *head=new Head;
+    for (p=p->children;p;p=p->next) {
+      if (!strcmp((char *)p->name,"title"))
+	head->title=ReadString(p);
+      else if (!strcmp((char *)p->name,"author")) 
+      head->author.push_back(ReadAuthor(p));
+      else ignore(p);
+    }
+    return head;
+  };
+
+  Song* ReadSong(xmlNodePtr p) {
     Song *song=new Song;
     assert(!strcmp((char*)p->name,"song"));
     for (p=p->children;p;p=p->next) {
@@ -43,62 +152,33 @@ public:
 	song->head=ReadHead(p);
       else if (!strcmp((char*)p->name,"body"))
 	song->body=ReadBody(p);
-      else ignore(p->name);
+      else ignore(p);
     };
+    if (song->head==0) throw runtime_error("no head found");
+    if (song->body==0) throw runtime_error("no body found");
+    return song;
   };
 
-  virtual int Read(string filename, std::vector<Song *> &list) {
+  virtual int Read(string filename, SongList &list) {
     int count=0;
     xmlDocPtr doc=xmlParseFile(filename.c_str());
     if (!doc)
       throw runtime_error("non riesco a leggere il file "+filename);
     for (xmlNodePtr p=doc->children;p;p=p->next) {
-      if (strcmp((char*)(p->name),"songs")!=0) p=p->children;
-      if (strcmp((char*)(p->name),"song")!=0) {
-	ignore(p->name);
-	continue;
-      } 
-      if (p->children)
+      if (p->type!=XML_ELEMENT_NODE) continue;
+      if (!strcmp((char*)(p->name),"songs")) p=p->children;
+      if (!strcmp((char*)(p->name),"song")) {
 	list.push_back(ReadSong(p));
-      count++;
+	continue;
+      } else ignore(p);
     }
     return count;
   };
 
-  void Write(FILE *out, std::vector<xmlNodePtr> &list,
-	     const PlugoutOptions &opt) {
-    unsigned int i;
-    for (i=0;i<list.size();++i) {
-      xmlDtdPtr dtd;
-      xmlDocPtr doc;
-      doc=xmlNewDoc(BAD_CAST "1.0");
-      dtd=xmlNewDtd(doc,BAD_CAST "song",BAD_CAST XNG_DTD,0);
-      doc->extSubset=dtd;
-      doc->children=(xmlNodePtr) dtd;
-      xmlDocSetRootElement(doc,list[i]);
-      xmlDocDump(out,doc);
-    }
-  };
-  
-  virtual void Write(std::ostream &out, std::vector<xmlNodePtr> &list,
-		     const PlugoutOptions &opt) {
-    assert(&out==&cout);
-    Write(stdout,list,opt);
-  };
-
-  virtual void Write(string filename, std::vector<xmlNodePtr> &list,
-		     const PlugoutOptions &opt) {
-    FILE *out=fopen(filename.c_str(),"wt"); 
-    if (!out) throw runtime_error("cannot write file "+filename);
-    Write(out,list,opt);
-    fclose(out);
-  };
-
-  XngPlug(): 
-             Plugin("xsong","xng","xml song format [manu-fatto]"),
-             Plugout("xsong","xng","xml song format [manu-fatto]")
+  XngPlugin(): 
+             Plugin("xsong","xng","xml song format [manu-fatto]")
 	     {};
 };
 
 // registra il plugin
-const bool XngPlug::dummy=XngPlug::startup();
+const bool XngPlugin::dummy=XngPlugin::startup();

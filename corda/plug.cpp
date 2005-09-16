@@ -17,7 +17,7 @@ Plugin::Plugin(string name,string ext,string descr): Plug(name,ext,descr)
    // cerr<<"Plugin("<<name<<"="<<this->name<<") "<<this<<"\n";
  }
 
-int Plugin::Read(string filename, vector<Song *> &list) {
+int Plugin::Read(string filename, SongList &list) {
   ifstream in(filename.c_str());
   if (!in) 
     throw runtime_error("cannot open file "+filename);
@@ -41,7 +41,7 @@ Plugin *Plugin::Construct(string ext) {
   else return 0;
 }
 
-void Plugout::Write(string filename, vector<Song *> &list,
+void Plugout::Write(string filename, const SongList &list,
 		   const PlugoutOptions &opt) {
   ofstream out(filename.c_str());
   if (!out) 

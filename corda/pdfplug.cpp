@@ -19,7 +19,7 @@ private:
 
 public:
   
-  virtual void Write(string filename, std::vector<Song *> &list,
+  virtual void Write(string filename, const SongList &list,
 		     const PlugoutOptions &opt) {
     try {
       PdfMedia m(filename,opt.start_page);

@@ -30,8 +30,7 @@ song: 	main.o \
 	textmedia.o \
 	txtplug.o \
 	lstplug.o \
-#	chord.o \
-#	xngplug.o \
+	xngplugin.o \
 
 	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 

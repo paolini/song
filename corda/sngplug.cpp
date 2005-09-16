@@ -465,7 +465,7 @@ private:
   };
 
 public:
-  virtual int Read(istream &, vector<Song *> &list);
+  virtual int Read(istream &, SongList &list);
   SngPlugin(): Plugin("song","sng","song sng TeX-like format [manu-fatto]"),
 	       current_in(0)
   {
@@ -677,12 +677,11 @@ public:
     bool newline=true;
     Stanza *stanza=0;
     if (token[0]=='\\' && strchr("srkb",token[1])) {
-      stanza=new Stanza;
       switch(token[1]) {
-      case 's': stanza->type=Stanza::STROPHE;break;
-      case 'r': stanza->type=Stanza::REFRAIN;break;
-      case 'k': stanza->type=Stanza::SPOKEN;newline=false;break;
-      case 'b': stanza->type=Stanza::TAB;break;
+      case 's': stanza=new Stanza(Stanza::STROPHE);break;
+      case 'r': stanza=new Stanza(Stanza::REFRAIN);break;
+      case 'k': stanza=new Stanza(Stanza::SPOKEN);newline=false;break;
+      case 'b': stanza=new Stanza(Stanza::TAB);break;
       default: assert(false);
       }
       next_token();
@@ -753,26 +752,28 @@ public:
       char c=token[1];
       next_token();
       skip_spaces();
-      Modifier *ret=new Modifier;
-      if (c=='m') ret->attribute=Modifier::STRUM;
-      else ret->attribute=Modifier::NOTES;
+      //      Modifier *ret=new Modifier;
+      Modifier::Type type;
+      PhraseList *p;
+
+      if (c=='m') type=Modifier::STRUM;
+      else type=Modifier::NOTES;
       c=token[0];
       if (c=='{') {
 	next_token();
-	ret->child=readPhraseList(false);
+	p=readPhraseList(false);
 	if (token[0]!='}') error("'}` expected");
 	next_token();
       } else {
-	ret->child=new PhraseList;
-	ret->child->list.push_back(readPhraseItem(false));
+	p=new PhraseList;
+	p->list.push_back(readPhraseItem(false));
       }
-      return ret;
+      return new Modifier(type,p);
     } 
 
     if (token[0]=='[') {
       next_token();
-      Chord *ret=new Chord;
-      ret->modifier=readString(false);
+      Chord *ret=new Chord(readString(false));
       if (token[0]!=']') error("']' expected");
       next_token();
       return ret;
@@ -784,18 +785,14 @@ public:
     }
 
     string s=readString(newline);
-    if (s.size()) {
-      Word *ret=new Word;
-      ret->word=s;
-      return ret;
-    }
-    
+    if (s.size()) 
+      return new Word(s);
     return 0;
   };
 
 };
 
-int SngPlugin::Read(istream &in, vector<Song *> &list) {
+int SngPlugin::Read(istream &in, SongList &list) {
   Song *q;
   int n=0;
   connect(in);

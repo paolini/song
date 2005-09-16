@@ -8,5 +8,5 @@
 
 Box* SongBox(Media &m, Song* p);
 
-void PrintSongs(const vector<Song *> &,Media &);
+void PrintSongs(const SongList &,Media &);
 #endif

@@ -25,7 +25,7 @@ private:
 
 public:
 
-  virtual void Write(std::ostream &out, std::vector<Song *> &list,
+  virtual void Write(std::ostream &out, const SongList &list,
 		     const PlugoutOptions &opt) {
     op=&out;
     (*op)<<"<?xml version='1.0' encoding='utf8' ?>\n"
@@ -52,9 +52,11 @@ public:
   };
 
   void writeHead(const Head *head) {
+    (*op)<<"<head>\n";
     (*op)<<"<title>"<<head->title<<"</title>\n";
     for (size_t i=0;i<head->author.size();++i)
       writeAuthor(head->author[i]);
+    (*op)<<"</head>\n";
   };
 
   void writeAuthor(const Author *author) {
