@@ -1,3 +1,4 @@
+<!ELEMENT songs (song+)>
 <!ELEMENT song (head,log?,body)>
 <!ELEMENT head (title,author)>
 <!ELEMENT title (#PCDATA)>

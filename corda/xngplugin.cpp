@@ -62,7 +62,7 @@ public:
     PhraseList *list=new PhraseList;
     for (p=p->children;p;p=p->next) {
       PhraseItem *item=ReadItem(p);
-      if (item) list->list.push_back(item);
+      if (item) list->push_back(item);
     }
     return list;
   };
@@ -104,7 +104,7 @@ public:
 
     for (p=p->children;p;p=p->next) {
       if (!strcmp((char *) p->name,"v")) 
-	stanza->verse.push_back(ReadList(p));
+	stanza->push_back(ReadList(p));
       else ignore(p);
     };
     return stanza;
@@ -114,7 +114,7 @@ public:
     Body *body=new Body;
     for (p=p->children;p;p=p->next) {
       if (!strcmp((char *)p->name,"stanza"))
-	body->stanza.push_back(ReadStanza(p));
+	body->push_back(ReadStanza(p));
       else ignore(p);
     }
     return body;
@@ -149,13 +149,13 @@ public:
     assert(!strcmp((char*)p->name,"song"));
     for (p=p->children;p;p=p->next) {
       if (!strcmp((char*)p->name,"head"))
-	song->head=ReadHead(p);
+	song->setHead(ReadHead(p));
       else if (!strcmp((char*)p->name,"body"))
-	song->body=ReadBody(p);
+	song->setBody(ReadBody(p));
       else ignore(p);
     };
-    if (song->head==0) throw runtime_error("no head found");
-    if (song->body==0) throw runtime_error("no body found");
+    if (song->head()==0) throw runtime_error("no head found");
+    if (song->body()==0) throw runtime_error("no body found");
     return song;
   };
 

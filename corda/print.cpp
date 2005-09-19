@@ -28,6 +28,7 @@ void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8,
       size_t j;
       for (j=i;j<s.size() && !myisspace(s[j]);++j);
       if (j>i) {
+	//	cerr<<"StringBox("<<s<<" "<<i<<" "<<j<<"\n";
 	(*word)->push_back(new StringBox(string(s,i,j-i),f));
       }
       i=j;
@@ -46,6 +47,8 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
     const Modifier *m;
     const Tab *t;
   } p;
+
+  assert(item);
 
   p.w=dynamic_cast<const Word*>(item);
   if (p.w) {
@@ -98,8 +101,8 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
 void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
 		   const PhraseList *p,Media::font f, int level) {
   size_t i;
-  for (i=0;i<p->list.size();++i)
-    ParseNodeItem(verse,word,p->list[i],f,level);
+  for (i=0;i<p->size();++i)
+    ParseNodeItem(verse,word,(*p)[i],f,level);
 }
 Box *VerseBox(Media &m, const PhraseList *p, Media::font f) {
   assert(p!=0);
@@ -127,8 +130,8 @@ Box* StanzaBox(Media &m, const Stanza* p) {
   if (p->type==Stanza::REFRAIN) 
     f=Media::REFRAIN;
   size_t i;
-  for (i=0;i<p->verse.size();++i) {
-    stanza->push_back(VerseBox(m,p->verse[i],f));
+  for (i=0;i<p->size();++i) {
+    stanza->push_back(VerseBox(m,(*p)[i],f));
   }
   Box *r=stanza;
   if (p->type==Stanza::SPOKEN) { 
@@ -145,8 +148,8 @@ Box* BodyBox(Media &m, const Body* p) {
   body->sup_space=m.column_sep;
   body->test=body_debug;
   size_t i;
-  for (i=0;i<p->stanza.size();++i) {
-    body->push_back(StanzaBox(m, p->stanza[i]));
+  for (i=0;i<p->size();++i) {
+    body->push_back(StanzaBox(m, (*p)[i]));
   }
   CompressBox *ret=new CompressBox(body,false);
   ret->halign=-1;
@@ -178,7 +181,7 @@ Box* HeadBox(Media &m, const Head* p) {
   }
 
   SequenceBox *author=0;
-  for (int i=0;i<p->author.size();++i) {
+  for (uint i=0;i<p->author.size();++i) {
     s=p->author[i]->firstName+" "+p->author[i]->Name;
     
     if (author==0) {
@@ -199,6 +202,7 @@ Box* HeadBox(Media &m, const Head* p) {
 
 Box* SongBox(Media &m, const Song* p) {
   //  assert(!strcmp((char *)(p->name), "song"));
+  //  cerr<<"songbox("<<p->head->title<<")\n";
   assert(p);
   Box::setMedia(m);
   SequenceBox *song=new SequenceBox(false);
@@ -209,8 +213,8 @@ Box* SongBox(Media &m, const Song* p) {
   Box *body=0;
   Box *head=0;
 
-  if (p->head) head=HeadBox(m,p->head);
-  if (p->body) body=BodyBox(m,p->body);
+  if (p->head()) head=HeadBox(m,p->head());
+  if (p->body()) body=BodyBox(m,p->body());
 
   if (head) song->push_back(head);
   if (body) song->push_back(body);
@@ -284,7 +288,7 @@ void PrintSongs(const SongList &songlist,Media &m) {
   int page=0;
   while(list.size()) {
     page++;
-    int origsize=list.size();
+    //int origsize=list.size();
     DimNBad best_dim;
     const char *bestlayout=0;
     for (int i=0;
@@ -313,10 +317,10 @@ void PrintSongs(const SongList &songlist,Media &m) {
     cerr<<n<<" songs in page "<<page<<
       ", dim[bad]: "<<dim<<" lay: "
 	<<layout<<"\n  ";
-    for (int i=0;i<n;++i) {
+    for (uint i=0;i<n;++i) {
       if (i) cerr<<", ";
-      assert(songlist[count]->head);
-      cerr<<iso(songlist[count]->head->title);
+      assert(songlist[count]->head());
+      cerr<<iso(songlist[count]->head()->title);
       count++;
     }
     cerr<<"\n";

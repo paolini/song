@@ -1,4 +1,5 @@
-SONG (1990?-2005) (manu-fatto) paolini AT math.unifi.it
+CORDA (2005) (manu-fatto) paolini AT math.unifi.it
+	(precedentemente chiamato SONG)
 
 DESCRIZIONE
 -----------
@@ -9,11 +10,14 @@ di canzoni scritte nei formati SNG e XNG.
 DISTRIBUZIONE
 -------------
 
+Lo sviluppo avviene ora su http://www.sourceforge.net/projects/corda/
+
 Attualmente sono disponibili i sorgenti C++ con Makefile. Testato sotto Linux,
-con gcc, dovrebbe ugualmente compilare con qualunque compilatore moderno.
-Richiede le seguenti librerie:
- - libxml2: http://xmlsoft.org/
- - libharu 1.2.0 per il supporto PDF
+con gcc, e con DEV-CPP in Windows. 
+
+Opzionalmente può utilizzare le seguenti librerie:
+ - libxml2: http://xmlsoft.org/ per leggere il formato XML
+ - libharu 1.2.0 per stampare in PDF
 
 COMPILAZIONE
 ------------
@@ -25,7 +29,7 @@ make
 INSTALLAZIONE
 -------------
 
-cp song /usr/local/bin
+cp corda /usr/local/bin
 
 FORMATO SNG e XNG
 -----------------
@@ -36,35 +40,43 @@ per una descrizione completa.
 XNG e` invece un formato XML, la descrizione formale si trova nel file 
 "song.dtd".
 
-I files test.xng e test.sng sono dati come esempio.
+I files test.xng e test.sng sono dati come esempio. Io ho trascritto e
+raccolto molti testi (con accordi) di canzoni italiane e straniere in
+formato SNG. Per rispetto dei diritti d'autore non posso pubblicare
+questi files su internet. 
 
 ESEMPI
 ------
 
 Per visualizzare il file test.sng come testo semplice:
 
-$ song test.sng
+> corda test.sng
 
 Per visualizzare il file test.xng come testo semplice:
 
-$ song test.xng
+> corda test.xng
 
 Per visualizzare il file test.sng facendolo stare nella corrente finestra di 
 xterm:
 
-$ song test.sng -width $COLUMNS -height $LINES
+> corda test.sng -width $COLUMNS -height $LINES
 
 Per stampare i files test.sng e test.xng in un file PostScript:
 
-$ song test.sng test.xng -o test.ps
+> song test.sng test.xng -o test.ps
 
 ...su file PDF:
 
-$ song test.sng test.xng -o test.pdf
+> song test.sng test.xng -o test.pdf
 
 Per avere un elenco completo delle opzioni:
 
-$ song -help
+> corda -help
 
+VERSIONE PER DOS
+----------------
 
+La versione per DOS è stata compilata con DEV-CPP. Attualmente non sono
+riuscito a linkarlo contro le libxml2, e quindi non è possibile utilizzare
+il formato XNG per l'input. Ovviamente va usato da una finestra di MS-DOS.
 
