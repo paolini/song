@@ -44,10 +44,10 @@ public:
 
   void writeSong(const Song *song) {
     (*op)<<"<song>\n";
-    if (song->head)
-      writeHead(song->head);
-    if (song->body)
-      writeBody(song->body);
+    if (song->head())
+      writeHead(song->head());
+    if (song->body())
+      writeBody(song->body());
     (*op)<<"</song>\n";
   };
 
@@ -68,10 +68,10 @@ public:
 
   void writeBody(const Body *body) {
     (*op)<<"<body>\n";
-    for (size_t i=0;i<body->stanza.size();++i)
-      ids[body->stanza[i]]=i;
-    for (size_t i=0;i<body->stanza.size();++i)
-      writeStanza(body->stanza[i]);
+    for (size_t i=0;i<body->size();++i)
+      ids[(*body)[i]]=i;
+    for (size_t i=0;i<body->size();++i)
+      writeStanza((*body)[i]);
     (*op)<<"</body>\n";
   };
 
@@ -86,17 +86,17 @@ public:
     if (stanza->copy) (*op)<<" copy='"<<ids[stanza->copy]<<"'";
     if (stanza->chords) (*op)<<" chords='"<<ids[stanza->chords]<<"'";
     (*op)<<">\n";
-    for (size_t i=0;i<stanza->verse.size();++i) {
+    for (size_t i=0;i<stanza->size();++i) {
       (*op)<<"<v>";
-      writeVerse(stanza->verse[i]);
+      writeVerse((*stanza)[i]);
       (*op)<<"</v>\n";
     }
     (*op)<<"</stanza>\n";
   };
 
   void writeVerse(const PhraseList *phrase) {
-    for (size_t i=0;i<phrase->list.size();++i)
-      writeItem(phrase->list[i]);
+    for (size_t i=0;i<phrase->size();++i)
+      writeItem((*phrase)[i]);
   };
   
   void writeItem(const PhraseItem *item) {

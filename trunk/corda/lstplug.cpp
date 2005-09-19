@@ -24,15 +24,15 @@ public:
     unsigned int i;
     for (i=0;i<song_list.size();++i) {
       Song* p=song_list[i];
-      assert(p->head!=0);
-      out<<iso(p->head->title);
+      assert(p->head()!=0);
+      out<<iso(p->head()->title);
       size_t j;
-      for (j=0;j<p->head->author.size();++j){
+      for (j=0;j<p->head()->author.size();++j){
 	if (j==0) out<<" (";
 	else out<<", ";
-	string s=p->head->author[j]->firstName;
+	string s=p->head()->author[j]->firstName;
 	if (s.size()) s+=" ";
-	s+=p->head->author[j]->Name;
+	s+=p->head()->author[j]->Name;
 	out<<iso(s);
       }
       if (j) out<<")\n";

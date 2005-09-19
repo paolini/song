@@ -427,10 +427,10 @@ void SequenceBox2::current_write() {
 
 }
 
-static const char *lc(bool hor) {
-  if (hor) return "line";
-  else return "column";
-};
+//static const char *lc(bool hor) {
+//  if (hor) return "line";
+//  else return "column";
+//};
 
 void SequenceBox2::recalculate() {
   static int level=0;
@@ -446,8 +446,8 @@ void SequenceBox2::recalculate() {
     cerr<<"\nrecalculate "<<last_space<<" (level "<<level<<") \n";
 
   for (uint iteration=0;iteration<1;++iteration) {
-    int nlines=0;
-    int current_line=0;
+    uint nlines=0;
+    uint current_line=0;
     vector<DimNBad> try_line_dim;
     vector<uint> try_next_item;
     vector<DimNBad> try_given_space;
@@ -473,7 +473,7 @@ void SequenceBox2::recalculate() {
       try_given_space[i]=list[i]->dim(space_left); //quanto spazio occupa?
       assert(try_given_space[i].x<= space_left.x 
 	     && try_given_space[i].y<= space_left.y);
-      int new_width;
+      uint new_width;
       new_width=try_line_dim[current_line].get(hor);
       if (new_width) new_width+=space;
       new_width+=try_given_space[i].get(hor)+list[i]->chord_width();

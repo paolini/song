@@ -15,7 +15,7 @@ using namespace std;
 
 void strlwr(string &s)
 {
-  for (int i=0;i<s.size();++i) s[i]=tolower(s[i]);
+  for (uint i=0;i<s.size();++i) s[i]=tolower(s[i]);
 }
 
 static char *commands[]={
@@ -26,16 +26,16 @@ static char *commands[]={
   "llabel","ycopy","frefer",
   "cchords","mstrum","ppar",""};
 
-static char *isoacc[]={
-  " " "a"   "e"   "i"   "o"   "u"   "A"   "E"   "I"   "O"   "U"   "nNcC",
-  "`" "\xE0""\xE8""\xEC""\xF2""\xF9""\xC0""\xC8""\xCC""\xD2""\xD9""    ",
-  "'" "\xE1""\xE9""\xED""\xF3""\xFA""\xC1""\xC9""\xCD""\xD3""\xDA""    ",
-  "^" "\xE2""\xEA""\xEE""\xF4""\xFB""\xC2""\xCA""\xCE""\xD4""\xDB""    ",
-  "~" "\xE3"" "   " "   "\xF5"" "   "\xC3"" "   " "   "\xD5"" "   "\xF1\xD1  ",
-  "\"""\xE4""\xEB""\xEF""\xF6""\xFC""\xC4""\xCB""\xCF""\xD6""\xDC""    ",
-  "," " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  \xE7\xC7",
-  "<" " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  ""cC",
-  ""};
+// static char *isoacc[]={
+//   " " "a"   "e"   "i"   "o"   "u"   "A"   "E"   "I"   "O"   "U"   "nNcC",
+//   "`" "\xE0""\xE8""\xEC""\xF2""\xF9""\xC0""\xC8""\xCC""\xD2""\xD9""    ",
+//   "'" "\xE1""\xE9""\xED""\xF3""\xFA""\xC1""\xC9""\xCD""\xD3""\xDA""    ",
+//   "^" "\xE2""\xEA""\xEE""\xF4""\xFB""\xC2""\xCA""\xCE""\xD4""\xDB""    ",
+//   "~" "\xE3"" "   " "   "\xF5"" "   "\xC3"" "   " "   "\xD5"" "   "\xF1\xD1  ",
+//   "\"""\xE4""\xEB""\xEF""\xF6""\xFC""\xC4""\xCB""\xCF""\xD6""\xDC""    ",
+//   "," " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  \xE7\xC7",
+//   "<" " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  ""cC",
+//   ""};
 
 struct {
   char c;
@@ -372,7 +372,7 @@ int add_utf8_char(unsigned char c, string &to) {
 
 string new_unicode(string &s) {
   string ret;
-  for (int i=0;i<s.size();++i)
+  for (uint i=0;i<s.size();++i)
     add_utf8_char(s[i],ret);  
   return ret;
 }
@@ -384,7 +384,7 @@ int myisalpha(unsigned char c) {
 Author *get_author(const string  &s) {
   Author *ret=new Author;
 
-  int i;
+  uint i;
   for (i=0;i+1<s.size() && 
 	 !(isupper(s[i]) && (isupper(s[i+1])|| s[i+1]=='\'' ));i++);
   if (i+1==s.size()) {
@@ -447,7 +447,7 @@ private:
     Plugin *p=new SngPlugin();
     //    cerr<<"create SngPlugin: "<<p<<" ["<<p->name<<"]\n";     
   
-    return new SngPlugin();
+    return p;
   }
 
   static bool plugin_startup() {
@@ -534,6 +534,9 @@ public:
       int c=get();
       if (c!=10) unget(c);
     } else {
+      if (c&128) {
+	error(string("non ASCII character '")+c+"' not allowed");
+      }
       token+=c;
     }
     //    cerr<<"token: >>"<<token<<"<< ("<<int(token[0])<<")\n";
@@ -544,7 +547,7 @@ public:
   }
 
   void error(string s) {
-    int i;
+    //    int i;
     //ostream &m=cerr;
     stringstream m; 
     m<<nline<<":"<<ncol<<" ERROR: "<<s<<"\n";
@@ -644,19 +647,19 @@ public:
     next_token();
     skip_spaces();
     song=new Song;
-    song->head=new Head;
-    song->head->title=readString();
+    song->setHead(new Head);
+    song->head()->title=readString();
     skip_spaces();
 
     if (token=="\\a") {
       next_token();
       skip_spaces();
       string line=readString();
-      split_authors(line,song->head);
+      split_authors(line,song->head());
     }
     skip_spaces();
 
-    song->body=readBody();
+    song->setBody(readBody());
     
     return song;
   };
@@ -666,7 +669,7 @@ public:
     Stanza *stanza;
     while((stanza=readStanza())!=0) {
       if (!body) body=new Body;
-      body->stanza.push_back(stanza);
+      body->push_back(stanza);
     }
     return body;
   }
@@ -712,8 +715,8 @@ public:
       }
 
       PhraseList *verse;
-      while (verse=readVerse(newline)) {
-	stanza->verse.push_back(verse);
+      while ((verse=readVerse(newline))!=0) {
+	stanza->push_back(verse);
       }
     } 
     return stanza;
@@ -733,7 +736,7 @@ public:
     PhraseItem *item;
     while((item=readPhraseItem(newline))!=0) {
       if (!phrase) phrase=new PhraseList;
-      phrase->list.push_back(item);
+      phrase->push_back(item);
     }
     skip_spaces();
     return phrase;
@@ -766,7 +769,9 @@ public:
 	next_token();
       } else {
 	p=new PhraseList;
-	p->list.push_back(readPhraseItem(false));
+	PhraseItem *it=readPhraseItem(false);
+	if (!it) error("empty \\strum or \\notes");
+	p->push_back(it);
       }
       return new Modifier(type,p);
     } 
