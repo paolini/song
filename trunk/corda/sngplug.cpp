@@ -489,15 +489,15 @@ public:
     if (current_in->eof()) return 4;
     c=current_in->get();
     if (c==-1) return 4;
-    ncol++;
-    if (c==10) {nline++;ncol=0;};
-
+    if (c==10 && ncol>=0) {nline++;ncol=0;}
+    else ncol++;
     //    cerr<<"get: "<<c<<" --\n";
     return c;
   };
 
   void unget(char c) {
     current_in->putback(c);
+    ncol--;
   };
 
   void next_token() {

@@ -1,7 +1,7 @@
 
-VERSION=corda-0.1.1
+VERSION=corda-testing
 
-OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug
+OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
 
 ## se si dispone della libreria libxml2
 XML_FLAGS=$(LDFLAGS) -lxml2
@@ -32,3 +32,14 @@ clean: clear.common
 	-rm -f *.o *~ delme* $(TARGET)
 
 clear: clean
+
+tarball::
+	mkdir ../$(VERSION)
+	make clear
+	-cp * ../$(VERSION)
+	mkdir ../$(VERSION)/CVS
+	echo corda > ../$(VERSION)/CVS/Repository
+	echo ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/corda" \
+	> ../$(VERSION)/CVS/Root
+	cd .. && tar czvf $(VERSION).tgz $(VERSION)
+	rm -fr ../$(VERSION)

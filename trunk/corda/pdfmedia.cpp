@@ -8,7 +8,7 @@
 
 #include "iso.h"
 
-static const char *font_name[3]={"FR","FI","FB"};
+static const char *font_name[4]={"FR","FI","FB","FC"};
 // roman, italic, bold
 
 PdfMedia::PdfMedia(const string &name, int start_page): filename(name) {
@@ -22,6 +22,7 @@ PdfMedia::PdfMedia(const string &name, int start_page): filename(name) {
   doc->AddType1Font(new PdfTimesRomanFontDef(),font_name[0],encoding);
   doc->AddType1Font(new PdfTimesItalicFontDef(),font_name[1],encoding);
   doc->AddType1Font(new PdfTimesBoldFontDef(),font_name[2],encoding);
+  doc->AddType1Font(new PdfCourierFontDef(),font_name[3],encoding);
   
   page=0;
   canvas=0;

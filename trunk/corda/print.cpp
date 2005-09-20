@@ -19,7 +19,7 @@ void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8,
   size_t i;
   for (i=0;i<s.size();) {
     if (myisspace(s[i])) {
-      if ((*word)->size()!=0) {
+      if (true /*(*word)->size()!=0*/) {
         verse->push_back(*word);
 	(*word)=new SequenceBox(true);
       }
@@ -129,6 +129,8 @@ Box* StanzaBox(Media &m, const Stanza* p) {
   //  unsigned char *type=xmlGetProp(p,(xmlChar *)"type");
   if (p->type==Stanza::REFRAIN) 
     f=Media::REFRAIN;
+  else if (p->type==Stanza::TAB)
+    f=Media::TAB;
   size_t i;
   for (i=0;i<p->size();++i) {
     stanza->push_back(VerseBox(m,(*p)[i],f));

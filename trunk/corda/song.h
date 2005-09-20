@@ -27,6 +27,7 @@ protected:
 public:
   void setParent(SongBase *Parent);
   virtual ~SongBase() {if (parent) parent->removeChild(this);};
+  SongBase(): parent(0){};
   //  SongBase(SongBase *Parent): parent(Parent) }{};
 };
 
@@ -69,6 +70,7 @@ public:
   void setBody(Body *b);
 
   virtual ~Song();
+  Song(): my_head(0), my_body(0){};
 };
 
 class Head: public SongBase {
@@ -81,6 +83,9 @@ class Author: public SongBase {
  public:
   string firstName;
   string Name;
+  Author(){};
+  Author(const string &firstname,const string &name): firstName(firstname),
+						      Name(name){};
 };
 
 class Body: public SongVector<Stanza> {
@@ -96,7 +101,8 @@ class Stanza: public SongVector<Verse> {
   Stanza *chords;
   Stanza *copy;
   //  vector<PhraseList *> verse;
-  Stanza(Type t): type(t), chords(0), copy(0) {};
+  Stanza(Type t=STROPHE): type(t), chords(0), copy(0) {};
+  void setType(Type t) {type=t;};
 protected:
   friend class Body;
 };

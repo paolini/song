@@ -11,7 +11,7 @@ class Media {
 protected:
 
 public:
-  enum font {NORMAL=0, REFRAIN,CHORD, TITLE, AUTHOR, NOFONT};
+  enum font {NORMAL=0, REFRAIN,CHORD, TITLE, AUTHOR, TAB, NOFONT};
   bool uppercase_title;
 
   int stanza_sep; // spazio tra le strofe
@@ -50,7 +50,7 @@ public:
 class VectorMedia: public Media {
   // dimensioni in centesimi di punto
 public:
-  // normal, refrain, chord, title, author, nofont
+  // normal, refrain, chord, title, author, tabs, nofont
   static const int font_size[];
   static const int font_font[]; // roman, italic, bold
 
