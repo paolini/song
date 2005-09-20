@@ -3,8 +3,8 @@
 // normal, refrain, chord, title, author, nofont
 
 //enum font {NORMAL=0, REFRAIN,CHORD, TITLE, AUTHOR, NOFONT};
-const int VectorMedia::font_size[]={10,10,8,20,12,0};
-const int VectorMedia::font_font[]={ 0, 1, 0, 2, 2,0}; // roman, italic, bold
+const int VectorMedia::font_size[]={10,10, 8,20,12,8,0};
+const int VectorMedia::font_font[]={ 0, 1, 0, 2, 2, 3,0}; // roman, italic, bold, courier
 
 
 
