@@ -49,3 +49,16 @@ string iso(const string &utf8) {
   }
   return ret;
 };
+
+int add_utf8_char(unsigned char c, string &to) {
+  if ( c & 128 ) { // 2 caratteri
+    //cerr<<"char "<<(unsigned int)(c)<<" to utf8\n";
+    to+=char((c>>6)|(128+64));
+    to+=char((c&(63))|128);
+    return 2;
+  } else {
+    to+=char(c);
+    return 1;
+  }
+}
+

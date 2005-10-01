@@ -6,6 +6,7 @@
 
 #include "plug.h"
 #include "song.h"
+#include "iso.h"
 
 using namespace std;
 
@@ -98,12 +99,37 @@ private:
       stanza->setType(type);
     }
   };
+
+  void add_char(int ascii,string &to) {
+    if ((ascii & 128) ==0) to+=ascii;
+    else {
+      switch(ascii) {
+      case 136: add_utf8_char(0xE0,to); break; //agrave
+      case 143: add_utf8_char(0xE8,to); break; //egrave
+      case 147: add_utf8_char(0xEC,to); break; //igrave
+      case 152: add_utf8_char(0xF2,to); break; //ograve
+      case 157: add_utf8_char(0xF9,to); break; //ugrave
+      case 142: add_utf8_char(0xE9,to); break; // eacute
+      default:
+	stringstream s;
+	s<<"uknown character code "<<(int)(ascii);
+	error(s.str());
+      }
+    }
+  };
+
   
   int read() { 
     // torna 1 se ho letto una canzone, 0 altrimenti
     while (c!=4) {
-      if (false) {
-      } else if (c=='[') { // chord
+      if (false) { // dummy case
+      } else if (c=='[' || c=='\\') { // chord
+	bool space=false;
+	if (c=='\\') {
+	  nextChar();
+	  if (c!='[') error("spurious '\\' found");
+	  space=true;
+	}
 	nextChar();
 	string chord;
 	while(c!=4 && c!=']') {
@@ -113,6 +139,8 @@ private:
 	if (c!=']') error("']' expected");
 	nextChar();
 	verse->push_back(new Chord(chord));
+	if (space)
+	  verse->push_back(new Word(" "));
       } else if (c=='{') { // directive
 	nextChar();
 	string cmd;
@@ -124,7 +152,7 @@ private:
 	if (c==':') nextChar();
 	while (c==' ' || c=='\t') nextChar();
 	while (c!=4 && c!='}' && c!=10) {
-	  args+=c;
+	  add_char(c,args);
 	  nextChar();
 	}
 	if (c!='}') error("'}' expected in command '"+cmd+"'");
@@ -173,6 +201,8 @@ private:
 	} else if (cmd=="column_break" || cmd=="colb") {
 	} else if (cmd=="columns" || cmd=="col") {
 	} else if (cmd=="new_physical_page" || cmd=="np") {
+	} else if (cmd=="page_number" || cmd=="pn") {
+	} else if (cmd=="pack_song" || cmd=="ps") {
 	} else error("invalid directive: '"+cmd+"'");
       } else if (c==13) { //ignore
 	nextChar();
@@ -202,8 +232,8 @@ private:
       } else if (c>32) { // normal text
 	string word;
 	while (c!=4 && c!='[' && c!='{' && c!=' ' && c!='\t' &&
-	       c!=10 && c!=13 && c!='#' && c!='}' && c!=']') {
-	  word+=c; 
+	       c!=10 && c!=13 && c!='#' && c!='}' && c!=']' && c!='\\') {
+	  add_char(c,word);
 	  nextChar();
 	}
 	verse->push_back(new Word(word));

@@ -19,11 +19,11 @@ private:
   static Plugout* Create() {return new ListPlugout();};
 public:
 
-  virtual void Write(std::ostream &out, std::vector<Song *> &song_list,
+  virtual void Write(std::ostream &out, const SongList &song_list,
 		     const PlugoutOptions &opt) {
     unsigned int i;
     for (i=0;i<song_list.size();++i) {
-      Song* p=song_list[i];
+      const Song* p=song_list[i];
       assert(p->head()!=0);
       out<<iso(p->head()->title);
       size_t j;

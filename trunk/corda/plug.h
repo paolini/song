@@ -32,7 +32,7 @@ public:
   static Plugin* Construct(string ext);
 
   virtual int Read(std::istream &in,  SongList &list) {
-    throw std::logic_error("reading "+string(name)+
+    throw std::runtime_error("reading "+string(name)+
 			   " from stdin not implemented");
   };
   
@@ -67,8 +67,8 @@ class Plugout: public Plug {
 
   virtual void Write(std::ostream &out, const SongList &list, 
 		     const PlugoutOptions &opt) {
-    throw std::logic_error("writing "+string(name)+
-			   "to stdout not implemented");
+    throw std::runtime_error("writing "+string(name)+
+			   " to stdout not implemented");
   };
 
   virtual void Write(string filename, const SongList &list,

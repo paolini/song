@@ -8,6 +8,7 @@
 #include <map>
 
 #include "song.h"
+#include "iso.h"
 
 using namespace std;
 
@@ -358,17 +359,6 @@ struct {
     {0,0}
 };
 
-
-int add_utf8_char(unsigned char c, string &to) {
-  if ( c & 128 ) { // 2 caratteri
-    to+=char((c>>6)|(128+64));
-    to+=char((c&(63))|128);
-    return 2;
-  } else {
-    to+=char(c);
-    return 1;
-  }
-}
 
 string new_unicode(string &s) {
   string ret;
