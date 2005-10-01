@@ -1,5 +1,7 @@
 
-VERSION=corda-testing
+VERSION=corda-0.2
+## last release: VERSION=0.1.1
+
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
 
@@ -20,7 +22,7 @@ all: target
 install: target
 	cp $(TARGET) /usr/local/bin
 
-sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng)
+sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng test.cho)
 
 -include Makefile.common
 
