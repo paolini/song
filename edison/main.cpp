@@ -1,4 +1,4 @@
-
+#include <iostream>
 // from Hello World sample:
 #include "wx/wxprec.h"
 
@@ -56,7 +56,7 @@ public:
   void load(const wxString &filename) {
     Plugin* reader=Plugin::Construct("sng");
     if (!reader) {
-      cerr<<"cannot create sng reader\n";
+      std::cerr<<"cannot create sng reader\n";
     abort();
     }
     try {
