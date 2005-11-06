@@ -5,6 +5,7 @@
 
 #include "media.h"
 #include "layout.h"
+#include "song.h"
 
 Box* SongBox(Media &m, Song* p);
 

@@ -1,6 +1,6 @@
 
-VERSION=corda-0.2
-## last release: VERSION=0.1.1
+VERSION=corda-testing
+## last release: VERSION=0.2.2
 
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
@@ -16,11 +16,14 @@ PDF_OBJECTS=$(OBJECTS) pdfmedia pdfplug
 TARGET=corda
 
 CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/include/libxml2 -DVERSION=\"$(VERSION)\"
-
 all: target
 
 install: target
 	cp $(TARGET) /usr/local/bin
+
+libcorda.a: choplug.o debug.o iso.o layout.o lstplug.o media.o pdfmedia.o pdfplug.o plug.o print.o psmedia.o psplug.o sngplug.o song.o textmedia.o txtplug.o
+	ar rc $@ $^
+	ranlib $@
 
 sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng test.cho)
 

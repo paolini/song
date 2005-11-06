@@ -732,6 +732,18 @@ public:
     return phrase;
   };
 
+  Chord *readChord() {
+    while (token[0]==' ' || token[0]=='\t') next_token();
+    string chord;
+    while(token[0]!=']' && token[0]!=' ' && token[0]!='\t') {
+      chord+=token[0];
+      next_token();
+    }
+    while (token[0]==' ' || token[0]=='\t') next_token();
+    if (chord.size()==0) error("empty chord");
+    return new Chord(chord);
+  };
+
   PhraseItem *readPhraseItem(bool newline=true) {
 //     if (token[0]=='{') {
 //       next_token();
@@ -757,6 +769,13 @@ public:
 	p=readPhraseList(false);
 	if (token[0]!='}') error("'}` expected");
 	next_token();
+      } else if (c=='[') {
+	next_token();
+	p=new PhraseList;
+	while(token[0]!=']') {
+	  p->push_back(readChord());
+	}
+	next_token();
       } else {
 	p=new PhraseList;
 	PhraseItem *it=readPhraseItem(false);
@@ -768,9 +787,13 @@ public:
 
     if (token[0]=='[') {
       next_token();
-      Chord *ret=new Chord(readString(false));
-      if (token[0]!=']') error("']' expected");
-      next_token();
+      Chord* ret=readChord();
+
+      if (token[0]!=']') {
+	token="["; // another chord expected
+      } else {
+	next_token();
+      }
       return ret;
     }
     

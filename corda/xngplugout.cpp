@@ -124,7 +124,7 @@ public:
 
     const Chord* c=dynamic_cast<const Chord *>(item);
     if (c) {
-      (*op)<<"<c>"<<c->modifier<<"</c>";
+      (*op)<<"<c>"<<string(*c)<<"</c>";
       return;
     }
     

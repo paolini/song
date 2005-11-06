@@ -2,6 +2,7 @@
 #define _LAYOUT_H_
 
 #include <iostream>
+#include <vector>
 
 #include "media.h"
 
