@@ -14,6 +14,8 @@ using namespace std;
 
 #include "plug.h"
 
+typedef unsigned int uint;
+
 void strlwr(string &s)
 {
   for (uint i=0;i<s.size();++i) s[i]=tolower(s[i]);
