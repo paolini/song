@@ -131,14 +131,17 @@ private:
 	  space=true;
 	}
 	nextChar();
-	string chord;
-	while(c!=4 && c!=']') {
-	  chord+=c;
-	  nextChar();
-	}
-	if (c!=']') error("']' expected");
+	do {
+	  string chord;
+	  while(c!=4 && c!=']' && c!=' ' && c!='\t') {
+	    chord+=c;
+	    nextChar();
+	  }
+	  while (c==' ' || c=='\t') nextChar();
+	  verse->push_back(new Chord(chord));
+	  if (c==']') break;
+	} while(true);
 	nextChar();
-	verse->push_back(new Chord(chord));
 	if (space)
 	  verse->push_back(new Word(" "));
       } else if (c=='{') { // directive

@@ -42,8 +42,11 @@ class SongVector: public SongBase{
   };
  public:
   SongVector() {}; //non puo` essere costruito dall'utente
-  virtual ~SongVector() {for (size_t i=0;i<list.size();++i) {
-  delete list[i];list[i]=0;}};
+  void clear() {
+    for (size_t i=0;i<list.size();++i) {
+      delete list[i];list[i]=0;}
+  }; //cancella tutto il contenuto
+  virtual ~SongVector() {clear();};
   const T *operator[](size_t i) const {return list[i];}; 
   T *operator[](size_t i) {return list[i];}; 
   size_t size() const {return list.size();}; 
@@ -133,12 +136,25 @@ protected:
   ~Modifier();
 };
 
+class Note {
+private:
+  static const char *it_names[];
+public:
+  int note; // 0...6 or -1 if empty
+  int aug;  // +# -b
+  Note(): note(-1), aug(0){};
+  Note(const string &s,size_t &off);
+  operator string() const;
+};
+
 class Chord: public PhraseItem {
- public:
-  int base; // LA=0, LA#=1,...
-  int bass; // ""    ""
+public:
+  Note base;
+  Note bass;
   string modifier; // -7dim ...
-  Chord(const string &s): modifier(s) {};
+ public:
+  Chord(const string &s);
+  operator string() const;
 };
 
 class Tab: public PhraseItem {

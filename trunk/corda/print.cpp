@@ -9,6 +9,8 @@
 #include "print.h"
 #include "debug.h"
 
+#define SequenceBox2 SequenceBox
+
 bool myisspace(int x) {
   return (x & 128) == 0 && isspace(x); 
 }
@@ -59,9 +61,10 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
   p.c=dynamic_cast<const Chord *>(item);
   if (p.c) {
     if (level==0) {
-      (*word)->push_back(new ChordBox(p.c->modifier));
+      (*word)->push_back(new ChordBox(string(*(p.c))));
     } else {
-      PutString(verse, word, p.c->modifier, Media::CHORD);
+      PutString(verse, word, string(*(p.c)), Media::CHORD);
+      PutString(verse, word, string(" "), Media::NORMAL);
     }
     return;
   }

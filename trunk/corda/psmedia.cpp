@@ -75,7 +75,7 @@ static char *psnames[]={
   "dieresis",
   "cedilla",
   ""};
-static char *unicode[]={
+static char *unicode_table[]={
   " " "a"   "e"   "i"   "o"   "u"   "A"   "E"   "I"   "O"   "U"   "nNcC",
   "`" "\xE0""\xE8""\xEC""\xF2""\xF9""\xC0""\xC8""\xCC""\xD2""\xD9""    ",
   "'" "\xE1""\xE9""\xED""\xF3""\xFA""\xC1""\xC9""\xCD""\xD3""\xDA""    ",
@@ -145,11 +145,11 @@ PsMedia::PsMedia(ostream &the_out, int start_page):
     "end\n"
     "}def\n"
     "/scandvec[\n";
-  for (int i=1;unicode[i];i++)
-    for (int j=1;unicode[i][j];j++) {
-      if (unicode[i][j]!=' ')
-	OUT<<"8#"<<octal(unicode[i][j])
-	   <<" /"<<unicode[0][j]<<psnames[i-1]<<"\n";
+  for (int i=1;unicode_table[i];i++)
+    for (int j=1;unicode_table[i][j];j++) {
+      if (unicode_table[i][j]!=' ')
+	OUT<<"8#"<<octal(unicode_table[i][j])
+	   <<" /"<<unicode_table[0][j]<<psnames[i-1]<<"\n";
   } 
  OUT<<
    // normal, refrain, chord, title, author, nofont
