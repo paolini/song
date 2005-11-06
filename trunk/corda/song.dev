@@ -1,7 +1,7 @@
 [Project]
 FileName=song.dev
-Name=song
-UnitCount=17
+Name=corda
+UnitCount=18
 Type=1
 Ver=1
 ObjFiles=
@@ -208,7 +208,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=xmlpatch.cpp
+FileName=choplug.cpp
 CompileCpp=1
 Folder=song
 Compile=1

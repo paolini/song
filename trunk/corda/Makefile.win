@@ -1,12 +1,12 @@
-# Project: song
+# Project: corda
 # Makefile created by Dev-C++ 4.9.9.2-wx-beta-6.8
 
 CPP  = g++.exe
 CC   = gcc.exe
 WINDRES = windres.exe
 RES  = 
-OBJ  = debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o pdfmedia.o pdfplug.o xmlpatch.o iso.o song.o $(RES)
-LINKOBJ  = debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o pdfmedia.o pdfplug.o xmlpatch.o iso.o song.o $(RES)
+OBJ  = debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o pdfmedia.o pdfplug.o xmlpatch.o iso.o song.o choplug.o $(RES)
+LINKOBJ  = debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o pdfmedia.o pdfplug.o xmlpatch.o iso.o song.o choplug.o $(RES)
 LIBS =  -L"C:/Dev-Cpp/lib" ../haru/libharu.a  
 INCS =  -I"C:/Dev-Cpp/include" 
 CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/wx/msw"  -I"C:/Dev-Cpp/include/wx/generic"  -I"C:/Dev-Cpp/include/wx/animate"  -I"C:/Dev-Cpp/include/wx/fl"  -I"C:/Dev-Cpp/include/wx/gizmos"  -I"C:/Dev-Cpp/include/wx/html"  -I"C:/Dev-Cpp/include/wx/mmedia"  -I"C:/Dev-Cpp/include/wx/net"  -I"C:/Dev-Cpp/include/wx/ogl"  -I"C:/Dev-Cpp/include/wx/plot"  -I"C:/Dev-Cpp/include/wx/protocol"  -I"C:/Dev-Cpp/include/wx/stc"  -I"C:/Dev-Cpp/include/wx/svg"  -I"C:/Dev-Cpp/include/wx/xml"  -I"C:/Dev-Cpp/include/wx/xrc"  -I"C:/Dev-Cpp/include/wx" 
@@ -53,7 +53,7 @@ psmedia.o: psmedia.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream iso.h   psmedia.h m
 psplug.o: psplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept song.h psmedia.h media.h print.h   layout.h
 	$(CPP) -c psplug.cpp -o psplug.o $(CXXFLAGS)
 
-sngplug.o: sngplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/c++/3.4.2/sstream   C:/Dev-Cpp/include/c++/3.4.2/vector C:/Dev-Cpp/include/c++/3.4.2/map   song.h plug.h C:/Dev-Cpp/include/c++/3.4.2/stdexcept
+sngplug.o: sngplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/c++/3.4.2/sstream   C:/Dev-Cpp/include/c++/3.4.2/vector C:/Dev-Cpp/include/c++/3.4.2/map   song.h iso.h plug.h C:/Dev-Cpp/include/c++/3.4.2/stdexcept
 	$(CPP) -c sngplug.cpp -o sngplug.o $(CXXFLAGS)
 
 textmedia.o: textmedia.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   textmedia.h media.h iso.h
@@ -76,3 +76,6 @@ iso.o: iso.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream iso.h
 
 song.o: song.cpp C:/Dev-Cpp/include/c++/3.4.2/cassert song.h   C:/Dev-Cpp/include/c++/3.4.2/string C:/Dev-Cpp/include/c++/3.4.2/vector
 	$(CPP) -c song.cpp -o song.o $(CXXFLAGS)
+
+choplug.o: choplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/c++/3.4.2/sstream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept song.h iso.h
+	$(CPP) -c choplug.cpp -o choplug.o $(CXXFLAGS)

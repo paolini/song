@@ -9,6 +9,8 @@
 #include "print.h"
 #include "debug.h"
 
+typedef unsigned int uint;
+
 #define SequenceBox2 SequenceBox
 
 bool myisspace(int x) {
