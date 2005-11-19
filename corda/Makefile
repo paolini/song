@@ -25,7 +25,7 @@ libcorda.a: choplug.o debug.o iso.o layout.o lstplug.o media.o pdfmedia.o pdfplu
 	ar rc $@ $^
 	ranlib $@
 
-sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng test.cho)
+sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.dtd test.sng test.xng test.cho cordalib.dev test2.cho)
 
 -include Makefile.common
 
