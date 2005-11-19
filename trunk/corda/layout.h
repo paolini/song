@@ -6,6 +6,7 @@
 
 #include "media.h"
 
+
 //extern bool stanza_debug, verse_debug, song_debug, body_debug;
 
 
@@ -251,6 +252,11 @@ class TabBox: public StringBox {
 public:
   TabBox(): StringBox(" / ",Media::NORMAL) {};
   virtual ~TabBox(){};
+};
+
+class CursorBox: public Box {
+  public:
+  CursorBox() {};
 };
 
 class CompressBox: public CacheBox {

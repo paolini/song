@@ -6,8 +6,7 @@
 #include <vector>
 
 
-using namespace std;
-
+//using namespace std;
 // ALL STRINGS ENCODED IN UTF8
 
 class Song;
@@ -34,7 +33,7 @@ public:
 template<class T> 
 class SongVector: public SongBase{
  protected:
-  vector<T *> list;
+  std::vector<T *> list;
   virtual void removeChild(SongBase *child) {
     size_t i;
     for (i=0;i<list.size() && list[i]!=child;++i);
@@ -78,16 +77,16 @@ public:
 
 class Head: public SongBase {
  public:
-  string title;
+  std::string title;
   SongVector<Author> author;
 };
 
 class Author: public SongBase {
  public:
-  string firstName;
-  string Name;
+  std::string firstName;
+  std::string Name;
   Author(){};
-  Author(const string &firstname,const string &name): firstName(firstname),
+  Author(const std::string &firstname,const std::string &name): firstName(firstname),
 						      Name(name){};
 };
 
@@ -114,15 +113,27 @@ class PhraseList: public SongVector<PhraseItem> {
  public:
 };
 
+class Word;
+class Modifier;
+class Note;
+class Chord;
+class Tab;
+
 class PhraseItem: public SongBase {
  public:
   virtual ~PhraseItem(){};
+  virtual const Word* wordp() const {return 0;};
+  virtual const Modifier* modifierp() const {return 0;};
+  virtual const Note* notep() const {return 0;};
+  virtual const Chord* chordp() const {return 0;};
+  virtual const Tab* tabp() const {return 0;};
 };
 
 class Word: public PhraseItem {
  public:
-  string word;
-  Word(const string &s): word(s) {};
+  std::string word;
+  Word(const std::string &s): word(s) {};
+  virtual const Word* wordp() const {return this;};
 };
 
 class Modifier: public PhraseItem {
@@ -134,6 +145,7 @@ protected:
   PhraseList *child;
   Modifier(Type t, PhraseList *c);
   ~Modifier();
+  virtual const Modifier *modifierp() const {return this;};
 };
 
 class Note {
@@ -143,22 +155,25 @@ public:
   int note; // 0...6 or -1 if empty
   int aug;  // +# -b
   Note(): note(-1), aug(0){};
-  Note(const string &s,size_t &off);
-  operator string() const;
+  Note(const std::string &s,size_t &off);
+  operator std::string() const;
+  virtual const Note* notep() const {return this;};
 };
 
 class Chord: public PhraseItem {
 public:
   Note base;
   Note bass;
-  string modifier; // -7dim ...
+  std::string modifier; // -7dim ...
  public:
-  Chord(const string &s);
-  operator string() const;
+  Chord(const std::string &s);
+  operator std::string() const;
+  virtual const Chord* chordp() const {return this;};
 };
 
 class Tab: public PhraseItem {
  public:
+ virtual const Tab* tabp() const {return this;};
 };
 
 #endif

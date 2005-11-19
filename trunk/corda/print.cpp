@@ -11,7 +11,7 @@
 
 typedef unsigned int uint;
 
-#define SequenceBox2 SequenceBox
+#define SequenceBox SequenceBox2
 
 bool myisspace(int x) {
   return (x & 128) == 0 && isspace(x); 
@@ -41,26 +41,37 @@ void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8,
 }
 
 void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseList *p,Media::font f, int level);
+		   const PhraseList *p,Media::font f, int level, const Cursor*);
 
 void ParseNodeItem(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseItem *item,Media::font f, int level) {
+		   const PhraseItem *item, Media::font f, int level,
+                   const Cursor *cursor) {
+
   union {
     const Word *w;
     const Chord *c;
     const Modifier *m;
     const Tab *t;
+    const Cursor *p;
   } p;
 
   assert(item);
 
-  p.w=dynamic_cast<const Word*>(item);
+  if (cursor!=0 && cursor->item==item) {
+    if ((*word)->size()) verse->push_back(*word);
+    verse->push_back(new CursorBox());
+    (*word)=new SequenceBox(true);
+  }
+
+//  p.w=dynamic_cast<const Word*>(item);
+  p.w=item->wordp();
+
   if (p.w) {
     PutString(verse, word, p.w->word, f);
     return;
   } 
   
-  p.c=dynamic_cast<const Chord *>(item);
+  p.c=item->chordp();
   if (p.c) {
     if (level==0) {
       (*word)->push_back(new ChordBox(string(*(p.c))));
@@ -71,10 +82,12 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
     return;
   }
   
-  p.m=dynamic_cast<const Modifier *>(item);
+  
+//  p.m=dynamic_cast<const Modifier *>(item);
+   p.m=item->modifierp();
   if (p.m) {
     if (p.m->attribute==Modifier::STRUM) {
-      ParseNodeList(verse,word,p.m->child,f,level+1);
+      ParseNodeList(verse,word,p.m->child,f,level+1,cursor);
     }
     else if (p.m->attribute==Modifier::NOTES) {
       int l=(*word)->size();
@@ -82,7 +95,7 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
       
       PutString(verse, word, "[", f);
       
-      ParseNodeList(verse,word,p.m->child, f, level+1);
+      ParseNodeList(verse,word,p.m->child, f, level+1,cursor);
       if (*word == save && (*word)->size()==l+1) {
 	(*word)->free(l);
       } else
@@ -92,7 +105,8 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
     return;
   }
   
-  p.t=dynamic_cast<const Tab *>(item); 
+//  p.t=dynamic_cast<const Tab *>(item); 
+  p.t=item->tabp();
   if (p.t) {
     if ((*word)->size()) verse->push_back(*word);
     verse->push_back(new TabBox());
@@ -104,12 +118,15 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
 }
 
 void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseList *p,Media::font f, int level) {
+		   const PhraseList *p,Media::font f, int level,
+                   const Cursor *cursor) {
   size_t i;
   for (i=0;i<p->size();++i)
-    ParseNodeItem(verse,word,(*p)[i],f,level);
+    ParseNodeItem(verse,word,(*p)[i],f,level,cursor);
 }
-Box *VerseBox(Media &m, const PhraseList *p, Media::font f) {
+
+Box *VerseBox(Media &m, const PhraseList *p, Media::font f,
+               const Cursor *cursor) {
   assert(p!=0);
   SequenceBox *verse=new SequenceBox(true, true);
   verse->space=m.spaceWidth(f);
@@ -117,7 +134,7 @@ Box *VerseBox(Media &m, const PhraseList *p, Media::font f) {
   verse->halign=-1;
   SequenceBox *word=new SequenceBox(true);
 
-  ParseNodeList(verse,&word,p, f,0);
+  ParseNodeList(verse,&word,p, f,0,cursor);
 
   if (word->size()) verse->push_back(word);
   else delete word;
@@ -126,7 +143,7 @@ Box *VerseBox(Media &m, const PhraseList *p, Media::font f) {
   return ret;
 };
 
-Box* StanzaBox(Media &m, const Stanza* p) {
+Box* StanzaBox(Media &m, const Stanza* p, const Cursor *cursor) {
   Media::font f=Media::NORMAL;
   assert(p!=0);
   SequenceBox *stanza=new SequenceBox(false);
@@ -138,7 +155,7 @@ Box* StanzaBox(Media &m, const Stanza* p) {
     f=Media::TAB;
   size_t i;
   for (i=0;i<p->size();++i) {
-    stanza->push_back(VerseBox(m,(*p)[i],f));
+    stanza->push_back(VerseBox(m,(*p)[i],f,cursor));
   }
   Box *r=stanza;
   if (p->type==Stanza::SPOKEN) { 
@@ -148,7 +165,7 @@ Box* StanzaBox(Media &m, const Stanza* p) {
   return /*new FrameBox*/ (r);
 };
 
-Box* BodyBox(Media &m, const Body* p) {
+Box* BodyBox(Media &m, const Body* p, const Cursor *cursor) {
   assert(p!=0);
   SequenceBox *body=new SequenceBox(false,true,true);
   body->space=m.stanza_sep;
@@ -156,7 +173,7 @@ Box* BodyBox(Media &m, const Body* p) {
   body->test=body_debug;
   size_t i;
   for (i=0;i<p->size();++i) {
-    body->push_back(StanzaBox(m, (*p)[i]));
+    body->push_back(StanzaBox(m, (*p)[i],cursor));
   }
   CompressBox *ret=new CompressBox(body,false);
   ret->halign=-1;
@@ -207,7 +224,7 @@ Box* HeadBox(Media &m, const Head* p) {
   return head;
 };
 
-Box* SongBox(Media &m, const Song* p) {
+Box* SongBox(Media &m, const Song* p, const Cursor *cursor=0) {
   //  assert(!strcmp((char *)(p->name), "song"));
   //  cerr<<"songbox("<<p->head->title<<")\n";
   assert(p);
@@ -221,7 +238,7 @@ Box* SongBox(Media &m, const Song* p) {
   Box *head=0;
 
   if (p->head()) head=HeadBox(m,p->head());
-  if (p->body()) body=BodyBox(m,p->body());
+  if (p->body()) body=BodyBox(m,p->body(),cursor);
 
   if (head) song->push_back(head);
   if (body) song->push_back(body);
@@ -286,13 +303,14 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(const SongList &songlist,Media &m) {
+void PrintSongs(const SongList &songlist,Media &m, const Cursor *cursor) {
   vector<Box *> list;
   int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {
-    list.push_back(SongBox(m,songlist[i]));
+    list.push_back(SongBox(m,songlist[i],cursor));
   }
   int page=0;
+  
   while(list.size()) {
     page++;
     //int origsize=list.size();
@@ -332,7 +350,6 @@ void PrintSongs(const SongList &songlist,Media &m) {
     }
     cerr<<"\n";
 
-    if (list.size())
       m.newPage();
     delete box;
   }

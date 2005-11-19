@@ -470,7 +470,7 @@ public:
   };
 
 
-  /*READING INPUT FILE*/
+///READING INPUT FILE
   istream *current_in;
   int nline;
   int ncol;
@@ -826,3 +826,4 @@ int SngPlugin::Read(istream &in, SongList &list) {
 }
 
 const bool SngPlugin::dummy=SngPlugin::plugin_startup();
+

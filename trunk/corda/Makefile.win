@@ -1,3 +1,90 @@
+<<<<<<< Makefile.win
+# Project: cordalib
+# Makefile created by Dev-C++ 4.9.9.2-wx-beta-6.8
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = xngplugout.o choplug.o cursor.o debug.o iso.o layout.o lstplug.o media.o plug.o print.o psmedia.o psplug.o sngplug.o song.o textmedia.o txtplug.o xmlpatch.o pdfmedia.o pdfplug.o $(RES)
+LINKOBJ  = xngplugout.o choplug.o cursor.o debug.o iso.o layout.o lstplug.o media.o plug.o print.o psmedia.o psplug.o sngplug.o song.o textmedia.o txtplug.o xmlpatch.o pdfmedia.o pdfplug.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib"  -s 
+INCS =  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/wx/msw"  -I"C:/Dev-Cpp/include/wx/generic"  -I"C:/Dev-Cpp/include/wx/animate"  -I"C:/Dev-Cpp/include/wx/fl"  -I"C:/Dev-Cpp/include/wx/gizmos"  -I"C:/Dev-Cpp/include/wx/html"  -I"C:/Dev-Cpp/include/wx/mmedia"  -I"C:/Dev-Cpp/include/wx/net"  -I"C:/Dev-Cpp/include/wx/ogl"  -I"C:/Dev-Cpp/include/wx/plot"  -I"C:/Dev-Cpp/include/wx/protocol"  -I"C:/Dev-Cpp/include/wx/stc"  -I"C:/Dev-Cpp/include/wx/svg"  -I"C:/Dev-Cpp/include/wx/xml"  -I"C:/Dev-Cpp/include/wx/xrc"  -I"C:/Dev-Cpp/include/wx" 
+BIN  = cordalib.a
+CXXFLAGS = $(CXXINCS)-I..\haru -DNOZLIB -DNOPNG -DNOJPEG   -fexceptions -fexpensive-optimizations -O3
+CFLAGS = $(INCS)  -fexceptions -fexpensive-optimizations -O3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before cordalib.a all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	ar r $(BIN) $(LINKOBJ)
+	ranlib $(BIN)
+
+xngplugout.o: xngplugout.cpp
+	$(CPP) -c xngplugout.cpp -o xngplugout.o $(CXXFLAGS)
+
+choplug.o: choplug.cpp
+	$(CPP) -c choplug.cpp -o choplug.o $(CXXFLAGS)
+
+cursor.o: cursor.cpp
+	$(CPP) -c cursor.cpp -o cursor.o $(CXXFLAGS)
+
+debug.o: debug.cpp
+	$(CPP) -c debug.cpp -o debug.o $(CXXFLAGS)
+
+iso.o: iso.cpp
+	$(CPP) -c iso.cpp -o iso.o $(CXXFLAGS)
+
+layout.o: layout.cpp
+	$(CPP) -c layout.cpp -o layout.o $(CXXFLAGS)
+
+lstplug.o: lstplug.cpp
+	$(CPP) -c lstplug.cpp -o lstplug.o $(CXXFLAGS)
+
+media.o: media.cpp
+	$(CPP) -c media.cpp -o media.o $(CXXFLAGS)
+
+plug.o: plug.cpp
+	$(CPP) -c plug.cpp -o plug.o $(CXXFLAGS)
+
+print.o: print.cpp
+	$(CPP) -c print.cpp -o print.o $(CXXFLAGS)
+
+psmedia.o: psmedia.cpp
+	$(CPP) -c psmedia.cpp -o psmedia.o $(CXXFLAGS)
+
+psplug.o: psplug.cpp
+	$(CPP) -c psplug.cpp -o psplug.o $(CXXFLAGS)
+
+sngplug.o: sngplug.cpp
+	$(CPP) -c sngplug.cpp -o sngplug.o $(CXXFLAGS)
+
+song.o: song.cpp
+	$(CPP) -c song.cpp -o song.o $(CXXFLAGS)
+
+textmedia.o: textmedia.cpp
+	$(CPP) -c textmedia.cpp -o textmedia.o $(CXXFLAGS)
+
+txtplug.o: txtplug.cpp
+	$(CPP) -c txtplug.cpp -o txtplug.o $(CXXFLAGS)
+
+xmlpatch.o: xmlpatch.cpp
+	$(CPP) -c xmlpatch.cpp -o xmlpatch.o $(CXXFLAGS)
+
+pdfmedia.o: pdfmedia.cpp
+	$(CPP) -c pdfmedia.cpp -o pdfmedia.o $(CXXFLAGS)
+
+pdfplug.o: pdfplug.cpp
+	$(CPP) -c pdfplug.cpp -o pdfplug.o $(CXXFLAGS)
+=======
 # Project: corda
 # Makefile created by Dev-C++ 4.9.9.2-wx-beta-6.8
 
@@ -79,3 +166,4 @@ song.o: song.cpp C:/Dev-Cpp/include/c++/3.4.2/cassert song.h   C:/Dev-Cpp/includ
 
 choplug.o: choplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/c++/3.4.2/sstream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept song.h iso.h
 	$(CPP) -c choplug.cpp -o choplug.o $(CXXFLAGS)
+>>>>>>> 1.5

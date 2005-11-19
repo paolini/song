@@ -3,6 +3,8 @@
 
 #include "song.h"
 
+using namespace std;
+
 void SongBase::setParent(SongBase *Parent) {assert(parent==0);parent=Parent;};
 
 Song::~Song() {delete my_body;delete my_head;};

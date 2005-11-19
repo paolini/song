@@ -11,7 +11,7 @@ class Media {
 protected:
 
 public:
-  enum font {NORMAL=0, REFRAIN,CHORD, TITLE, AUTHOR, TAB, NOFONT};
+  enum font {NORMAL=0, REFRAIN, CHORD, TITLE, AUTHOR, TAB, NOFONT};
   bool uppercase_title;
 
   int stanza_sep; // spazio tra le strofe
@@ -33,6 +33,7 @@ public:
   virtual void chordReset() {}; //nuova riga di accordi
   virtual int spaceWidth(font f) const {return wordWidth(" ",f);};
   virtual void spaceWrite(font f) {wordWrite(" ",f);};
+  virtual void cursorWrite(font f) {};
 
   virtual int lineSkip(font f)=0; 
   virtual int chordSkip() {return lineSkip(NORMAL)+lineSkip(CHORD);};

@@ -6,8 +6,9 @@
 #include "media.h"
 #include "layout.h"
 #include "song.h"
+#include "cursor.h"
 
 Box* SongBox(Media &m, Song* p);
 
-void PrintSongs(const SongList &,Media &);
+void PrintSongs(const SongList &,Media &, const Cursor *cursor=0);
 #endif
