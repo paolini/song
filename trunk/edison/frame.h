@@ -22,6 +22,7 @@
 class MyCanvas;
 class Cursor;
 class MyEditor;
+class MyList;
 
 class MyFrame: public wxFrame
 {
@@ -40,8 +41,9 @@ public:
   MyCanvas *canvas;
   Cursor *cursor;
   MyEditor *editor;
+  MyList *list;
 
-  SongList list;
+  SongList songlist;
   
   wxString filename;
   bool modified; // editor e view non sono sincronizzati
