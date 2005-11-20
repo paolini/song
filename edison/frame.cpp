@@ -26,7 +26,8 @@ enum
     ID_Quit = 1,
     ID_Load, 
     ID_About,
-    ID_Save
+    ID_Save,
+    ID_Export
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -34,22 +35,28 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_Load,  MyFrame::OnLoad)
   EVT_MENU(ID_About, MyFrame::OnAbout)
   EVT_MENU(ID_Save, MyFrame::OnSave)
+  EVT_MENU(ID_Export, MyFrame::OnExport)
 END_EVENT_TABLE()
 
 
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   : wxFrame((wxFrame *)NULL, -1, title, pos, size)
 {
-    wxMenu *menuFile = new wxMenu;
+  wxMenu *menuExport = new wxMenu;
+  menuExport->Append(ID_Export, "&PDF");
 
-    menuFile->Append( ID_Load, "&Load..." );
-    menuFile->Append( ID_Save, "&Save");
-    menuFile->AppendSeparator();
-    menuFile->Append( ID_About, "&About..." );
-    menuFile->AppendSeparator();
-    menuFile->Append( ID_Quit, "E&xit" );
+  wxMenu *menuFile = new wxMenu;
+  
+  menuFile->Append( ID_Load, "&Load..." );
+  menuFile->Append( ID_Save, "&Save");
+  menuFile->Append(ID_Export,"&Export",menuExport);
+  menuFile->AppendSeparator();
+  menuFile->Append( ID_About, "&About..." );
+  menuFile->AppendSeparator();
+  menuFile->Append( ID_Quit, "E&xit" );
+  
 
-    wxMenuBar *menuBar = new wxMenuBar;
+  wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append( menuFile, "&File" );
 
     SetMenuBar( menuBar );
@@ -153,6 +160,10 @@ void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
 void MyFrame::OnSave(wxCommandEvent & WXUNUSED(event)) {
   save();
 }
+
+void MyFrame::OnExport(wxCommandEvent &event) {
+  std::cerr<<"export: "<<event.GetInt()<<"\n";
+};
 
 void MyFrame::resetTitle() {
   wxString title="edison ";
