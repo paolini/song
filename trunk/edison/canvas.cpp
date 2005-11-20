@@ -69,3 +69,4 @@ void MyCanvas::OnDraw(wxDC &dc)
   frame->SetStatusText("drawing... done!");
 }
 
+
