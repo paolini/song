@@ -50,6 +50,16 @@ class SongVector: public SongBase{
   T *operator[](size_t i) {return list[i];}; 
   size_t size() const {return list.size();}; 
   void push_back(T *p) {list.push_back(p);p->setParent(this);}; 
+  /*
+    void copy(const SongVector *p) {
+    assert(size()==0);
+    for (size_t i=0;i<p->size();++i) {
+    T *x=new T;
+    x->copy((*p)[i]);
+    push_back(x);
+    }
+  };
+  */
 };
 
 class SongList: public SongVector<Song> {
@@ -73,12 +83,14 @@ public:
 
   virtual ~Song();
   Song(): my_head(0), my_body(0){};
+//  void copy(const Song *from, SongBase *parent=0);
 };
 
 class Head: public SongBase {
  public:
   std::string title;
   SongVector<Author> author;
+//  void copy(const Head *);
 };
 
 class Author: public SongBase {
@@ -86,12 +98,15 @@ class Author: public SongBase {
   std::string firstName;
   std::string Name;
   Author(){};
-  Author(const std::string &firstname,const std::string &name): firstName(firstname),
-						      Name(name){};
+  Author(const std::string &firstname,const std::string &name): 
+    firstName(firstname),
+    Name(name){};
+//  void copy(const Author *);
 };
 
 class Body: public SongVector<Stanza> {
  public:
+//  void copy(const Body *p);
 };
 
 typedef PhraseList Verse;
@@ -105,6 +120,7 @@ class Stanza: public SongVector<Verse> {
   //  vector<PhraseList *> verse;
   Stanza(Type t=STROPHE): type(t), chords(0), copy(0) {};
   void setType(Type t) {type=t;};
+//  void copy(const Stanza *);
 protected:
   friend class Body;
 };
@@ -127,6 +143,7 @@ class PhraseItem: public SongBase {
   virtual const Note* notep() const {return 0;};
   virtual const Chord* chordp() const {return 0;};
   virtual const Tab* tabp() const {return 0;};
+//  void copy(const PhraseItem *p);
 };
 
 class Word: public PhraseItem {

@@ -5,7 +5,27 @@
 
 using namespace std;
 
-void SongBase::setParent(SongBase *Parent) {assert(parent==0);parent=Parent;};
+void SongBase::setParent(SongBase *Parent) {
+  assert(parent==0);
+  parent=Parent;
+};
+
+/*
+void Song::copy(const Song *p) {
+  assert(my_body==0);
+  assert(my_head==0);
+  if (p->head()) {
+    my_head = new Head();
+    my_head->copy(p->head());
+    my_head->SetParent(this);
+  }
+  if (s->body()) {
+    my_body = new Body();
+    my_body->copy(p->body());
+    my_body->SetParent(this);
+  }
+};
+*/
 
 Song::~Song() {delete my_body;delete my_head;};
 
@@ -20,12 +40,52 @@ void Song::removeChild(SongBase *c) {
     else if (c==my_body) my_body=0;
   };
 
-void Song::setHead(Head *h) {assert(my_head==0);my_head=h;h->setParent(this);};
-void Song::setBody(Body *b) {assert(my_body==0);my_body=b;b->setParent(this);};
+void Song::setHead(Head *h) {
+  assert(my_head==0);assert(h);
+  my_head=h;h->setParent(this);};
+void Song::setBody(Body *b) {
+  assert(my_body==0);assert(b);
+  my_body=b;b->setParent(this);};
 void Modifier::removeChild(SongBase *c) {
   assert(false);
   //non posso rimuovere l'unico child
 };
+
+/*
+void Head::copy(const Head *p) {
+  title=p->title;
+  author.copy(&(p->author));
+};
+
+void Author::copy(const Author *p) {
+  firstName=p->firstName;
+  Name=p->Name;
+};
+
+void Body::copy(const Body *p) {
+  SongVector<Stanza>::copy(p);
+  for (int i=0;i<size();++i) {
+    assert(i<p->size());
+    for (int j=0;j<size();++j) {
+      if ((*p)[i]->chords==(*p)[j]) (*this)[i]->chords=(*this)[j];
+      if ((*p)[i]->copy==(*p)[j]) (*this)[i]->copy=(*this)[j];
+    }
+  }
+};
+
+void Stanza::copy(const Stanza *p) {
+  SongVector<Verse>::copy(p);
+  Type=p->Type;
+  chords=0; // potrebbero non essere nella stessa Song !!
+  copy=0;   // li deve aggiustare Body::copy
+};
+
+void PhraseItem::copy(const PhraseItem *p) {
+  if (p->wordp()) {
+    
+  }
+};
+*/
 
 bool stribeg(const string &s, const string &with, size_t &off) {
   size_t i;
