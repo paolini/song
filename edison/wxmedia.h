@@ -16,7 +16,10 @@ protected:
 
   wxDC &dc;
   int h; // height in pixel
-
+  wxColour cursorColor;
+  wxColour fontColor[Media::NOFONT];
+  wxFont fontFont[Media::NOFONT];
+  int fontSize[Media::NOFONT];
 public:
   
   virtual void goto_xy(int x, int y);
@@ -28,6 +31,7 @@ public:
   virtual void wordWrite(const string &s, font f); 
   virtual void chordWrite(const string &s);
   virtual void chordReset(); //nuova riga di accordi
+  virtual void cursorWrite(font f);
 
   virtual int lineSkip(font f); 
 
