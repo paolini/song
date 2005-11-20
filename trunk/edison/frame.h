@@ -21,6 +21,7 @@
 
 class MyCanvas;
 class Cursor;
+class MyEditor;
 
 class MyFrame: public wxFrame
 {
@@ -29,21 +30,27 @@ public:
   
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
-  void OnLoad(wxCommandEvent& envent);
+  void OnLoad(wxCommandEvent& event);
+  void OnSave(wxCommandEvent& event);
+
+  void resetTitle();
   
   wxNotebook *tabs;
   MyCanvas *canvas;
   Cursor *cursor;
-  wxTextCtrl *editor;
+  MyEditor *editor;
 
   SongList list;
   
-  //  wxString filename;
+  wxString filename;
   bool modified; // editor e view non sono sincronizzati
   bool saved; // editor e file non sono sincronizzati
 
   void load(const wxString &fileName);
+  void save();
   void compile();
+  
+  int AskSave();
 
 private:
   DECLARE_EVENT_TABLE()
