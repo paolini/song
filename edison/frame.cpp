@@ -14,6 +14,7 @@ class Cursor {
 
 #include "frame.h"
 #include "canvas.h"
+#include "editor.h"
 #include "plug.h"
 
 #include <string>
@@ -25,21 +26,25 @@ enum
     ID_Quit = 1,
     ID_Load, 
     ID_About,
+    ID_Save
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_Quit,  MyFrame::OnQuit)
   EVT_MENU(ID_Load,  MyFrame::OnLoad)
   EVT_MENU(ID_About, MyFrame::OnAbout)
+  EVT_MENU(ID_Save, MyFrame::OnSave)
 END_EVENT_TABLE()
 
 
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
-       : wxFrame((wxFrame *)NULL, -1, title, pos, size)
+  : wxFrame((wxFrame *)NULL, -1, title, pos, size)
 {
     wxMenu *menuFile = new wxMenu;
 
     menuFile->Append( ID_Load, "&Load..." );
+    menuFile->Append( ID_Save, "&Save");
+    menuFile->AppendSeparator();
     menuFile->Append( ID_About, "&About..." );
     menuFile->AppendSeparator();
     menuFile->Append( ID_Quit, "E&xit" );
@@ -51,11 +56,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 
     CreateStatusBar();
     SetStatusText( "Welcome to edison corda song editor!" );
-
+ 
     tabs=new wxNotebook(this,-1);
     canvas=new MyCanvas(tabs,this);
-    editor=new wxTextCtrl(tabs,-1,_T(""),wxDefaultPosition,
-			  wxDefaultSize, wxTE_MULTILINE);
+    editor=new MyEditor(tabs,this);
     tabs->AddPage(canvas,"view");
     tabs->AddPage(editor,"edit");
     cursor=0;
@@ -95,20 +99,38 @@ void MyFrame::compile() {
     Close(TRUE);
   }
   modified=false;
+  resetTitle();
+  canvas->Update();
 }
 
-void MyFrame::load(const wxString &filename) {
-  SetStatusText("reading file "+filename+"...");
-
+void MyFrame::load(const wxString &name) {
+  SetStatusText("reading file "+name+"...");
+  filename=name;
   editor->LoadFile(filename);
   saved=true;
   modified=true;
   compile();
 };
 
+void MyFrame::save() {
+  if (filename==wxString()) {
+    wxMessageBox("no file loaded", "warning", wxOK | wxICON_INFORMATION);
+    return;
+  }
+  if (saved) {
+    wxMessageBox("file has not been modified", "warning", 
+		 wxOK | wxICON_INFORMATION);
+    return;
+  }
+  editor->SaveFile(filename);
+  saved=true;
+  resetTitle();
+};
+
 void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
-    Close(TRUE);
+  if (AskSave()) return;
+  Close(TRUE);
 }
 
 void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -118,6 +140,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 }
 
 void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
+  if (AskSave()) return;
   wxFileDialog dia(this,"Choose file",
 		   "","","*.sng");
   if (dia.ShowModal()==wxID_OK) {
@@ -127,3 +150,39 @@ void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
   };
 }
 
+void MyFrame::OnSave(wxCommandEvent & WXUNUSED(event)) {
+  save();
+}
+
+void MyFrame::resetTitle() {
+  wxString title="edison ";
+  title+=filename;
+  if (!saved) title+=" (modified) ";
+  if (modified) title+=" (edited) ";
+  SetTitle(title);
+};
+
+
+int MyFrame::AskSave() {
+  bool cancel=false;
+  if (saved) return cancel;
+  wxMessageDialog *ask;
+  ask=new wxMessageDialog(this,"File has been modified. Save?",
+			  "save?",wxCANCEL|wxYES_NO);
+  switch(ask->ShowModal()) {
+  case wxID_CANCEL:
+    std::cerr<<"cancel\n";
+    cancel=true;
+    goto fine;
+  case wxID_YES:
+    save();
+    std::cerr<<"yes\n";
+    goto fine;
+  case wxID_NO:
+    std::cerr<<"no\n";
+    goto fine;
+  };
+ fine:
+  ask->Destroy();
+  return cancel;
+};
