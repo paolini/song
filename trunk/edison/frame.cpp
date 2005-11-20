@@ -60,83 +60,33 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   
 
   wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append( menuFile, "&File" );
+  menuBar->Append( menuFile, "&File" );
+  
+  SetMenuBar( menuBar );
+  
+  CreateStatusBar();
+  SetStatusText( "Welcome to edison corda song editor!" );
 
-    SetMenuBar( menuBar );
+  tabs=new wxNotebook(this,-1);
+  canvas=new MyCanvas(tabs,this);
+  editor=new MyEditor(tabs,this,file.getContent());
+  list=new MyList(tabs,this);
 
-    CreateStatusBar();
-    SetStatusText( "Welcome to edison corda song editor!" );
- 
-    tabs=new wxNotebook(this,-1);
-    canvas=new MyCanvas(tabs,this);
-    editor=new MyEditor(tabs,this);
-    list=new MyList(tabs,this);
-    tabs->AddPage(canvas,"view");
-    tabs->AddPage(editor,"edit");
-    tabs->AddPage(list,"list");
-    cursor=0;
-    //    filename="";
-    modified=false;
-    saved=true;
+  tabs->AddPage(canvas,"view");
+  tabs->AddPage(editor,"edit");
+  tabs->AddPage(list,"list");
+
+
+
+  cursor=0;
 }
 
-void MyFrame::compile() {
-  if (editor->IsModified()) modified=true;
-  editor->DiscardEdits();
-  if (!modified) return;
-  try {
-    // visualizza
-    Plugin* reader=Plugin::Construct("sng");
-    if (!reader) {
-      wxMessageBox("cannot create SNG reader","error", wxOK|wxICON_INFORMATION);
-      //    cerr<<e.what()<<"\n";
-      Close(TRUE);
-    }
-    songlist.clear(); // cancella le canzoni caricate
-    
-    std::string buf=editor->GetValue().c_str();
-    std::stringstream in(buf);
-
-    //reader->Read(std::string(filename),songlist);
-        reader->Read(in,songlist);
- 
-    if (songlist.size()) 
-      cursor=new Cursor(*songlist[0]);
-    else
-      wxMessageBox("No song in file","warning", wxOK|wxICON_INFORMATION);
-    // inserisce il cursore:
-  } catch(std::runtime_error &e) {
-    wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
-    //    cerr<<e.what()<<"\n";
-    Close(TRUE);
-  }
-  modified=false;
+void MyFrame::Load(const wxString &name) {
+  file.Load(name);
+  editor->Set(file.getContent());
+  std::cerr<<"Load: content="<<editor->GetValue().size()<<" file="<<file.getContent().size()<<"\n";
   resetTitle();
-  canvas->Update();
-}
-
-void MyFrame::load(const wxString &name) {
-  SetStatusText("reading file "+name+"...");
-  filename=name;
-  editor->LoadFile(filename);
-  saved=true;
-  modified=true;
-  compile();
-};
-
-void MyFrame::save() {
-  if (filename==wxString()) {
-    wxMessageBox("no file loaded", "warning", wxOK | wxICON_INFORMATION);
-    return;
-  }
-  if (saved) {
-    wxMessageBox("file has not been modified", "warning", 
-		 wxOK | wxICON_INFORMATION);
-    return;
-  }
-  editor->SaveFile(filename);
-  saved=true;
-  resetTitle();
+  Refresh();
 };
 
 void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -156,14 +106,18 @@ void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
   wxFileDialog dia(this,"Choose file",
 		   "","","*.sng");
   if (dia.ShowModal()==wxID_OK) {
-    SetStatusText("Load file : "+dia.GetPath());
-    load(dia.GetPath());
-    Refresh();
+    SetStatusText("Load file: "+dia.GetPath());
+    Load(dia.GetPath());
   };
 }
 
 void MyFrame::OnSave(wxCommandEvent & WXUNUSED(event)) {
-  save();
+  if (file.FileName()==wxString()) {
+    // SAVE AS ...
+    return;
+  }
+  file.Save();
+  resetTitle();
 }
 
 void MyFrame::OnExport(wxCommandEvent &event) {
@@ -171,17 +125,16 @@ void MyFrame::OnExport(wxCommandEvent &event) {
 };
 
 void MyFrame::resetTitle() {
-  wxString title="edison ";
-  title+=filename;
-  if (!saved) title+=" (modified) ";
-  if (modified) title+=" (edited) ";
+  wxString title="edison: ";
+  title+=file.FileName();
+  if (file.Modified()) title+=" (modified)";
   SetTitle(title);
 };
 
 
 int MyFrame::AskSave() {
   bool cancel=false;
-  if (saved) return cancel;
+  if (!file.Modified()) return cancel;
   wxMessageDialog *ask;
   ask=new wxMessageDialog(this,"File has been modified. Save?",
 			  "save?",wxCANCEL|wxYES_NO);
@@ -191,7 +144,7 @@ int MyFrame::AskSave() {
     cancel=true;
     goto fine;
   case wxID_YES:
-    save();
+    file.Save();
     std::cerr<<"yes\n";
     goto fine;
   case wxID_NO:
@@ -202,3 +155,4 @@ int MyFrame::AskSave() {
   ask->Destroy();
   return cancel;
 };
+

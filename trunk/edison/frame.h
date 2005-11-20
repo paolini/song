@@ -1,6 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include "song.h"
+#include "list.h"
 
 /*
 #include "wx/wxprec.h"
@@ -28,6 +29,8 @@ class MyFrame: public wxFrame
 {
 public:
   MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+
+  void Load(const wxString &fileName);
   
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
@@ -37,22 +40,14 @@ public:
 
   void resetTitle();
   
+  Cursor *cursor;
   wxNotebook *tabs;
   MyCanvas *canvas;
-  Cursor *cursor;
   MyEditor *editor;
   MyList *list;
 
-  SongList songlist;
-  
-  wxString filename;
-  bool modified; // editor e view non sono sincronizzati
-  bool saved; // editor e file non sono sincronizzati
+  FileItem file;
 
-  void load(const wxString &fileName);
-  void save();
-  void compile();
-  
   int AskSave();
 
 private:

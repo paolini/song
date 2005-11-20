@@ -55,6 +55,10 @@ bool MyApp::OnInit() {
 				  wxSize(450,340) );
     frame->Show( TRUE );
     SetTopWindow( frame );
+    if (argc>1) {
+      std::cerr<<"OnInit: argv[1]="<<argv[1]<<"\n";
+      frame->Load(argv[1]);
+    }
     return TRUE;
 }
 

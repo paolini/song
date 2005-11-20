@@ -6,9 +6,11 @@ class MyFrame;
 
 class MyEditor: public wxTextCtrl {
   MyFrame *frame;
+  int freeze;
  public:
-  MyEditor(wxWindow *parent,MyFrame *frame);
+  MyEditor(wxWindow *parent,MyFrame *frame,const wxString &content);
   void OnText(wxCommandEvent& WXUNUSED(event));
+  void Set(const wxString &val);
  private:
   DECLARE_EVENT_TABLE()
 };
