@@ -32,6 +32,7 @@ public:
   void OnAbout(wxCommandEvent& event);
   void OnLoad(wxCommandEvent& event);
   void OnSave(wxCommandEvent& event);
+  void OnExport(wxCommandEvent& event);
 
   void resetTitle();
   
