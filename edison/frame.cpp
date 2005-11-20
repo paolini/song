@@ -15,6 +15,9 @@ class Cursor {
 #include "frame.h"
 #include "canvas.h"
 #include "editor.h"
+#include "list.h"
+
+
 #include "plug.h"
 
 #include <string>
@@ -67,8 +70,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     tabs=new wxNotebook(this,-1);
     canvas=new MyCanvas(tabs,this);
     editor=new MyEditor(tabs,this);
+    list=new MyList(tabs,this);
     tabs->AddPage(canvas,"view");
     tabs->AddPage(editor,"edit");
+    tabs->AddPage(list,"list");
     cursor=0;
     //    filename="";
     modified=false;
@@ -87,16 +92,16 @@ void MyFrame::compile() {
       //    cerr<<e.what()<<"\n";
       Close(TRUE);
     }
-    list.clear(); // cancella le canzoni caricate
+    songlist.clear(); // cancella le canzoni caricate
     
     std::string buf=editor->GetValue().c_str();
     std::stringstream in(buf);
 
-    //reader->Read(std::string(filename),list);
-        reader->Read(in,list);
+    //reader->Read(std::string(filename),songlist);
+        reader->Read(in,songlist);
  
-    if (list.size()) 
-      cursor=new Cursor(*list[0]);
+    if (songlist.size()) 
+      cursor=new Cursor(*songlist[0]);
     else
       wxMessageBox("No song in file","warning", wxOK|wxICON_INFORMATION);
     // inserisce il cursore:

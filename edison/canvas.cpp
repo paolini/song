@@ -65,7 +65,7 @@ void MyCanvas::OnDraw(wxDC &dc)
   frame->SetStatusText("drawing... ");
   wxMedia media(dc,h);
   
-  PrintSongs(frame->list,media,frame->cursor);
+  PrintSongs(frame->songlist,media,frame->cursor);
   frame->SetStatusText("drawing... done!");
 }
 
