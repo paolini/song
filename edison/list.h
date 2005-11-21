@@ -3,6 +3,7 @@
 #include <wx/wx.h>
 #include <wx/listctrl.h>
 #include "song.h"
+#include <vector>
 
 class MyFrame;
 
@@ -30,6 +31,7 @@ class MyList: public wxListCtrl {
  private:
   MyFrame *frame;
  public:
+
   MyList(wxWindow *parent, MyFrame *frame);
 };
 
