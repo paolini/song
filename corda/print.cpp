@@ -246,6 +246,11 @@ Box* SongBox(Media &m, const Song* p, const Cursor *cursor=0) {
   return song;
 };
 
+void PrintSong(const Song *song, Media &m, const Cursor *cur) {
+  Box *box=SongBox(m,song,cur);
+  DimNBad dim=box->write(Dim(m.page_width(),m.page_height()));
+};
+
 // helper class: contiene una box, ma quando viene distrutta non distrugge
 // la scatola contenuta
 class TryBox: public Box {

@@ -10,5 +10,6 @@
 
 Box* SongBox(Media &m, Song* p);
 
+void PrintSong(const Song *, Media &, const Cursor *cur=0);
 void PrintSongs(const SongList &,Media &, const Cursor *cursor=0);
 #endif
