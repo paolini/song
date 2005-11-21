@@ -1,6 +1,6 @@
 #include "editor.h"
 #include "frame.h"
-//#include <iostream>
+#include <iostream>
 
 
 BEGIN_EVENT_TABLE(MyEditor, wxTextCtrl)

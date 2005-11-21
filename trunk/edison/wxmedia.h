@@ -2,8 +2,6 @@
 #define _wxmedia_hh_
 #include "media.h"
 
-#include "wx/wx.h"
-
 // questa classe astrae il formato di stampa
 // dovrebbe adattarsi a txt a PS e altro...
 

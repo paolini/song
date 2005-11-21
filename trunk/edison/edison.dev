@@ -1,7 +1,7 @@
 [Project]
 FileName=edison.dev
 Name=Project1
-UnitCount=20
+UnitCount=22
 Type=0
 Ver=1
 ObjFiles=
@@ -12,7 +12,7 @@ ResourceIncludes=C:\Dev-Cpp\include
 MakeIncludes=
 Compiler=-fno-rtti_@@_-fexceptions_@@_-fno-pcc-struct-return_@@_-fstrict-aliasing_@@_-Wall_@@_-fvtable-thunks_@@_-D__WXMSW___@@_-D__GNUWIN32___@@_-D__WIN95___@@_-I..\corda_@@_
 CppCompiler=-fno-rtti_@@_-fexceptions_@@_-fno-pcc-struct-return_@@_-fstrict-aliasing_@@_-Wall_@@_-D__WXMSW___@@_-D__GNUWIN32___@@_-D__WIN95___@@_-I..\corda_@@_-I..\haru_@@_-DNOZLIB_@@_-DNOPNG_@@_-DNOJPEG_@@_
-Linker=-lwxmsw26_@@_-lole32_@@_-loleaut32_@@_-luuid_@@_-lcomctl32_@@_
+Linker=-lwxmsw_@@_-lole32_@@_-loleaut32_@@_-luuid_@@_-lcomctl32_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -168,7 +168,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=..\corda\txtplug.cpp
+FileName=list.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1
@@ -178,7 +178,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=..\corda\xngplugout.cpp
+FileName=editor.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1

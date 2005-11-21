@@ -1,6 +1,6 @@
 #include "song.h"
 #include "cursor.h"
-
+#include <iostream>
 #ifdef BUGGY
 // questo dovrebbe essere già incluso da cursor.h
 class Cursor {
