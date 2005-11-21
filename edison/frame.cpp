@@ -1,5 +1,5 @@
-#include "song.h"
-#include "cursor.h"
+#include "corda/song.h"
+#include "corda/cursor.h"
 #include <iostream>
 #ifdef BUGGY
 // questo dovrebbe essere già incluso da cursor.h
@@ -18,7 +18,7 @@ class Cursor {
 #include "list.h"
 
 
-#include "plug.h"
+#include "corda/plug.h"
 
 #include <string>
 #include <sstream>

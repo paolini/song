@@ -1,7 +1,7 @@
 #include "list.h"
 #include "frame.h"
 #include <wx/ffile.h>
-#include "plug.h"
+#include "corda/plug.h"
 #include <stdexcept>
 #include <string>
 #include <sstream>

@@ -1,6 +1,6 @@
 #ifndef _wxmedia_hh_
 #define _wxmedia_hh_
-#include "media.h"
+#include "corda/media.h"
 
 // questa classe astrae il formato di stampa
 // dovrebbe adattarsi a txt a PS e altro...
@@ -9,7 +9,7 @@ class wxMedia: public VectorMedia {
 protected:
   // dimensioni in centesimi di punto
   int x,y,chord_x;
-  string filename;
+//  string filename;
   int page_no;
 
   wxDC &dc;
