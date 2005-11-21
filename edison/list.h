@@ -24,7 +24,7 @@ class FileItem {
   FileItem();
   void Load(const wxString &filename);
   void Save();
-  const Song *getSong(int n=0) const;
+  const Song *getSong(unsigned int n=0) const;
 };
 
 class MyList: public wxListCtrl {

@@ -94,7 +94,7 @@ void FileItem::compile() const {
   compiled_valid=true;
 };
 
-const Song *FileItem::getSong(int n) const {
+const Song *FileItem::getSong(unsigned int n) const {
   compile();
   if (n>=compiled.size()) return 0;
   return compiled[n];
