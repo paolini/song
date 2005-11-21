@@ -1,8 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
+#include "corda/song.h"
 #include <wx/wx.h>
 #include <wx/listctrl.h>
-#include "song.h"
 #include <vector>
 
 class MyFrame;

@@ -1,4 +1,4 @@
-#include "song.h"
+#include "corda/song.h"
 
 #include "wx/wxprec.h"
 
@@ -26,9 +26,9 @@ class Cursor {
 #endif
 
 
-#include "cursor.h"
-#include "print.h"
-#include "plug.h"
+#include "corda/cursor.h"
+#include "corda/print.h"
+#include "corda/plug.h"
 #include "wxmedia.h"
 #include "list.h"
 
