@@ -129,11 +129,13 @@ void MyList::Load(const wxString &filename) {
   FileItem *it=new FileItem;
   it->Load(filename);
   songs.push_back(it);
+  SetItemState(n,0,wxLIST_STATE_SELECTED);
   n=songs.size()-1;
   InsertItem(n,songs[n].file->FileName()
 	     /*+": "+songs[n]->getSong()->head()->title*/);
   
   //  ProcessEvent(wxListEvent(wxEVT_LIST_ITEM_SELECTED,n));
+  SetItemState(n,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
   frame->editor->Set(songs[n].file->getContent());
   frame->resetTitle();
   frame->Refresh();
