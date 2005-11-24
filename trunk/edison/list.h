@@ -9,7 +9,7 @@ class MyFrame;
 
 class FileItem {
   wxString content;
-  wxString filename;
+  wxString filename; // se filename="" e` un file nuovo
   bool modified;
   mutable bool compiled_valid;
   mutable SongList compiled;
@@ -24,15 +24,36 @@ class FileItem {
   FileItem();
   void Load(const wxString &filename);
   void Save();
+  void SaveAs(const wxString &filename);
   const Song *getSong(unsigned int n=0) const;
+};
+
+class Item {
+ private:
+  int n;
+ public:
+  FileItem *file;
+  Item(FileItem *_file, int _n=0): file(_file), n(_n){};
+  const Song *getSong() {return file->getSong(n);};
 };
 
 class MyList: public wxListCtrl {
  private:
   MyFrame *frame;
+  std::vector<Item> songs;
+  unsigned int n;
  public:
-
+  void Load(const wxString &filename);
+  void Save();
+  void SaveAs(const wxString &filename);
   MyList(wxWindow *parent, MyFrame *frame);
+  const Song *getSong(unsigned int n=0) {return songs[n].getSong();};
+  FileItem *CurrentFile();
+
+  void OnSelect(wxListEvent &event);
+
+ private:
+  DECLARE_EVENT_TABLE()
 };
 
 #endif

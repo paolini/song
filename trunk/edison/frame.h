@@ -30,13 +30,15 @@ class MyFrame: public wxFrame
 public:
   MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
 
-  void Load(const wxString &fileName);
+  //  void Load(const wxString &fileName);
   
   void OnQuit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
   void OnLoad(wxCommandEvent& event);
   void OnSave(wxCommandEvent& event);
+  void OnSaveAs(wxCommandEvent& event);
   void OnExport(wxCommandEvent& event);
+  void OnNew(wxCommandEvent& event);
 
   void resetTitle();
   
@@ -46,7 +48,7 @@ public:
   MyEditor *editor;
   MyList *list;
 
-  FileItem file;
+  //  FileItem file;
 
   int AskSave();
 

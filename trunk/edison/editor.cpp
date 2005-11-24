@@ -22,7 +22,7 @@ void MyEditor::OnText(wxCommandEvent& WXUNUSED(event)) {
   //  std::cerr<<"ONText\n";
   /*  frame->modified=true;
       frame->saved=false;*/
-  frame->file.setContent(GetValue());
+  frame->list->CurrentFile()->setContent(GetValue());
   frame->resetTitle();
 };
 
