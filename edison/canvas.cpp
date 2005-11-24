@@ -10,9 +10,7 @@
     #include "wx/wx.h"
 #endif
 
-//#include "wx/colordlg.h"
-//#include "wx/image.h"
-//#include "wx/artprov.h"
+#include <iostream>
 
 #ifdef BUGGY
 // dovrebbe essere già definito da cursor.h!!
@@ -51,8 +49,6 @@ MyCanvas::MyCanvas(wxWindow *parent, MyFrame *fr)
 
 void MyCanvas::OnDraw(wxDC &dc)
 {
-
-  //  frame->compile();
   wxBrush brushHatch(*wxRED, wxFDIAGONAL_HATCH);
   dc.SetBrush(brushHatch);
   wxBrush whiteBrush(*wxWHITE,wxSOLID);
@@ -67,8 +63,11 @@ void MyCanvas::OnDraw(wxDC &dc)
   frame->SetStatusText("drawing... ");
   wxMedia media(dc,h);
 
-  if (frame->file.getSong())
-    PrintSong(frame->file.getSong(),media,frame->cursor);
+  FileItem *f=frame->list->CurrentFile();
+  if (f && f->getSong())
+    PrintSong(f->getSong(),media,frame->cursor);
+  else
+    std::cerr<<"OnDraw: empty song\n";
   //  PrintSongs(frame->songlist,media,frame->cursor);
   frame->SetStatusText("drawing... done!");
 }

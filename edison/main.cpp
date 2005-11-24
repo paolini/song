@@ -57,7 +57,7 @@ bool MyApp::OnInit() {
     SetTopWindow( frame );
     if (argc>1) {
       std::cerr<<"OnInit: argv[1]="<<argv[1]<<"\n";
-      frame->Load(argv[1]);
+      frame->list->Load(argv[1]);
     }
     return TRUE;
 }

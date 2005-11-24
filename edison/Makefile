@@ -1,6 +1,6 @@
 CXX = $(shell wx-config --cxx)
 
-FLAGS = -I../corda -L../corda -g
+FLAGS = -I.. -L../corda -g
 
 PROGRAM = edison
 
