@@ -33,7 +33,7 @@ class Item {
   int n;
  public:
   FileItem *file;
-  Item(FileItem *_file, int _n=0): file(_file), n(_n){};
+  Item(FileItem *_file, int _n=0): n(_n), file(_file){};
   const Song *getSong() {return file->getSong(n);};
 };
 
