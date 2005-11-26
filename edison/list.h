@@ -49,6 +49,7 @@ class MyList: public wxListCtrl {
   MyList(wxWindow *parent, MyFrame *frame);
   const Song *getSong(unsigned int n=0) {return songs[n].getSong();};
   FileItem *CurrentFile();
+  void Export(const wxString &filename, const wxString &plug);
 
   void OnSelect(wxListEvent &event);
 

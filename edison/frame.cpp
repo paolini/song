@@ -1,16 +1,6 @@
 #include "corda/song.h"
 #include "corda/cursor.h"
 #include <iostream>
-#ifdef BUGGY
-// questo dovrebbe essere già incluso da cursor.h
-class Cursor {
- public:
-  PhraseItem *item;
-  int pos;
- public:
-  Cursor(Song &song);
-};
-#endif
 
 #include "frame.h"
 #include "canvas.h"
@@ -32,6 +22,8 @@ enum
     ID_Save,
     ID_SaveAs,
     ID_Export,
+    ID_PDF,
+    ID_PS,
     ID_New
 };
 
@@ -41,7 +33,8 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_About, MyFrame::OnAbout)
   EVT_MENU(ID_Save, MyFrame::OnSave)
   EVT_MENU(ID_SaveAs, MyFrame::OnSaveAs)
-  EVT_MENU(ID_Export, MyFrame::OnExport)
+  EVT_MENU(ID_PDF, MyFrame::OnExport)
+  EVT_MENU(ID_PS, MyFrame::OnExport)
   EVT_MENU(ID_New, MyFrame::OnNew)
 END_EVENT_TABLE()
 
@@ -50,7 +43,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   : wxFrame((wxFrame *)NULL, -1, title, pos, size)
 {
   wxMenu *menuExport = new wxMenu;
-  menuExport->Append(ID_Export, "&PDF");
+  menuExport->Append(ID_PDF, "&PDF");
+  menuExport->Append(ID_PS, "&PS");
 
   wxMenu *menuFile = new wxMenu;
   
@@ -58,7 +52,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   menuFile->Append( ID_Load, "&Load..." );
   menuFile->Append( ID_Save, "&Save");
   menuFile->Append( ID_SaveAs, "Save as...");
-  //  menuFile->Append(ID_Export,"&Export",menuExport);
+  menuFile->Append(ID_Export,"&Export",menuExport);
   menuFile->AppendSeparator();
   menuFile->Append( ID_About, "&About..." );
   menuFile->AppendSeparator();
@@ -121,7 +115,17 @@ void MyFrame::OnSaveAs(wxCommandEvent & WXUNUSED(event)) {
 }
 
 void MyFrame::OnExport(wxCommandEvent &event) {
-  std::cerr<<"export: "<<event.GetInt()<<"\n";
+  wxString plug;
+  std::cerr<<"export: "<<event.GetId()<<"\n";
+  switch(event.GetId()) {
+  case ID_PDF: plug="pdf"; break;
+  case ID_PS: plug="ps"; break;
+  default: assert(false);
+  };
+  wxFileDialog dia(this,"Choose export file","","","*."+plug);
+  if (dia.ShowModal()==wxID_OK) {
+    list->Export(dia.GetPath(),plug);
+  };
 };
 
 void MyFrame::OnNew(wxCommandEvent &event) {

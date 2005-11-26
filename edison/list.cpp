@@ -168,3 +168,18 @@ void MyList::OnSelect(wxListEvent &event) {
   frame->editor->Set(CurrentFile()->getContent());
   std::cerr<<"OnSelect "<<event.GetIndex()<<"\n";
 };
+
+void MyList::Export(const wxString &filename, const wxString &plug) {
+  Plugout *writer=Plugout::Construct(plug.c_str());
+  PlugoutOptions opt;
+  if (!writer) throw std::runtime_error(("Cannot initialize "+plug+" plug").c_str());
+  SongList list(true);
+  for (size_t n=0;n<songs.size();++n) {
+    const Song *s;
+    for (unsigned int i=0;(s=songs[n].file->getSong(i));++i) {
+      // sistemare:      list.push_back((Song *) s); //
+    }
+  };
+  std::cerr<<"MyList::Export "<<list.size()<<" songs to print \n";
+  writer->Write(filename.c_str(),list,opt);
+};
