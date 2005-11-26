@@ -79,8 +79,8 @@ const wxString &FileItem::FileName() const {
 };
 
 void FileItem::compile() const {
-  std::cerr<<"compile()\n";
   if (compiled_valid) return;
+  std::cerr<<"compile()\n";
   compiled.clear();
   try {
     // visualizza
@@ -111,6 +111,11 @@ const Song *FileItem::getSong(unsigned int n) const {
   compile();
   if (n>=compiled.size()) return 0;
   return compiled[n];
+};
+
+const SongList &FileItem::getList() const {
+  compile();
+  return compiled;
 };
 
 BEGIN_EVENT_TABLE(MyList, wxListCtrl)
@@ -173,13 +178,20 @@ void MyList::Export(const wxString &filename, const wxString &plug) {
   Plugout *writer=Plugout::Construct(plug.c_str());
   PlugoutOptions opt;
   if (!writer) throw std::runtime_error(("Cannot initialize "+plug+" plug").c_str());
-  SongList list(true);
-  for (size_t n=0;n<songs.size();++n) {
-    const Song *s;
-    for (unsigned int i=0;(s=songs[n].file->getSong(i));++i) {
-      // sistemare:      list.push_back((Song *) s); //
+  SongCollection list;
+  for (size_t i=0;i<songs.size();++i) {
+    const SongList &file=songs[i].file->getList();
+    for (size_t j=0;j<file.size();++j) {
+      list.push_back(file[j]);
+      //      std::cerr<<"push_back("<<file[j]<<")\n";
     }
-  };
-  std::cerr<<"MyList::Export "<<list.size()<<" songs to print \n";
+  }
+  for (size_t i=0;i<list.size();++i) {
+    //    std::cerr<<"Title: "<<list[i]->head()->title<<"\n";
+  }
+  std::cerr<<"MyList::Export "<<list.size()<<" songs for "
+	   <<plug<<" on file "<<filename<<"\n";
+  assert(writer);
   writer->Write(filename.c_str(),list,opt);
+  //  std::cerr<<"MyList: wrote!\n";
 };

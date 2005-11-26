@@ -24,6 +24,7 @@ enum
     ID_Export,
     ID_PDF,
     ID_PS,
+    ID_TXT,
     ID_New
 };
 
@@ -35,6 +36,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_SaveAs, MyFrame::OnSaveAs)
   EVT_MENU(ID_PDF, MyFrame::OnExport)
   EVT_MENU(ID_PS, MyFrame::OnExport)
+  EVT_MENU(ID_TXT, MyFrame::OnExport)
   EVT_MENU(ID_New, MyFrame::OnNew)
 END_EVENT_TABLE()
 
@@ -44,7 +46,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 {
   wxMenu *menuExport = new wxMenu;
   menuExport->Append(ID_PDF, "&PDF");
-  menuExport->Append(ID_PS, "&PS");
+  menuExport->Append(ID_PS, "P&S");
+  menuExport->Append(ID_TXT, "&TXT");
 
   wxMenu *menuFile = new wxMenu;
   
@@ -120,6 +123,7 @@ void MyFrame::OnExport(wxCommandEvent &event) {
   switch(event.GetId()) {
   case ID_PDF: plug="pdf"; break;
   case ID_PS: plug="ps"; break;
+  case ID_TXT: plug="txt"; break;
   default: assert(false);
   };
   wxFileDialog dia(this,"Choose export file","","","*."+plug);
