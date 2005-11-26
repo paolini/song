@@ -26,6 +26,7 @@ class FileItem {
   void Save();
   void SaveAs(const wxString &filename);
   const Song *getSong(unsigned int n=0) const;
+  const SongList &getList() const;
 };
 
 class Item {
