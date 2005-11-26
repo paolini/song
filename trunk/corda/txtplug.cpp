@@ -16,13 +16,16 @@ private:
   static Plugout* Create() {return new TxtPlugout();};
 
 public:
-  virtual void Write(std::ostream &out, const SongList &list,
+  virtual void Write(std::ostream &out, const SongArray &list,
 		     const PlugoutOptions &opt) {
+    //    std::cerr<<"TxtPlug::Write("<<list.size()<<")\n";
     TextMedia m(out,opt.width,opt.height);
     PrintSongs(list,m);
   };
 
-  TxtPlugout(): Plugout("Text","txt","simple text") {};
+  TxtPlugout(): Plugout("Text","txt","simple text") {
+    //    std::cerr<<"TxtPlugout()="<<this<<"\n";
+  };
 };
 
 // registra il plugout

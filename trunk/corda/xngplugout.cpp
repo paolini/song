@@ -25,7 +25,7 @@ private:
 
 public:
 
-  virtual void Write(std::ostream &out, const SongList &list,
+  virtual void Write(std::ostream &out, const SongArray &list,
 		     const PlugoutOptions &opt) {
     op=&out;
     (*op)<<"<?xml version='1.0' encoding='utf8' ?>\n"

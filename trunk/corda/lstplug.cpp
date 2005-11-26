@@ -19,7 +19,7 @@ private:
   static Plugout* Create() {return new ListPlugout();};
 public:
 
-  virtual void Write(std::ostream &out, const SongList &song_list,
+  virtual void Write(std::ostream &out, const SongArray &song_list,
 		     const PlugoutOptions &opt) {
     unsigned int i;
     for (i=0;i<song_list.size();++i) {

@@ -41,12 +41,15 @@ Plugin *Plugin::Construct(string ext) {
   else return 0;
 }
 
-void Plugout::Write(string filename, const SongList &list,
+void Plugout::Write(string filename, const SongArray &list,
 		   const PlugoutOptions &opt) {
   ofstream out(filename.c_str());
   if (!out) 
     throw runtime_error("cannot open file"+filename);
-  return Write(out,list,opt);
+  //  std::cerr<<"Plugout::Write("<<filename<<","<<list.size()<<")="
+  //	   <<this<<"\n";
+  Write(out,list,opt);
+  //  std::cerr<<"Plugout::Write done\n";
 };
 
 map<string,Plugout::ctor *> &registry_out() {
@@ -55,6 +58,7 @@ map<string,Plugout::ctor *> &registry_out() {
 };
 
 void Plugout::Register(string ext, ctor f) {
+  //  std::cerr<<"Plugout::Register("<<ext<<")\n";
   registry_out()[ext]=f;
   //  cerr<<"Plugout "<<ext<<" registered!\n";
 }
