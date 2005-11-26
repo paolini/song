@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-
 //using namespace std;
 // ALL STRINGS ENCODED IN UTF8
 
@@ -62,9 +61,30 @@ class SongVector: public SongBase{
   */
 };
 
-class SongList: public SongVector<Song> {
+class Song;
+
+class SongArray { // classe virtuale per gli elenchi di canzoni
+public:
+  virtual size_t size() const=0;
+  virtual const Song* operator[](size_t n) const=0;
+};
+
+class SongList: public SongVector<Song>, public SongArray {
 protected:
 public:
+  virtual size_t size() const {
+    return SongVector<Song>::size();};
+  virtual const Song* operator[](size_t n) const {
+    return SongVector<Song>::operator[](n);
+  };
+};
+
+class SongCollection: public std::vector<const Song *>, public SongArray {
+public:
+  virtual size_t size() const {
+    return std::vector<const Song *>::size();};
+  virtual const Song* operator[](size_t n) const;
+  virtual ~SongCollection() {};
 };
 
 class Song: public SongBase {

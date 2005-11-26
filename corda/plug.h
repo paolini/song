@@ -65,13 +65,13 @@ class Plugout: public Plug {
   // costruisce un writer per il formato ext
   static Plugout* Construct(string ext);
 
-  virtual void Write(std::ostream &out, const SongList &list, 
+  virtual void Write(std::ostream &out, const SongArray &list, 
 		     const PlugoutOptions &opt) {
     throw std::runtime_error("writing "+string(name)+
 			   " to stdout not implemented");
   };
 
-  virtual void Write(string filename, const SongList &list,
+  virtual void Write(string filename, const SongArray &list,
 		     const PlugoutOptions &opt);
 
   Plugout(string name,string ext, string descr): Plug(name,ext,descr) {};

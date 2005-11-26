@@ -308,7 +308,9 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(const SongList &songlist,Media &m, const Cursor *cursor) {
+void PrintSongs(const SongArray &songlist,Media &m, const Cursor *cursor) {
+  //  std::cerr<<"PrintSongs "<<songlist.size()<<"\n";
+
   vector<Box *> list;
   int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {

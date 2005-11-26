@@ -1,6 +1,8 @@
 #include <cassert>
 #include <stdexcept>
 
+#include <iostream>
+
 #include "song.h"
 
 using namespace std;
@@ -9,6 +11,13 @@ void SongBase::setParent(SongBase *Parent) {
   assert(parent==0);
   parent=Parent;
 };
+
+const Song* SongCollection::operator[](size_t n) const {
+  //  std::cerr<<"SongCollection["<<n<<"]="
+  //	   <<std::vector<const Song *>::operator[](n)<<"\n";
+  return std::vector<const Song *>::operator[](n);
+};  
+
 
 /*
 void Song::copy(const Song *p) {
