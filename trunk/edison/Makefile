@@ -1,6 +1,10 @@
 CXX = $(shell wx-config --cxx)
 
-FLAGS = -I.. -L../corda -g
+LAST_VERSION=0.2
+
+VERSION=$(LAST_VERSION)-testing
+
+FLAGS = -I.. -L../corda -g -DVERSION=\"$(VERSION)\"
 
 PROGRAM = edison
 

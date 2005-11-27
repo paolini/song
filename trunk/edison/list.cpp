@@ -47,8 +47,6 @@ void FileItem::SaveAs(const wxString &newname) {
 void FileItem::reload() {
   std::cerr<<"reload() filename="<<filename<<"\n";
   if (filename==wxString()) {
-    content="\\t Titolo\n\\a FirstName NAME\n\n\\s\n";
-    modified=true;
   } else {
     wxFFile file(filename.c_str(),"r");
     if (!file.ReadAll(&content)) {
@@ -118,12 +116,12 @@ const SongList &FileItem::getList() const {
   return compiled;
 };
 
-BEGIN_EVENT_TABLE(MyList, wxListCtrl)
+BEGIN_EVENT_TABLE(MyList, wxListBox)
   EVT_LIST_ITEM_SELECTED(-1,MyList::OnSelect)  
 END_EVENT_TABLE()
 
 MyList::MyList(wxWindow *parent, MyFrame* fr):
-  wxListCtrl(parent,-1,wxDefaultPosition,wxDefaultSize,
+  wxListBox(parent,-1,wxDefaultPosition,wxDefaultSize,
 	     0)
 {
   n=0;
@@ -134,14 +132,20 @@ void MyList::Load(const wxString &filename) {
   FileItem *it=new FileItem;
   it->Load(filename);
   songs.push_back(it);
-  SetItemState(n,0,wxLIST_STATE_SELECTED);
+  //  SetItemState(n,0,wxLIST_STATE_SELECTED);
+  SetSelection(n,0);
   n=songs.size()-1;
-  InsertItem(n,songs[n].file->FileName()
-	     /*+": "+songs[n]->getSong()->head()->title*/);
+  if (songs[n].file->FileName()!=wxString())
+    Append(songs[n].file->FileName());
+  else
+    Append("** new file **");
+		 /*+": "+songs[n]->getSong()->head()->title*/
   
   //  ProcessEvent(wxListEvent(wxEVT_LIST_ITEM_SELECTED,n));
-  SetItemState(n,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+  //  SetItemState(n,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+  SetSelection(n,1);
   frame->editor->Set(songs[n].file->getContent());
+  frame->editor->Enable(true);
   frame->resetTitle();
   frame->Refresh();
 };
@@ -159,6 +163,7 @@ void MyList::SaveAs(const wxString &name) {
   if (songs.size()==0) throw std::runtime_error("no file");
   assert(n<songs.size());
   songs[n].file->SaveAs(name);
+  SetString(n,name);
   frame->resetTitle();
 };
 
