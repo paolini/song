@@ -38,7 +38,7 @@ class Item {
   const Song *getSong() {return file->getSong(n);};
 };
 
-class MyList: public wxListCtrl {
+class MyList: public wxListBox /*wxListCtrl*/ {
  private:
   MyFrame *frame;
   std::vector<Item> songs;

@@ -32,13 +32,14 @@ public:
 
   //  void Load(const wxString &fileName);
   
-  void OnQuit(wxCommandEvent& event);
-  void OnAbout(wxCommandEvent& event);
-  void OnLoad(wxCommandEvent& event);
-  void OnSave(wxCommandEvent& event);
-  void OnSaveAs(wxCommandEvent& event);
-  void OnExport(wxCommandEvent& event);
-  void OnNew(wxCommandEvent& event);
+  void OnQuit(wxCommandEvent&);
+  void OnAbout(wxCommandEvent&);
+  void OnLoad(wxCommandEvent&);
+  void OnSave(wxCommandEvent&);
+  void OnSaveAs(wxCommandEvent&);
+  void OnExport(wxCommandEvent&);
+  void OnNew(wxCommandEvent&);
+  void OnInsert(wxCommandEvent &);
 
   void resetTitle();
   
@@ -47,6 +48,9 @@ public:
   MyCanvas *canvas;
   MyEditor *editor;
   MyList *list;
+  
+  wxMenu *menuInsert;
+
 
   //  FileItem file;
 

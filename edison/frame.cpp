@@ -14,8 +14,11 @@
 #include <sstream>
 #include <cassert>
 
-enum
-{
+#ifndef VERSION
+#define VERSION "testing"
+#endif
+
+enum {
     ID_Quit = 1,
     ID_Load, 
     ID_About,
@@ -25,7 +28,9 @@ enum
     ID_PDF,
     ID_PS,
     ID_TXT,
-    ID_New
+    ID_New,
+    ID_InsertHeader,
+    ID_InsertStanza,
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -38,6 +43,8 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_PS, MyFrame::OnExport)
   EVT_MENU(ID_TXT, MyFrame::OnExport)
   EVT_MENU(ID_New, MyFrame::OnNew)
+  EVT_MENU(ID_InsertHeader, MyFrame::OnInsert)
+  EVT_MENU(ID_InsertStanza, MyFrame::OnInsert)
 END_EVENT_TABLE()
 
 
@@ -61,10 +68,15 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   menuFile->AppendSeparator();
   menuFile->Append( ID_Quit, "E&xit" );
   
+  this->menuInsert = new wxMenu;
+  
+  menuInsert->Append(ID_InsertHeader,"Insert Song &Header");
+  menuInsert->Append(ID_InsertStanza,"Insert Song &Stanza");
 
   wxMenuBar *menuBar = new wxMenuBar;
-  menuBar->Append( menuFile, "&File" );
-  
+  menuBar->Append(menuFile, "&File" );
+  menuBar->Append(menuInsert, "&Insert");
+
   SetMenuBar( menuBar );
   
   CreateStatusBar();
@@ -73,8 +85,11 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   tabs=new wxNotebook(this,-1);
   canvas=new MyCanvas(tabs,this);
   editor=new MyEditor(tabs,this,wxString());
-  list=new MyList(tabs,this);
+  editor->Enable(false);
+  menuInsert->Enable(-1,false);
 
+  list=new MyList(tabs,this);
+  
   tabs->AddPage(canvas,"view");
   tabs->AddPage(editor,"edit");
   tabs->AddPage(list,"list");
@@ -90,7 +105,7 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxMessageBox( "This is edison corda song editor",
+    wxMessageBox( "This is edison song editor (manu-fatto) 2005 -- version " VERSION,
                   "About Edison", wxOK | wxICON_INFORMATION );
 }
 
@@ -134,6 +149,20 @@ void MyFrame::OnExport(wxCommandEvent &event) {
 
 void MyFrame::OnNew(wxCommandEvent &event) {
   list->Load("");
+  editor->InsertHeader();
+  editor->InsertStanza();
+};
+
+void MyFrame::OnInsert(wxCommandEvent &event) {
+  switch(event.GetId()) {
+  case ID_InsertHeader: 
+    editor->InsertHeader();
+    break;
+  case ID_InsertStanza:
+    editor->InsertStanza();
+    break;
+  default: assert(false);
+  }
 };
 
 void MyFrame::resetTitle() {
