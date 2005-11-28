@@ -12,17 +12,6 @@
 
 #include <iostream>
 
-#ifdef BUGGY
-// dovrebbe essere già definito da cursor.h!!
-class Cursor {
- public:
-  PhraseItem *item;
-  int pos;
- public:
-  Cursor(Song &song);
-};
-#endif
-
 
 #include "corda/cursor.h"
 #include "corda/print.h"
@@ -30,14 +19,10 @@ class Cursor {
 #include "wxmedia.h"
 #include "list.h"
 
-#ifdef BUGGY
-// dovrebbe essere già definita in print.h!
-void PrintSongs(const SongList &,Media &, const Cursor* cursor);
-#endif
-
 
 #include "canvas.h"
 #include "frame.h"
+#include "editor.h"
 
 MyCanvas::MyCanvas(wxWindow *parent, MyFrame *fr)
   : wxScrolledWindow(parent, -1, wxDefaultPosition, wxDefaultSize,
@@ -64,10 +49,20 @@ void MyCanvas::OnDraw(wxDC &dc)
   wxMedia media(dc,h);
 
   FileItem *f=frame->list->CurrentFile();
-  if (f && f->getSong())
-    PrintSong(f->getSong(),media,frame->cursor);
-  else
-    std::cerr<<"OnDraw: empty song\n";
+  try {
+    if (f) {
+      const Song *song=f->getSong();
+      if (song)
+	PrintSong(song,media,frame->cursor);
+    }
+    else
+      std::cerr<<"OnDraw: empty song\n";
+  } catch (PlugError &e) {
+    wxString message;
+    message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
+    wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
+    frame->editor->SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
+  };
   //  PrintSongs(frame->songlist,media,frame->cursor);
   frame->SetStatusText("drawing... done!");
 }

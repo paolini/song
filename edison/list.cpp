@@ -3,6 +3,7 @@
 #include "editor.h"
 #include <wx/ffile.h>
 #include <wx/listctrl.h>
+#include <wx/filename.h>
 #include "corda/plug.h"
 #include <stdexcept>
 #include <string>
@@ -46,6 +47,7 @@ void FileItem::SaveAs(const wxString &newname) {
 
 void FileItem::reload() {
   std::cerr<<"reload() filename="<<filename<<"\n";
+  plug=wxFileName(filename).GetExt();
   if (filename==wxString()) {
   } else {
     wxFFile file(filename.c_str(),"r");
@@ -80,29 +82,33 @@ void FileItem::compile() const {
   if (compiled_valid) return;
   std::cerr<<"compile()\n";
   compiled.clear();
-  try {
-    // visualizza
-    Plugin* reader=Plugin::Construct("sng");
+  //  try {
+  Plugin* reader=Plugin::Construct(plug.c_str());
     if (!reader) {
-      throw std::runtime_error("cannot create SNG reader");
+      throw std::runtime_error("cannot find "+std::string(plug)+" reader");
     }
     
     std::string buf=getContent().c_str();
     std::stringstream in(buf);
     
+    compiled_valid=true;
     reader->Read(in,compiled);
     
     if (compiled.size()==0) {
       // wxMessageBox("No song in file","warning", wxOK|wxICON_INFORMATION);
       std::cerr<<"no song in file\n";
     }
-  } catch(std::runtime_error &e) {
-    wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
-    //    cerr<<e.what()<<"\n";
-    //    Close(TRUE);
-    //    reset();
-  }
-  compiled_valid=true;
+//   } catch(PlugError &e) {
+//     compiled_valid=true;
+//     compiled.clear();
+//     wxString message;
+//     message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
+    
+//     wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
+//     //    cerr<<e.what()<<"\n";
+//     //    Close(TRUE);
+//     //    reset();
+//   }
 };
 
 const Song *FileItem::getSong(unsigned int n) const {

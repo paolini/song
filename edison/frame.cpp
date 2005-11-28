@@ -112,7 +112,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
   if (AskSave()) return;
   wxFileDialog dia(this,"Choose file",
-		   "","","*.sng");
+		   "","","SNG files (*.sng)|*.sng|ChordPro files (*.cho)|*.cho",wxOPEN|wxCHANGE_DIR);
   if (dia.ShowModal()==wxID_OK) {
     SetStatusText("Loading file: "+dia.GetPath());
     list->Load(dia.GetPath());
@@ -149,8 +149,8 @@ void MyFrame::OnExport(wxCommandEvent &event) {
 
 void MyFrame::OnNew(wxCommandEvent &event) {
   list->Load("");
-  editor->InsertHeader();
-  editor->InsertStanza();
+  if (editor->InsertHeader())
+    editor->InsertStanza();
 };
 
 void MyFrame::OnInsert(wxCommandEvent &event) {

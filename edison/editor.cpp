@@ -368,7 +368,7 @@ static wxString string2sng(const wxString &s) {
 return result;
 }
 
-void MyEditor::InsertHeader() {
+bool MyEditor::InsertHeader() {
   std::cerr<<"MyEditor::InsertHeader\n";
   wxDialog* frame=new wxDialog(this,-1,"Insert Song Headers");
   wxFlexGridSizer *grid= new wxFlexGridSizer(2,3,5);
@@ -393,7 +393,7 @@ void MyEditor::InsertHeader() {
   grid->Add(new wxBoxSizer(wxHORIZONTAL));
   wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
   buttons->Add(new wxButton(frame,wxID_OK,"OK"));
-  buttons->Add(new wxButton(frame,-1,"Cancel"));
+  buttons->Add(new wxButton(frame,wxID_CANCEL,"Cancel"));
   grid->Add(buttons);
   frame->SetSizer(grid);
   if (frame->ShowModal()==wxID_OK) {
@@ -401,11 +401,14 @@ void MyEditor::InsertHeader() {
     WriteText("\\title "+string2sng(title->GetValue())+"\n");
     WriteText("\\author "+string2sng(firstName->GetValue())
 	      +" "+string2sng((name->GetValue()).Upper())+"\n\n");
-  };
+    frame->Destroy();
+    return true;
+  } 
   frame->Destroy();
+  return false;
 };
 
-void MyEditor::InsertStanza() {
+bool MyEditor::InsertStanza() {
   std::cerr<<"MyEditor::InsertStanza\n";
   wxDialog* frame=new wxDialog(this,-1,"Insert Song Stanza");
   wxBoxSizer *sizer=new wxBoxSizer(wxVERTICAL);
@@ -436,6 +439,9 @@ void MyEditor::InsertStanza() {
     case 3:
       WriteText("\\b\n");
     };
+    frame->Destroy();
+    return true;
   };
   frame->Destroy();
+  return false;
 };

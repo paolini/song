@@ -10,6 +10,7 @@ class MyFrame;
 class FileItem {
   wxString content;
   wxString filename; // se filename="" e` un file nuovo
+  wxString plug; //sng o cho
   bool modified;
   mutable bool compiled_valid;
   mutable SongList compiled;
