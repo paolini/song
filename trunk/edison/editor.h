@@ -11,8 +11,8 @@ class MyEditor: public wxTextCtrl {
   MyEditor(wxWindow *parent,MyFrame *frame,const wxString &content);
   void OnText(wxCommandEvent& WXUNUSED(event));
   void Set(const wxString &val);
-  void InsertHeader();
-  void InsertStanza();
+  bool InsertHeader();
+  bool InsertStanza();
  private:
   DECLARE_EVENT_TABLE()
 };
