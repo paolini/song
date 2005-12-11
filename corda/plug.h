@@ -9,6 +9,24 @@
 //#include <libxml/tree.h>
 #include "song.h"
 
+class PlugError: public std::runtime_error {
+ public:
+  unsigned int line;
+  unsigned int col;
+  std::string filename;
+  PlugError(const std::string &mesg,
+	    int _line, int _col, 
+	    const std::string &_filename=std::string()): 
+    runtime_error(mesg),
+    line(_line),
+    col(_col),
+    filename(_filename)
+    {};
+  PlugError(const std::string &mesg):
+    runtime_error(mesg) {};
+  virtual ~PlugError() throw () {};
+};
+
 // classe base per Plugin e Plugout. Descrive un formato di input e/o output
 class Plug {
  public:
@@ -31,10 +49,12 @@ public:
   // Costruisce un reader per il formato ext
   static Plugin* Construct(string ext);
 
-  virtual int Read(std::istream &in,  SongList &list) {
-    throw std::runtime_error("reading "+string(name)+
-			   " from stdin not implemented");
-  };
+  virtual int Read(std::istream &in,  SongList &list) 
+    throw(PlugError)
+    {
+      throw PlugError("reading "+string(name)+
+		      " from stdin not implemented");
+    };
   
   virtual int Read(string filename, SongList &list);
 
