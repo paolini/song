@@ -457,7 +457,7 @@ private:
   };
 
 public:
-  virtual int Read(istream &, SongList &list);
+  virtual int Read(istream &, SongList &list) throw(PlugError);
   SngPlugin(): Plugin("song","sng","song sng TeX-like format [manu-fatto]"),
 	       current_in(0)
   {
@@ -538,12 +538,14 @@ public:
     cerr<<"WARNING: "<<s<<"\n";
   }
 
-  void error(string s) {
+  void error(string s) throw (PlugError) {
     //    int i;
     //ostream &m=cerr;
     stringstream m; 
-    m<<nline<<":"<<ncol<<" ERROR: "<<s<<"\n";
-    throw runtime_error(m.str()); 
+    int col=ncol;
+    if (col<0) col=0;
+    m<<nline<<":"<<col<<" ERROR: "<<s<<"\n";
+    throw PlugError(m.str(),nline,col); 
   };
 
   void skip_spaces(void) {
@@ -812,7 +814,7 @@ public:
 
 };
 
-int SngPlugin::Read(istream &in, SongList &list) {
+int SngPlugin::Read(istream &in, SongList &list) throw (PlugError) {
   Song *q;
   int n=0;
   connect(in);

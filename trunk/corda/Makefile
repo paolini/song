@@ -1,6 +1,6 @@
 
-VERSION=corda-testing
-## last release: VERSION=0.2.2
+VERSION=corda-0.2.3
+## last release: VERSION=0.2.3
 
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
@@ -40,8 +40,7 @@ clear: clean
 
 tarball::
 	mkdir ../$(VERSION)
-	make clear
-	-cp * ../$(VERSION)
+	-cp $(sources) ../$(VERSION)
 	mkdir ../$(VERSION)/CVS
 	echo corda > ../$(VERSION)/CVS/Repository
 	echo ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/corda" \
