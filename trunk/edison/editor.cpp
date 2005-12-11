@@ -370,7 +370,7 @@ return result;
 
 bool MyEditor::InsertHeader() {
   std::cerr<<"MyEditor::InsertHeader\n";
-  wxDialog* frame=new wxDialog(this,-1,"Insert Song Headers");
+  wxDialog* frame=new wxDialog(this,-1,wxString("Insert Song Headers"));
   wxFlexGridSizer *grid= new wxFlexGridSizer(2,3,5);
   grid->AddGrowableCol(1);
   grid->Add(new wxStaticText(frame,-1,_T("title:")),0,
@@ -410,7 +410,7 @@ bool MyEditor::InsertHeader() {
 
 bool MyEditor::InsertStanza() {
   std::cerr<<"MyEditor::InsertStanza\n";
-  wxDialog* frame=new wxDialog(this,-1,"Insert Song Stanza");
+  wxDialog* frame=new wxDialog(this,-1,wxString("Insert Song Stanza"));
   wxBoxSizer *sizer=new wxBoxSizer(wxVERTICAL);
   wxBoxSizer *type=new wxBoxSizer(wxHORIZONTAL);
   wxBoxSizer *buttons=new wxBoxSizer(wxHORIZONTAL);
