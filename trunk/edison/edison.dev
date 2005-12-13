@@ -1,7 +1,7 @@
 [Project]
 FileName=edison.dev
 Name=Project1
-UnitCount=22
+UnitCount=24
 Type=0
 Ver=1
 ObjFiles=
@@ -11,8 +11,8 @@ PrivateResource=
 ResourceIncludes=C:\Dev-Cpp\include
 MakeIncludes=
 Compiler=-fno-rtti_@@_-fexceptions_@@_-fno-pcc-struct-return_@@_-fstrict-aliasing_@@_-Wall_@@_-fvtable-thunks_@@_-D__WXMSW___@@_-D__GNUWIN32___@@_-D__WIN95___@@_-I..\corda_@@_
-CppCompiler=-fno-rtti_@@_-fexceptions_@@_-fno-pcc-struct-return_@@_-fstrict-aliasing_@@_-Wall_@@_-D__WXMSW___@@_-D__GNUWIN32___@@_-D__WIN95___@@_-I.._@@_-I..\haru_@@_-DNOZLIB_@@_-DNOPNG_@@_-DNOJPEG_@@_
-Linker=-lwxmsw26_@@_-lole32_@@_-loleaut32_@@_-luuid_@@_-lcomctl32_@@_
+CppCompiler=-fno-rtti_@@_-fexceptions_@@_-fno-pcc-struct-return_@@_-fstrict-aliasing_@@_-Wall_@@_-D__WXMSW___@@_-D__GNUWIN32___@@_-D__WIN95___@@_-I.._@@_-DNOZLIB_@@_-DNOPNG_@@_-DNOJPEG_@@_-I..\haru_@@_
+Linker=-lwxmsw26_@@_-lole32_@@_-loleaut32_@@_-luuid_@@_-lcomctl32_@@_../haru/libharu.a_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -188,7 +188,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=..\corda\txtplug.cpp
+FileName=..\corda\pdfplug.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1
@@ -269,6 +269,16 @@ BuildCmd=
 
 [Unit13]
 FileName=..\corda\print.cpp
+CompileCpp=1
+Folder=Project1
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit24]
+FileName=..\corda\pdfmedia.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1
