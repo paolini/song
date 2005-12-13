@@ -127,7 +127,9 @@ BEGIN_EVENT_TABLE(MyList, wxListBox)
 END_EVENT_TABLE()
 
 MyList::MyList(wxWindow *parent, MyFrame* fr):
-  wxListBox(parent,-1,wxDefaultPosition,wxDefaultSize,
+//  wxListCtrl(
+  wxListBox(
+            parent,-1,wxDefaultPosition,wxDefaultSize,
 	     0)
 {
   n=0;
