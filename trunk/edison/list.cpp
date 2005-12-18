@@ -4,6 +4,7 @@
 #include <wx/ffile.h>
 #include <wx/listctrl.h>
 #include <wx/filename.h>
+#include <wx/listbox.h>
 #include "corda/plug.h"
 #include <stdexcept>
 #include <string>
@@ -134,6 +135,7 @@ enum {MYLIST=1010};
 
 BEGIN_EVENT_TABLE(MyList, wxListBox /*wxListCtrl*/ )
   EVT_LISTBOX(MYLIST,MyList::OnSelect)  
+
 END_EVENT_TABLE()
 
 MyList::MyList(wxWindow *parent, MyFrame* fr):
