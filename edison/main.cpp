@@ -46,6 +46,7 @@ using namespace std;
 class MyApp: public wxApp
 {
     virtual bool OnInit();
+    virtual int OnRun();
 };
 
 IMPLEMENT_APP(MyApp)
@@ -62,3 +63,11 @@ bool MyApp::OnInit() {
     return TRUE;
 }
 
+int MyApp::OnRun() {
+  try {
+  MainLoop();
+  } catch(runtime_error &e) {
+    wxMessageBox(e.what(), "runtime error", wxOK|wxICON_INFORMATION);
+  }
+  return 0;
+};
