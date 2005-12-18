@@ -14,6 +14,7 @@
 void FileItem::reset() {
   filename=wxString(); // file vuoto
   content=wxString();
+  plug="unknown"; // default
   modified=false;
   compiled.clear();
   compiled_valid=true;  
@@ -46,10 +47,13 @@ void FileItem::SaveAs(const wxString &newname) {
 };
 
 void FileItem::reload() {
-  std::cerr<<"reload() filename="<<filename<<"\n";
-  plug=wxFileName(filename).GetExt();
+  std::cerr<<"reload() filename='"<<filename<<"'\n";
   if (filename==wxString()) {
+    plug="sng"; // default
+    compiled.clear();
+    compiled_valid=true;
   } else {
+    plug=wxFileName(filename).GetExt();
     wxFFile file(filename.c_str(),"r");
     if (!file.ReadAll(&content)) {
       wxMessageBox("error reading file "+filename,
@@ -57,9 +61,9 @@ void FileItem::reload() {
     }
     std::cerr<<"reload content="<<content.size()<<"\n";
     modified=false;
+    compiled.clear(); // cancella l'eventuale vecchio contenuto
+    compiled_valid=false;
   }
-  compiled.clear(); // cancella l'eventuale vecchio contenuto
-  compiled_valid=false;
 };
 
 const wxString &FileItem::getContent() const {
@@ -80,12 +84,12 @@ const wxString &FileItem::FileName() const {
 
 void FileItem::compile() const {
   if (compiled_valid) return;
-  std::cerr<<"compile()\n";
+  std::cerr<<"compile() filename='"<<filename<<"' content='"<<content<<"'\n";
   compiled.clear();
-  //  try {
+  try {
   Plugin* reader=Plugin::Construct(plug.c_str());
     if (!reader) {
-      throw std::runtime_error("cannot find "+std::string(plug)+" reader");
+      throw std::runtime_error("cannot find '"+std::string(plug)+"' reader");
     }
     
     std::string buf=getContent().c_str();
@@ -98,17 +102,21 @@ void FileItem::compile() const {
       // wxMessageBox("No song in file","warning", wxOK|wxICON_INFORMATION);
       std::cerr<<"no song in file\n";
     }
-//   } catch(PlugError &e) {
-//     compiled_valid=true;
-//     compiled.clear();
-//     wxString message;
-//     message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
-    
-//     wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
-//     //    cerr<<e.what()<<"\n";
-//     //    Close(TRUE);
-//     //    reset();
-//   }
+   } catch(PlugError &e) {
+     compiled_valid=true;
+     compiled.clear();
+     wxString message;
+     message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
+  
+     wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
+     //    cerr<<e.what()<<"\n";
+     //    Close(TRUE);
+     //    reset();
+   } catch (std::runtime_error &e) {
+     compiled_valid=true;
+     compiled.clear();
+     wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
+   }
 };
 
 const Song *FileItem::getSong(unsigned int n) const {
@@ -122,15 +130,17 @@ const SongList &FileItem::getList() const {
   return compiled;
 };
 
-BEGIN_EVENT_TABLE(MyList, wxListBox)
-  EVT_LIST_ITEM_SELECTED(-1,MyList::OnSelect)  
+enum {MYLIST=1010};
+
+BEGIN_EVENT_TABLE(MyList, wxListBox /*wxListCtrl*/ )
+  EVT_LISTBOX(MYLIST,MyList::OnSelect)  
 END_EVENT_TABLE()
 
 MyList::MyList(wxWindow *parent, MyFrame* fr):
-//  wxListCtrl(
+  //  wxListCtrl(
   wxListBox(
-            parent,-1,wxDefaultPosition,wxDefaultSize,
-	     0)
+            parent,MYLIST,wxDefaultPosition,wxDefaultSize,
+	    0)
 {
   n=0;
   frame=fr;
@@ -140,7 +150,7 @@ void MyList::Load(const wxString &filename) {
   FileItem *it=new FileItem;
   it->Load(filename);
   songs.push_back(it);
-  //  SetItemState(n,0,wxLIST_STATE_SELECTED);
+  //SetItemState(n,0,wxLIST_STATE_SELECTED);
   SetSelection(n,0);
   n=songs.size()-1;
   if (songs[n].file->FileName()!=wxString())
@@ -180,11 +190,12 @@ FileItem *MyList::CurrentFile() {
   return songs[n].file;
 };
 
-void MyList::OnSelect(wxListEvent &event) {
-  n=event.GetIndex();
+void MyList::OnSelect(wxCommandEvent &event) {
+  n=event.GetInt();
+  assert(n>=0);
   frame->resetTitle();
   frame->editor->Set(CurrentFile()->getContent());
-  std::cerr<<"OnSelect "<<event.GetIndex()<<"\n";
+  std::cerr<<"OnSelect "<<n<<"\n";
 };
 
 void MyList::Export(const wxString &filename, const wxString &plug) {

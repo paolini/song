@@ -17,6 +17,10 @@ MyEditor::MyEditor(wxWindow *parent, MyFrame *f, const wxString &content)
 };
 
 void MyEditor::OnText(wxCommandEvent& WXUNUSED(event)) {
+  OnTextVoid();
+}
+
+void MyEditor::OnTextVoid() {
   if (freeze) {std::cerr<<"OnText freezed \n";return;}
   std::cerr<<"OnText: content="<<GetValue().size()<<"\n";
   //  std::cerr<<"ONText\n";
@@ -402,6 +406,7 @@ bool MyEditor::InsertHeader() {
     WriteText("\\author "+string2sng(firstName->GetValue())
 	      +" "+string2sng((name->GetValue()).Upper())+"\n\n");
     frame->Destroy();
+    OnTextVoid();
     return true;
   } 
   frame->Destroy();
@@ -440,6 +445,7 @@ bool MyEditor::InsertStanza() {
       WriteText("\\b\n");
     };
     frame->Destroy();
+    OnTextVoid();
     return true;
   };
   frame->Destroy();

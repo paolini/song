@@ -9,6 +9,7 @@ class MyEditor: public wxTextCtrl {
   int freeze;
  public:
   MyEditor(wxWindow *parent,MyFrame *frame,const wxString &content);
+  void OnTextVoid();
   void OnText(wxCommandEvent& WXUNUSED(event));
   void Set(const wxString &val);
   bool InsertHeader();
