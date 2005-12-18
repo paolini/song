@@ -53,8 +53,12 @@ void Song::setHead(Head *h) {
   assert(my_head==0);assert(h);
   my_head=h;h->setParent(this);};
 void Song::setBody(Body *b) {
-  assert(my_body==0);assert(b);
-  my_body=b;b->setParent(this);};
+  assert(my_body==0);
+  if (b) {
+    my_body=b;
+    b->setParent(this);
+  }
+};
 void Modifier::removeChild(SongBase *c) {
   assert(false);
   //non posso rimuovere l'unico child
@@ -116,6 +120,7 @@ Note::Note(const string &s, size_t &off) {
     note=i;
   } else if (s.size()>0 && s[0]>='A' && s[0]<='G') {
     note=s[0]-'A';
+    off++;
   } else {
     note=-1;aug=0;
     return;
@@ -141,6 +146,8 @@ Note::operator string() const {
 };
 
 Chord::Chord(const string &s) {
+  //  std::cerr<<"Chord("<<s<<"): ";
+  
   size_t off=0;
   base=Note(s,off);
   size_t off1=off;
@@ -153,6 +160,8 @@ Chord::Chord(const string &s) {
   } else {
     bass=Note();
   }
+
+  //  std::cerr<<string(base)<<"("<<string(bass)<<") ["<<modifier<<"]\n";
   if (modifier.find(' ')!=string::npos) 
     throw runtime_error("no spaces allowed in chord");
 };

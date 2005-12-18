@@ -356,8 +356,8 @@ void PrintSongs(const SongArray &songlist,Media &m, const Cursor *cursor) {
       count++;
     }
     cerr<<"\n";
-
-      m.newPage();
+    
+    if (list.size())  m.newPage();
     delete box;
   }
 }

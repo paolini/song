@@ -2,6 +2,8 @@
 VERSION=corda-0.2.3
 ## last release: VERSION=0.2.3
 
+CVS_REVISION=$Revision$
+
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
 

@@ -155,10 +155,10 @@ PsMedia::PsMedia(ostream &the_out, int start_page):
    // normal, refrain, chord, title, author, nofont
    "] def\n";
 
- const char *name[]={"Roman","Italic","Bold"};
+ const char *name[]={"Times-Roman","Times-Italic", "Times-Bold","Courier"};
  for (int f=0;f!=NOFONT;++f) {
    OUT<<
-     "/Times-"<<name[font_font[f]]<<" /T"<<f<<" scandvec ReEncodeSmall\n"
+     "/"<<name[font_font[f]]<<" /T"<<f<<" scandvec ReEncodeSmall\n"
      "/F"<<f<<" {/T"<<f<<" findfont "<<font_size[f]<<
      " scalefont setfont} def\n";
  }
@@ -216,6 +216,9 @@ void PsMedia::move_xy(int dx, int dy) {
 int PsMedia::wordWidth(const string &s, font f) const {
   int len=0;
   size_t i;
+  if (f==TAB) {
+    return char_width('X')*s.size()*font_size[f]/10;
+  }
   for (i=0;i<s.size();) len+=char_width(iso(s,i));
   return len*font_size[f]/10;
 }
