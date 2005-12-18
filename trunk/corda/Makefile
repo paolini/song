@@ -1,9 +1,7 @@
+CVS_REVISION=$(shell echo $Revision 1.1$ | cut -f2 -d\\$ | cut -f2 -d' ')
 
-VERSION=corda-0.2.3
+VERSION=corda-0.2.3-CVS-$(CVS_REVISION)
 ## last release: VERSION=0.2.3
-
-CVS_REVISION=$Revision$
-
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
 
@@ -49,3 +47,4 @@ tarball::
 	> ../$(VERSION)/CVS/Root
 	cd .. && tar czvf $(VERSION).tgz $(VERSION)
 	rm -fr ../$(VERSION)
+

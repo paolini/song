@@ -90,9 +90,13 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 
   list=new MyList(tabs,this);
   
+  //  wxListCtrl* debug=new wxListCtrl(tabs);
+
   tabs->AddPage(canvas,"view");
   tabs->AddPage(editor,"edit");
   tabs->AddPage(list,"list");
+
+  //  tabs->AddPage(debug,"debug");
 
   cursor=0;
 }

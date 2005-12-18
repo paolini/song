@@ -39,7 +39,7 @@ class Item {
   const Song *getSong() {return file->getSong(n);};
 };
 
-class MyList: public wxListBox /*wxListCtrl*/ {
+class MyList: public wxListBox /* wxListCtrl*/ {
  private:
   MyFrame *frame;
   std::vector<Item> songs;
@@ -53,7 +53,7 @@ class MyList: public wxListBox /*wxListCtrl*/ {
   FileItem *CurrentFile();
   void Export(const wxString &filename, const wxString &plug);
 
-  void OnSelect(wxListEvent &event);
+  void OnSelect(wxCommandEvent &event);
 
  private:
   DECLARE_EVENT_TABLE()
