@@ -11,16 +11,10 @@
 #include "song.h"
 // #include "chord.h"
 
-
-#ifndef VERSION
-#define VERSION "unknow song version"
-#endif
-
 using namespace std;
 
 string usage(
-	     "song: manu-fatto (2005) VER. "
-	     VERSION "\n"
+	     "song: manu-fatto (2005) VER. "+SongVersion()+"\n"
 	     "description: reads sng and xng song files "
 	     "and print them in ps, pdf, xml or txt\n"
 	     "usage: song [options or input-files]\n\n"
@@ -58,7 +52,8 @@ int main(int argc, char *argv[]) {
       OPT0("-txt","forces txt output (default)") {lang="txt";continue;}
       OPT0("-xng","forces xml output") {lang="xng";continue;}
       OPT0("-list","list titles") {lang="lst";continue;}
-      OPT0("-version","show current version") {cout<<VERSION<<"\n";exit(0);};
+      OPT0("-version","show current version") {
+	cout<<SongVersion()<<"\n";exit(0);};
       OPT1("-o","<output-file> name of output file") {
 	++i;
 	output_file=string(argv[i]);

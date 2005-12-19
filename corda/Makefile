@@ -1,7 +1,4 @@
-CVS_REVISION=$(shell echo $Revision 1.1$ | cut -f2 -d\\$ | cut -f2 -d' ')
-
-VERSION=corda-0.2.3-CVS-$(CVS_REVISION)
-## last release: VERSION=0.2.3
+## VERSION vedi version.h
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug
 
@@ -15,8 +12,10 @@ PDF_OBJECTS=$(OBJECTS) pdfmedia pdfplug
 
 TARGET=corda
 
-CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/include/libxml2 -DVERSION=\"$(VERSION)\"
+CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/include/libxml2 
 all: target
+
+lib: libcorda.a
 
 install: target
 	cp $(TARGET) /usr/local/bin

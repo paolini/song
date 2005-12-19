@@ -1,12 +1,8 @@
 CXX = $(shell wx-config --cxx)
 
-LAST_VERSION=0.2
+##VERSION= vedi version.h
 
-CVS_REVISION=$(shell echo $Revision 1.1$ | cut -f2 -d\\$ | cut -f2 -d' ')
-
-VERSION=$(LAST_VERSION)-CVS-$(CVS_REVISION)
-
-FLAGS = -I.. -L../corda -g -DVERSION=\"$(VERSION)\"
+FLAGS = -I.. -L../corda -g 
 
 PROGRAM = edison
 
@@ -26,3 +22,5 @@ clean:
 	rm -f *.o *~ $(PROGRAM)
 
 clear: clean
+
+
