@@ -14,6 +14,7 @@ class MyEditor: public wxTextCtrl {
   void Set(const wxString &val);
   bool InsertHeader();
   bool InsertStanza();
+  void OnChar(wxKeyEvent&);
  private:
   DECLARE_EVENT_TABLE()
 };

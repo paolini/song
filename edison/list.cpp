@@ -87,7 +87,7 @@ void FileItem::compile() const {
   if (compiled_valid) return;
   std::cerr<<"compile() filename='"<<filename<<"' content='"<<content<<"'\n";
   compiled.clear();
-  try {
+  //  try {
   Plugin* reader=Plugin::Construct(plug.c_str());
     if (!reader) {
       throw std::runtime_error("cannot find '"+std::string(plug)+"' reader");
@@ -103,21 +103,6 @@ void FileItem::compile() const {
       // wxMessageBox("No song in file","warning", wxOK|wxICON_INFORMATION);
       std::cerr<<"no song in file\n";
     }
-   } catch(PlugError &e) {
-     compiled_valid=true;
-     compiled.clear();
-     wxString message;
-     message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
-  
-     wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
-     //    cerr<<e.what()<<"\n";
-     //    Close(TRUE);
-     //    reset();
-   } catch (std::runtime_error &e) {
-     compiled_valid=true;
-     compiled.clear();
-     wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
-   }
 };
 
 const Song *FileItem::getSong(unsigned int n) const {

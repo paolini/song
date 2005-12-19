@@ -60,11 +60,15 @@ void MyCanvas::OnDraw(wxDC &dc)
   } catch (PlugError &e) {
     wxString message;
     message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
+    std::cerr<<"Canvas: error caught\n";
+    frame->tabs->SetSelection(1); // seleziona l'editor
+    frame->editor->
+      SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
     wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
     frame->editor->SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
-  };
-  //  PrintSongs(frame->songlist,media,frame->cursor);
-  frame->SetStatusText("drawing... done!");
+  } catch (std::runtime_error &e) {
+    wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
+  }
+//  PrintSongs(frame->songlist,media,frame->cursor);
+frame->SetStatusText("drawing... done!");
 }
-
-
