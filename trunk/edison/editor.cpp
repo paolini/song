@@ -5,6 +5,7 @@
 
 BEGIN_EVENT_TABLE(MyEditor, wxTextCtrl)
   EVT_TEXT(-1,MyEditor::OnText)
+  EVT_CHAR(MyEditor::OnChar)
 END_EVENT_TABLE()
 
 MyEditor::MyEditor(wxWindow *parent, MyFrame *f, const wxString &content)
@@ -16,13 +17,14 @@ MyEditor::MyEditor(wxWindow *parent, MyFrame *f, const wxString &content)
  frame=f;
 };
 
-void MyEditor::OnText(wxCommandEvent& WXUNUSED(event)) {
+void MyEditor::OnText(wxCommandEvent& event) {
+  //  std::cerr<<"OnText: "<<event.GetString()<<" "<<event.GetInt()<<"\n";
   OnTextVoid();
 }
 
 void MyEditor::OnTextVoid() {
   if (freeze) {std::cerr<<"OnText freezed \n";return;}
-  std::cerr<<"OnText: content="<<GetValue().size()<<"\n";
+  std::cerr<<"OnTextVoid: content="<<GetValue().size()<<"\n";
   //  std::cerr<<"ONText\n";
   /*  frame->modified=true;
       frame->saved=false;*/
@@ -372,6 +374,19 @@ static wxString string2sng(const wxString &s) {
 return result;
 }
 
+void MyEditor::OnChar(wxKeyEvent& event) {
+  int c=event.GetKeyCode();
+  std::cerr<<"OnChar() c="<<c<<"\n";
+  if (c<128 || c>256) 
+    event.Skip();
+  else {
+    wxString s;
+    s+=c;
+    WriteText(string2sng(s));
+    OnTextVoid();
+  }
+};
+
 bool MyEditor::InsertHeader() {
   std::cerr<<"MyEditor::InsertHeader\n";
   wxDialog* frame=new wxDialog(this,-1,wxString("Insert Song Headers"));
@@ -410,6 +425,7 @@ bool MyEditor::InsertHeader() {
     return true;
   } 
   frame->Destroy();
+  SetFocus();
   return false;
 };
 
@@ -449,5 +465,6 @@ bool MyEditor::InsertStanza() {
     return true;
   };
   frame->Destroy();
+  SetFocus();
   return false;
 };

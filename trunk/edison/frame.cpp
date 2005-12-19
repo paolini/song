@@ -16,10 +16,6 @@
 
 #include "version.h"
 
-#ifndef VERSION
-#define VERSION "testing"
-#endif
-
 enum {
     ID_Quit = 1,
     ID_Load, 
@@ -33,6 +29,8 @@ enum {
     ID_New,
     ID_InsertHeader,
     ID_InsertStanza,
+    ID_InsertStrum,
+    ID_InsertNotes
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -47,6 +45,8 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_New, MyFrame::OnNew)
   EVT_MENU(ID_InsertHeader, MyFrame::OnInsert)
   EVT_MENU(ID_InsertStanza, MyFrame::OnInsert)
+  EVT_MENU(ID_InsertStrum, MyFrame::OnInsert)
+  EVT_MENU(ID_InsertNotes, MyFrame::OnInsert)
 END_EVENT_TABLE()
 
 
@@ -74,6 +74,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   
   menuInsert->Append(ID_InsertHeader,"Insert Song &Header");
   menuInsert->Append(ID_InsertStanza,"Insert Song &Stanza");
+  menuInsert->Append(ID_InsertStrum,"Insert Stru&mental");
+  menuInsert->Append(ID_InsertNotes,"Insert &Notes");
 
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(menuFile, "&File" );
@@ -107,6 +109,7 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
   if (AskSave()) return;
   Close(TRUE);
+  exit(0);
 }
 
 void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -159,6 +162,7 @@ void MyFrame::OnNew(wxCommandEvent &event) {
   list->Load("");
   if (editor->InsertHeader())
     editor->InsertStanza();
+  canvas->Refresh();
 };
 
 void MyFrame::OnInsert(wxCommandEvent &event) {
@@ -169,8 +173,17 @@ void MyFrame::OnInsert(wxCommandEvent &event) {
   case ID_InsertStanza:
     editor->InsertStanza();
     break;
+  case ID_InsertStrum:
+    editor->WriteText("\\m{}");
+    editor->SetInsertionPoint(editor->GetInsertionPoint()-1);
+    break;
+  case ID_InsertNotes:
+    editor->WriteText("\\n{}");
+    editor->SetInsertionPoint(editor->GetInsertionPoint()-1);
+    break;
   default: assert(false);
   }
+  canvas->Refresh();
 };
 
 void MyFrame::resetTitle() {
