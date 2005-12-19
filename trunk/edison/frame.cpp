@@ -14,6 +14,8 @@
 #include <sstream>
 #include <cassert>
 
+#include "version.h"
+
 #ifndef VERSION
 #define VERSION "testing"
 #endif
@@ -109,8 +111,10 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxMessageBox( "This is edison song editor (manu-fatto) 2005 -- version " VERSION,
-                  "About Edison", wxOK | wxICON_INFORMATION );
+  wxMessageBox(wxString("This is edison song editor "
+			"(manu-fatto) 2005 -- VER. edison-" 
+			VERSION " [")+SongVersion().c_str()+"]",
+	       "About Edison", wxOK | wxICON_INFORMATION );
 }
 
 void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {

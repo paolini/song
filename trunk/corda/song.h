@@ -5,8 +5,12 @@
 #include <string>
 #include <vector>
 
+std::string SongVersion();
+
 //using namespace std;
 // ALL STRINGS ENCODED IN UTF8
+
+
 
 class Song;
 class Head;

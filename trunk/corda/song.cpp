@@ -4,8 +4,13 @@
 #include <iostream>
 
 #include "song.h"
+#include "version.h"
 
 using namespace std;
+
+string SongVersion() {
+  return "corda-" VERSION;
+};
 
 void SongBase::setParent(SongBase *Parent) {
   assert(parent==0);
