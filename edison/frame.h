@@ -1,6 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 #include "corda/song.h"
+#include "corda/plug.h"
 #include "list.h"
 
 /*
@@ -28,6 +29,8 @@ class MyList;
 class MyFrame: public wxFrame
 {
 public:
+  PlugoutOptions opt;
+
   MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
 
   //  void Load(const wxString &fileName);

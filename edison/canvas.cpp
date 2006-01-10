@@ -48,12 +48,12 @@ void MyCanvas::OnDraw(wxDC &dc)
   frame->SetStatusText("drawing... ");
   wxMedia media(dc,h);
 
-  FileItem *f=frame->list->CurrentFile();
+  Item *f=frame->list->CurrentItem();
   try {
     if (f) {
       const Song *song=f->getSong();
       if (song)
-	PrintSong(song,media,frame->cursor);
+	PrintSong(song,media,&opt,frame->cursor);
     }
     else
       std::cerr<<"OnDraw: empty song\n";

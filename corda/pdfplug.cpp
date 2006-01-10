@@ -23,7 +23,7 @@ public:
 		     const PlugoutOptions &opt) {
     try {
       PdfMedia m(filename,opt.start_page);
-      PrintSongs(list,m);
+      PrintSongs(list,m,&opt);
     } catch (PdfException &e) {
       throw runtime_error((string("PDF (libharu): ")+e.what()).c_str());
     }

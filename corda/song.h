@@ -190,7 +190,7 @@ protected:
 };
 
 class Note {
-private:
+public:
   static const char *it_names[];
 public:
   int note; // 0...6 or -1 if empty
@@ -206,10 +206,10 @@ public:
   Note base;
   Note bass;
   std::string modifier; // -7dim ...
- public:
+public:
   Chord(const std::string &s);
-  operator std::string() const;
   virtual const Chord* chordp() const {return this;};
+  operator std::string() const; // utilizzare PlugoutOptions::convert
 };
 
 class Tab: public PhraseItem {

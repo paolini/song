@@ -111,9 +111,20 @@ const Song *FileItem::getSong(unsigned int n) const {
   return compiled[n];
 };
 
+int FileItem::nSongs() const {
+  compile();
+  return compiled.size();
+};
+
 const SongList &FileItem::getList() const {
   compile();
   return compiled;
+};
+
+wxString Item::Title() const {
+  const Song* song=getSong();
+  if (song && song->head()) return wxString(iso(song->head()->title).c_str());
+  return wxString("--no title--");
 };
 
 enum {MYLIST=1010};
@@ -133,26 +144,40 @@ MyList::MyList(wxWindow *parent, MyFrame* fr):
   frame=fr;
 };
 
+void MyList::Update() {
+  Clear();
+  for (size_t i=0;i<songs.size();++i) {
+    wxString name;
+    const Song *song=songs[i].getSong();
+    if (song==0) { // la canzone non c'e` piu`!
+      songs.erase(songs.begin()+i);
+      --i;
+      continue;
+    }
+    name=songs[i].file->FileName();
+    if (name==wxString()) name="-- new file --";
+    name+=": ";
+    name+=songs[i].Title();
+    Append(name);
+  }
+  frame->resetTitle();
+  frame->editor->Set(songs[n].file->getContent());
+  frame->editor->Enable(true);
+  frame->Refresh();
+};
+
 void MyList::Load(const wxString &filename) {
   FileItem *it=new FileItem;
   it->Load(filename);
-  songs.push_back(it);
+  for (int i=0;i<it->nSongs();++i)
+    songs.push_back(Item(it,i));
   //SetItemState(n,0,wxLIST_STATE_SELECTED);
   SetSelection(n,0);
   n=songs.size()-1;
-  if (songs[n].file->FileName()!=wxString())
-    Append(songs[n].file->FileName());
-  else
-    Append("** new file **");
-		 /*+": "+songs[n]->getSong()->head()->title*/
-  
   //  ProcessEvent(wxListEvent(wxEVT_LIST_ITEM_SELECTED,n));
   //  SetItemState(n,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
   SetSelection(n,1);
-  frame->editor->Set(songs[n].file->getContent());
-  frame->editor->Enable(true);
-  frame->resetTitle();
-  frame->Refresh();
+  Update();
 };
 
 void MyList::Save() {
@@ -160,7 +185,7 @@ void MyList::Save() {
     throw std::runtime_error("no filename specified");
   }
   songs[n].file->Save();
-  frame->resetTitle();
+  Update();
 };
 
 void MyList::SaveAs(const wxString &name) {
@@ -168,13 +193,17 @@ void MyList::SaveAs(const wxString &name) {
   if (songs.size()==0) throw std::runtime_error("no file");
   assert(n<songs.size());
   songs[n].file->SaveAs(name);
-  SetString(n,name);
-  frame->resetTitle();
+  Update();
 };
 
 FileItem *MyList::CurrentFile() {
   if (songs.size()==0) return 0;
   return songs[n].file;
+};
+
+Item *MyList::CurrentItem() {
+  if (songs.size()==0) return 0;
+  return &songs[n];
 };
 
 void MyList::OnSelect(wxCommandEvent &event) {

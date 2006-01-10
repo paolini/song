@@ -8,6 +8,7 @@
 #include "layout.h"
 #include "print.h"
 #include "debug.h"
+#include "plug.h"
 
 typedef unsigned int uint;
 
@@ -17,7 +18,9 @@ bool myisspace(int x) {
   return (x & 128) == 0 && isspace(x); 
 }
 
-void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8, 
+void PutString(SequenceBox *verse, 
+	       SequenceBox **word, 
+	       const string &utf8, 
 	       Media::font f) {
   const string &s=utf8;
   size_t i;
@@ -40,12 +43,21 @@ void PutString(SequenceBox *verse, SequenceBox **word, const string &utf8,
   }
 }
 
-void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseList *p,Media::font f, int level, const Cursor*);
+void ParseNodeList(SequenceBox *verse, 
+		   SequenceBox **word, 
+		   const PhraseList *p,
+		   Media::font f, 
+		   int level, 
+		   const Cursor*,
+		   const PlugoutOptions *);
 
-void ParseNodeItem(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseItem *item, Media::font f, int level,
-                   const Cursor *cursor) {
+void ParseNodeItem(SequenceBox *verse, 
+		   SequenceBox **word, 
+		   const PhraseItem *item, 
+		   Media::font f, 
+		   int level,
+                   const Cursor *cursor,
+		   const PlugoutOptions *options) {
 
   union {
     const Word *w;
@@ -74,9 +86,9 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
   p.c=item->chordp();
   if (p.c) {
     if (level==0) {
-      (*word)->push_back(new ChordBox(string(*(p.c))));
+      (*word)->push_back(new ChordBox(options->convert(*(p.c))));
     } else {
-      PutString(verse, word, string(*(p.c)), Media::CHORD);
+      PutString(verse, word, options->convert(*(p.c)), Media::CHORD);
       PutString(verse, word, string(" "), Media::NORMAL);
     }
     return;
@@ -87,7 +99,7 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
    p.m=item->modifierp();
   if (p.m) {
     if (p.m->attribute==Modifier::STRUM) {
-      ParseNodeList(verse,word,p.m->child,f,level+1,cursor);
+      ParseNodeList(verse,word,p.m->child,f,level+1,cursor,options);
     }
     else if (p.m->attribute==Modifier::NOTES) {
       int l=(*word)->size();
@@ -95,7 +107,7 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
       
       PutString(verse, word, "[", f);
       
-      ParseNodeList(verse,word,p.m->child, f, level+1,cursor);
+      ParseNodeList(verse,word,p.m->child, f, level+1,cursor,options);
       if (*word == save && (*word)->size()==l+1) {
 	(*word)->free(l);
       } else
@@ -117,16 +129,20 @@ void ParseNodeItem(SequenceBox *verse, SequenceBox **word,
   assert(false);
 }
 
-void ParseNodeList(SequenceBox *verse, SequenceBox **word, 
-		   const PhraseList *p,Media::font f, int level,
-                   const Cursor *cursor) {
+void ParseNodeList(SequenceBox *verse, 
+		   SequenceBox **word, 
+		   const PhraseList *p,
+		   Media::font f, 
+		   int level,
+                   const Cursor *cursor,
+		   const PlugoutOptions *options) {
   size_t i;
   for (i=0;i<p->size();++i)
-    ParseNodeItem(verse,word,(*p)[i],f,level,cursor);
+    ParseNodeItem(verse,word,(*p)[i],f,level,cursor,options);
 }
 
 Box *VerseBox(Media &m, const PhraseList *p, Media::font f,
-               const Cursor *cursor) {
+               const Cursor *cursor, const PlugoutOptions *options) {
   assert(p!=0);
   SequenceBox *verse=new SequenceBox(true, true);
   verse->space=m.spaceWidth(f);
@@ -134,7 +150,7 @@ Box *VerseBox(Media &m, const PhraseList *p, Media::font f,
   verse->halign=-1;
   SequenceBox *word=new SequenceBox(true);
 
-  ParseNodeList(verse,&word,p, f,0,cursor);
+  ParseNodeList(verse,&word,p, f,0,cursor,options);
 
   if (word->size()) verse->push_back(word);
   else delete word;
@@ -143,7 +159,8 @@ Box *VerseBox(Media &m, const PhraseList *p, Media::font f,
   return ret;
 };
 
-Box* StanzaBox(Media &m, const Stanza* p, const Cursor *cursor) {
+Box* StanzaBox(Media &m, const Stanza* p, const Cursor *cursor, 
+	       const PlugoutOptions *options) {
   Media::font f=Media::NORMAL;
   assert(p!=0);
   SequenceBox *stanza=new SequenceBox(false);
@@ -155,7 +172,7 @@ Box* StanzaBox(Media &m, const Stanza* p, const Cursor *cursor) {
     f=Media::TAB;
   size_t i;
   for (i=0;i<p->size();++i) {
-    stanza->push_back(VerseBox(m,(*p)[i],f,cursor));
+    stanza->push_back(VerseBox(m,(*p)[i],f,cursor,options));
   }
   Box *r=stanza;
   if (p->type==Stanza::SPOKEN) { 
@@ -165,7 +182,8 @@ Box* StanzaBox(Media &m, const Stanza* p, const Cursor *cursor) {
   return /*new FrameBox*/ (r);
 };
 
-Box* BodyBox(Media &m, const Body* p, const Cursor *cursor) {
+Box* BodyBox(Media &m, const Body* p, const Cursor *cursor, 
+	     const PlugoutOptions *options) {
   assert(p!=0);
   SequenceBox *body=new SequenceBox(false,true,true);
   body->space=m.stanza_sep;
@@ -173,7 +191,7 @@ Box* BodyBox(Media &m, const Body* p, const Cursor *cursor) {
   body->test=body_debug;
   size_t i;
   for (i=0;i<p->size();++i) {
-    body->push_back(StanzaBox(m, (*p)[i],cursor));
+    body->push_back(StanzaBox(m, (*p)[i],cursor,options));
   }
   CompressBox *ret=new CompressBox(body,false);
   ret->halign=-1;
@@ -224,7 +242,8 @@ Box* HeadBox(Media &m, const Head* p) {
   return head;
 };
 
-Box* SongBox(Media &m, const Song* p, const Cursor *cursor=0) {
+Box* SongBox(Media &m, const Song* p, const Cursor *cursor,
+	     const PlugoutOptions *options) {
   //  assert(!strcmp((char *)(p->name), "song"));
   //  cerr<<"songbox("<<p->head->title<<")\n";
   assert(p);
@@ -238,7 +257,7 @@ Box* SongBox(Media &m, const Song* p, const Cursor *cursor=0) {
   Box *head=0;
 
   if (p->head()) head=HeadBox(m,p->head());
-  if (p->body()) body=BodyBox(m,p->body(),cursor);
+  if (p->body()) body=BodyBox(m,p->body(),cursor,options);
 
   if (head) song->push_back(head);
   if (body) song->push_back(body);
@@ -246,8 +265,11 @@ Box* SongBox(Media &m, const Song* p, const Cursor *cursor=0) {
   return song;
 };
 
-void PrintSong(const Song *song, Media &m, const Cursor *cur) {
-  Box *box=SongBox(m,song,cur);
+void PrintSong(const Song *song, 
+	       Media &m, 
+	       const PlugoutOptions *options,
+	       const Cursor *cur) {
+  Box *box=SongBox(m,song,cur,options);
   DimNBad dim=box->write(Dim(m.page_width(),m.page_height()));
 };
 
@@ -308,13 +330,15 @@ static const char *trylayout[]={
   "-|ab|cd","|-ab-cd",
   0};
 
-void PrintSongs(const SongArray &songlist,Media &m, const Cursor *cursor) {
+void PrintSongs(const SongArray &songlist,Media &m, 
+		const PlugoutOptions *options,
+		const Cursor *cursor) {
   //  std::cerr<<"PrintSongs "<<songlist.size()<<"\n";
 
   vector<Box *> list;
   int count=0;
   for(unsigned int i=0;i<songlist.size();++i) {
-    list.push_back(SongBox(m,songlist[i],cursor));
+    list.push_back(SongBox(m,songlist[i],cursor,options));
   }
   int page=0;
   

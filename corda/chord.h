@@ -6,7 +6,7 @@ class chord {
   enum {OFF=0,It,IT,it,EN} mode;
   int tone;
  public:
-  void convert(xmlNodePtr song);
+  void convert(Song *s);
   chord() {
     mode=It;
     tone=0;

@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
+#include <cstring>
 
 //#include "print.h"
 
@@ -9,7 +10,7 @@
 #include "plug.h"
 // #include <libxml/parser.h>
 #include "song.h"
-// #include "chord.h"
+//#include "chord.h"
 
 using namespace std;
 
@@ -74,10 +75,45 @@ int main(int argc, char *argv[]) {
 	if (n>0) opt.height=n;
 	continue;
       }
-      OPT0("-help","print this help lines") {cout<<usage;exit(0);}
       OPT1("-pag","<page> starting page number") {
 	++i;
 	opt.start_page=atoi(argv[i]);
+	continue;
+      }
+      OPT1("-chord","[OFF,IT,It,EN] chord mode (DO, Do, C)") {
+	++i;
+	if (!strcasecmp(argv[i],"OFF")) 
+	  opt.chord_mode=PlugoutOptions::CHORD_OFF;
+	else if (!strcmp(argv[i],"IT")) 
+	  opt.chord_mode=PlugoutOptions::CHORD_IT;
+	else if (!strcmp(argv[i],"It")) 
+	  opt.chord_mode=PlugoutOptions::CHORD_It;
+	else if (!strcasecmp(argv[i],"EN")) 
+	  opt.chord_mode=PlugoutOptions::CHORD_EN;
+	else
+	  cerr<<"Unknown chord mode '"<<argv[i]<<"'\n";
+	continue;
+      }
+      OPT1("-bass","[OFF,SLASH,BRACE] bass mode (C, C/G, C(G))") {
+	++i;
+	if (!strcasecmp(argv[i],"OFF"))
+	  opt.bass_mode=PlugoutOptions::BASS_OFF;
+	else if (!strcasecmp(argv[i],"SLASH"))
+	  opt.bass_mode=PlugoutOptions::BASS_SLASH;
+	else if (!strcasecmp(argv[i],"BRACE"))
+	  opt.bass_mode=PlugoutOptions::BASS_BRACE;
+	else
+	  cerr<<"Unknown bass mode '"<<argv[i]<<"'\n";
+	continue;
+      }
+      OPT1("-minor","[DASH,M] minor chord mode (C-, Cm)") {
+	++i;
+	if (!strcasecmp(argv[i],"DASH"))
+	  opt.minor_mode=PlugoutOptions::MINOR_DASH;
+	else if (!strcasecmp(argv[i],"M"))
+	  opt.minor_mode=PlugoutOptions::MINOR_M;
+	else
+	  cerr<<"Unknown minor mode '"<<argv[i]<<"'\n";
 	continue;
       }
       OPT0("-sng","default to sng format (default)") {
@@ -102,6 +138,12 @@ int main(int argc, char *argv[]) {
 	}
 	continue;
       } 
+      // -help dev'essere l'ultima opzione, altrimenti
+      // le opzioni successive non modificano 'usage'
+      OPT0("-help","print this help lines") {
+	cout<<usage;
+	exit(0);
+      }
       if (argv[i][0]=='-') {
 	cerr<<"opzione sconosciuta "<<argv[i]<<"\n";
 	cout<<usage;
@@ -132,14 +174,12 @@ int main(int argc, char *argv[]) {
     }
     
     // convert chords
-    
-    /* !!!!!!!!!!!!1
-
+    /*    
     for (int i=0;i<song_list.size();++i) {
       chord_mode.convert(song_list[i]);
     };
-    */ 
-    
+    */
+
     // print all songs in song_list
     
     {
