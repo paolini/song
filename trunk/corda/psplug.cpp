@@ -19,7 +19,7 @@ public:
   virtual void Write(std::ostream &out, const SongArray &list,
 		     const PlugoutOptions &opt) {
     PsMedia m(out,opt.start_page);
-    PrintSongs(list,m);
+    PrintSongs(list,m,&opt);
   };
 
   PsPlugout(): Plugout("Postscript","ps","Adobe Postscript document") {};

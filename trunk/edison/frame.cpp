@@ -122,7 +122,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
   if (AskSave()) return;
-  wxFileDialog dia(this,"Choose file",
+  wxFileDialog dia(this,"Load file",
 		   "","","SNG files (*.sng)|*.sng|ChordPro files (*.cho)|*.cho",wxOPEN|wxCHANGE_DIR);
   if (dia.ShowModal()==wxID_OK) {
     SetStatusText("Loading file: "+dia.GetPath());
@@ -152,7 +152,7 @@ void MyFrame::OnExport(wxCommandEvent &event) {
   case ID_TXT: plug="txt"; break;
   default: assert(false);
   };
-  wxFileDialog dia(this,"Choose export file","","","*."+plug);
+  wxFileDialog dia(this,"Export to file","","","*."+plug);
   if (dia.ShowModal()==wxID_OK) {
     list->Export(dia.GetPath(),plug);
   };

@@ -6,6 +6,7 @@ class MyFrame;
 class MyCanvas: public wxScrolledWindow {
   MyFrame *frame;
 public:
+  PlugoutOptions opt;
   MyCanvas(wxWindow *parent, MyFrame *);
   
   //void OnPaint(wxPaintEvent &event);

@@ -69,3 +69,68 @@ Plugout *Plugout::Construct(string ext) {
   if (f) return f();
   else return 0;
 };
+
+string PlugoutOptions::convert(const Chord &chord) const {
+  string r;
+  r+=convert(chord.base);
+  string mod=chord.modifier;
+  if (minor_mode==MINOR_DASH) {
+    for (size_t i=0;i<mod.size();++i) {
+      if (mod[i]=='m') mod[i]='-';
+      else if (mod[i]=='M') mod[i]='+';
+    }
+  } else if (minor_mode==MINOR_M) {
+    for (size_t i=0;i<mod.size();++i) {
+      if (mod[i]=='-') mod[i]='m';
+      else if (mod[i]=='+') mod[i]='M';
+    }
+  }
+  r+=mod;
+  if (chord.bass.note!=-1) { // c'e' il basso
+    switch(bass_mode) {
+    case BASS_OFF: 
+      break;
+    case BASS_SLASH:
+      r+='/';
+      r+=convert(chord.bass);
+      break;
+    case BASS_BRACE:
+      r+='(';
+      r+=convert(chord.bass);
+      r+=')';
+      break;
+    }
+  }
+  return r;
+};
+
+string PlugoutOptions::convert(const Note &note) const {
+  string r;
+  if (note.note<0) return r;
+  switch(chord_mode) {
+  case CHORD_OFF: 
+    break;
+  case CHORD_It:
+    r+=Note::it_names[note.note];
+    break;
+  case CHORD_IT:
+    r+=Note::it_names[note.note];
+    for (size_t i=1;i<r.size();++i) r[i]=toupper(r[i]);
+    break;
+  case CHORD_EN:
+    r+='A'+note.note;
+    break;
+  }
+  int a=note.aug;
+  while (a>0) {
+    r+='#';
+    a--;
+    goto fine;
+  }
+  while (a<0) {
+    r+='b';
+    a++;
+  }
+ fine:
+  return r;
+};

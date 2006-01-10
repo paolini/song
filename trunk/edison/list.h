@@ -26,17 +26,19 @@ class FileItem {
   void Load(const wxString &filename);
   void Save();
   void SaveAs(const wxString &filename);
-  const Song *getSong(unsigned int n=0) const;
+  const Song *getSong(unsigned int n) const;
+  int nSongs() const;
   const SongList &getList() const;
 };
 
 class Item {
- private:
-  int n;
+ public:
+  int n; //n-esima canzone del file
  public:
   FileItem *file;
   Item(FileItem *_file, int _n=0): n(_n), file(_file){};
-  const Song *getSong() {return file->getSong(n);};
+  const Song *getSong() const {return file->getSong(n);};
+  wxString Title() const;
 };
 
 class MyList: public wxListBox /* wxListCtrl*/ {
@@ -45,12 +47,14 @@ class MyList: public wxListBox /* wxListCtrl*/ {
   std::vector<Item> songs;
   unsigned int n;
  public:
+  void Update();
   void Load(const wxString &filename);
   void Save();
   void SaveAs(const wxString &filename);
   MyList(wxWindow *parent, MyFrame *frame);
   const Song *getSong(unsigned int n=0) {return songs[n].getSong();};
   FileItem *CurrentFile();
+  Item *CurrentItem();
   void Export(const wxString &filename, const wxString &plug);
 
   void OnSelect(wxCommandEvent &event);

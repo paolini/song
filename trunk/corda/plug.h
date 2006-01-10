@@ -65,14 +65,21 @@ public:
 
 class PlugoutOptions {
  public:
+  enum {CHORD_OFF=0, CHORD_It, CHORD_IT, CHORD_EN} chord_mode;
+  enum {BASS_OFF=0, BASS_SLASH, BASS_BRACE} bass_mode;
+  enum {MINOR_DASH=0, MINOR_M} minor_mode;
   int width, height;
   int start_page;
-  PlugoutOptions() 
-    {
-      width=79;
-      height=250;
-      start_page=1;
-    };
+  PlugoutOptions() {
+    width=79;
+    height=250;
+    start_page=1;
+    chord_mode=CHORD_EN;
+    bass_mode=BASS_SLASH;
+    minor_mode=MINOR_M;
+  };
+  std::string convert(const Chord &chord) const;
+  std::string convert(const Note &note) const;
 };
 
 class Plugout: public Plug {

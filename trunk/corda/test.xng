@@ -1,69 +1,86 @@
-<?xml version="1.0"?>
-<!DOCTYPE song PUBLIC "http://www.math.unifi.it/paolini/src/song/xng-0.1.dtd" "">
-<song><head>
+<?xml version='1.0' encoding='utf8' ?>
+<?xml-stylesheet type='text/xsl' href='songml.xsl'?><!DOCTYPE song SYSTEM 'songml.dtd' >
+<song xmlns='http://sourceforge.net/projects/songml'>
+<description>
 <title>La sposa rubata</title>
-<author>Branduardi, Angelo</author></head>
-<body>
-<stanza id="A">
-<v><strum><c>RE- DO LA- FA DO RE- </c></strum></v></stanza>
-<stanza id="B">
-<v><c>RE-</c>Da tre notti <c>RE-</c>non <c>DO</c>ri<c>LA-</c>poso</v>
-<v><c>FA</c>resto ad ascol<c>DO</c>ta<c>LA-</c>re:</v>
-<v><c>RE-</c>&#xE8; la vipe<c>RE-</c>ra <c>DO</c>che <c>FA</c>soffia,</v>
-<v><c>FA</c>soffia <c>DO</c>presso <c>RE-</c>l'acqua.</v></stanza>
-<stanza copy="B">
-<v>Ho composto un canto nuovo</v>
-<v>vieni ad ascoltare</v>
-<v>della sposa che al banchetto</v>
-<v>mai pi&#xF9; ritorno fece.</v></stanza>
-<stanza type="refrain" id="C">
-<v><c>FA</c>C'era un invi<c>DO</c>tato in pi&#xF9;</v>
-<v><c>RE-</c>che la rimi<c>LA-</c>rava:</v>
-<v>"<c>SIb</c>alla mia gente vor<c>LA-</c>rei mostrare</v>
-<v>il tuo <c>SIb</c>abi<c>DO</c>to da <c>RE-</c>sposa".</v></stanza>
-<stanza type="refrain" copy="C">
-<v>Lei ingenua lo segu&#xEC;</v>
-<v>certa di tornare,</v>
-<v>fino a notte attesa,</v>
-<v>lei non ritorn&#xF2;</v></stanza>
-<stanza copy="B">
-<v>Se ne andava in piena notte</v>
-<v>da solo un suonatore,</v>
-<v>ma davanti gli si par&#xF2;</v>
-<v>il signore sconosciuto:</v></stanza>
-<stanza copy="B">
-<v>"forse tu cerchi la sposa</v>
-<v>che and&#xF2; perduta,</v>
-<v>se hai cuore di seguirmi</v>
-<v>da lei ti condurr&#xF2;".</v></stanza>
-<stanza type="refrain" copy="C">
-<v>E una barca lo port&#xF2;</v>
-<v>lungo un'acqua scura,</v>
-<v>ritrov&#xF2; la sposa</v>
-<v>e aveva vesti d'oro</v></stanza>
-<stanza type="refrain" copy="C">
-<v>"il mio anello ti dar&#xF2;</v>
-<v>portalo al mio uomo,</v>
-<v>qui non soffro pi&#xF9;</v>
-<v>n&#xE9; male n&#xE9; desiderio".</v></stanza>
-<stanza>
-<v><strum><c>RE- DO LA- FA DO RE- </c></strum></v></stanza>
-<stanza copy="B">
-<v>Il suonatore si gir&#xF2;,</v>
-<v>fece un solo passo</v>
-<v>poi gridare la sent&#xEC;</v>
-<v>nell'acqua che la soffocava.</v></stanza>
-<stanza type="refrain" copy="C">
-<v>Come luce lei brillava</v>
-<v>quando sposa and&#xF2;,</v>
-<v>dove mai l'avr&#xE0; portata</v>
-<v>il signore che la rub&#xF2;?</v></stanza>
-<stanza copy="B">
-<v>Da tre notti non riposo</v>
-<v>resto ad ascoltare:</v>
-<v>&#xC8; la vipera che soffia,</v>
-<v>soffia presso l'acqua.</v></stanza>
-<stanza>
-<v><strum><c>RE- DO LA- FA DO RE-</c></strum></v>
-<v><strum><c>RE</c></strum></v></stanza></body>
+<artist>Angelo <!-- name-->Branduardi<!-- /name--></artist>
+</description>
+<lyrics>
+<stanza id='0' label='Strophe' phrase='V'>
+<line><!-- strum--><chord is='Dm' /><chord is='C' /><chord is='Am' /><chord is='F' /><chord is='C' /><chord is='Dm' /><!-- /strum--></line>
+</stanza>
+<stanza id='1' label='Strophe' phrase='V'>
+<line><chord is='Dm' />Da tre notti <chord is='Dm' />non <chord is='C' />ri<chord is='Am' />poso</line>
+<line><chord is='F' />resto ad ascol<chord is='C' />ta<chord is='Am' />re:</line>
+<line><chord is='Dm' />è la vipe<chord is='Dm' />ra <chord is='C' />che <chord is='F' />soffia,</line>
+<line><chord is='F' />soffia <chord is='C' />presso <chord is='Dm' />l'acqua.</line>
+</stanza>
+<stanza id='2' label='Strophe' phrase='V'>
+<line>Ho composto un canto nuovo</line>
+<line>vieni ad ascoltare</line>
+<line>della sposa che al banchetto</line>
+<line>mai più ritorno fece.</line>
+</stanza>
+<stanza id='3' label='Refrain' phrase='C'>
+<line><chord is='F' />C'era un invi<chord is='C' />tato in più</line>
+<line><chord is='Dm' />che la rimi<chord is='Am' />rava:</line>
+<line>"<chord is='Bb' />alla mia gente vor<chord is='Am' />rei mostrare</line>
+<line>il tuo <chord is='Bb' />abi<chord is='C' />to da <chord is='Dm' />sposa".</line>
+</stanza>
+<stanza id='4' label='Refrain' phrase='C'>
+<line>Lei ingenua lo seguì</line>
+<line>certa di tornare,</line>
+<line>fino a notte attesa,</line>
+<line>lei non ritornò</line>
+</stanza>
+<stanza id='5' label='Strophe' phrase='V'>
+<line>Se ne andava in piena notte</line>
+<line>da solo un suonatore,</line>
+<line>ma davanti gli si parò</line>
+<line>il signore sconosciuto:</line>
+</stanza>
+<stanza id='6' label='Strophe' phrase='V'>
+<line>"forse tu cerchi la sposa</line>
+<line>che andò perduta,</line>
+<line>se hai cuore di seguirmi</line>
+<line>da lei ti condurrò".</line>
+</stanza>
+<stanza id='7' label='Refrain' phrase='C'>
+<line>E una barca lo portò</line>
+<line>lungo un'acqua scura,</line>
+<line>ritrovò la sposa</line>
+<line>e aveva vesti d'oro</line>
+</stanza>
+<stanza id='8' label='Refrain' phrase='C'>
+<line>"il mio anello ti darò</line>
+<line>portalo al mio uomo,</line>
+<line>qui non soffro più</line>
+<line>né male né desiderio".</line>
+</stanza>
+<stanza id='9' label='Strophe' phrase='V'>
+<line><!-- strum--><chord is='Dm' /><chord is='C' /><chord is='Am' /><chord is='F' /><chord is='C' /><chord is='Dm' /><!-- /strum--></line>
+</stanza>
+<stanza id='10' label='Strophe' phrase='V'>
+<line>Il suonatore si girò,</line>
+<line>fece un solo passo</line>
+<line>poi gridare la sentì</line>
+<line>nell'acqua che la soffocava.</line>
+</stanza>
+<stanza id='11' label='Refrain' phrase='C'>
+<line>Come luce lei brillava</line>
+<line>quando sposa andò,</line>
+<line>dove mai l'avrà portata</line>
+<line>il signore che la rubò?</line>
+</stanza>
+<stanza id='12' label='Strophe' phrase='V'>
+<line>Da tre notti non riposo</line>
+<line>resto ad ascoltare:</line>
+<line>È la vipera che soffia,</line>
+<line>soffia presso l'acqua.</line>
+</stanza>
+<stanza id='13' label='Strophe' phrase='V'>
+<line><!-- strum--><chord is='Dm' /><chord is='C' /><chord is='Am' /><chord is='F' /><chord is='C' /><chord is='Dm' /><!-- /strum--></line>
+<line><!-- strum--><chord is='D' /><!-- /strum--></line>
+</stanza>
+</lyrics>
 </song>
