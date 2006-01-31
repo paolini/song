@@ -14,16 +14,14 @@ class PlugError: public std::runtime_error {
   unsigned int line;
   unsigned int col;
   std::string filename;
-  PlugError(const std::string &mesg,
-	    int _line, int _col, 
+  PlugError(const std::string &mesg=std::string(),
+	    int _line=0, int _col=0, 
 	    const std::string &_filename=std::string()): 
     runtime_error(mesg),
     line(_line),
     col(_col),
     filename(_filename)
     {};
-  PlugError(const std::string &mesg):
-    runtime_error(mesg) {};
   virtual ~PlugError() throw () {};
 };
 

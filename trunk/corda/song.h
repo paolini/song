@@ -47,6 +47,7 @@ class SongVector: public SongBase{
   void clear() {
     for (size_t i=0;i<list.size();++i) {
       delete list[i];list[i]=0;}
+    list.clear();
   }; //cancella tutto il contenuto
   virtual ~SongVector() {clear();};
   const T *operator[](size_t i) const {return list[i];}; 
