@@ -30,7 +30,9 @@ enum {
     ID_InsertHeader,
     ID_InsertStanza,
     ID_InsertStrum,
-    ID_InsertNotes
+    ID_InsertNotes,
+    ID_Update,
+    ID_Test1
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -47,8 +49,23 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_InsertStanza, MyFrame::OnInsert)
   EVT_MENU(ID_InsertStrum, MyFrame::OnInsert)
   EVT_MENU(ID_InsertNotes, MyFrame::OnInsert)
+  EVT_MENU(ID_Update, MyFrame::OnDebug)
+  EVT_MENU(ID_Test1, MyFrame::OnDebug)
 END_EVENT_TABLE()
+  
+class MyTabs: public wxNotebook {
+public:
+  MyTabs(wxWindow* parent, wxWindowID id): wxNotebook(parent,id) {};
+  void OnChange() {
+    std::cerr<<"MyTabs: change\n";
+  };
+private:
+  DECLARE_EVENT_TABLE()
+};
 
+BEGIN_EVENT_TABLE(MyTabs, wxNotebook)
+  EVT_NOTEBOOK_PAGE_CHANGING(0,MyTabs::OnChange)
+END_EVENT_TABLE()
 
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   : wxFrame((wxFrame *)NULL, -1, title, pos, size)
@@ -68,7 +85,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   menuFile->AppendSeparator();
   menuFile->Append( ID_About, "&About..." );
   menuFile->AppendSeparator();
-  menuFile->Append( ID_Quit, "E&xit" );
+  menuFile->Append( ID_Quit, "&Quit" );
   
   this->menuInsert = new wxMenu;
   
@@ -77,16 +94,23 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   menuInsert->Append(ID_InsertStrum,"Insert Stru&mental");
   menuInsert->Append(ID_InsertNotes,"Insert &Notes");
 
+  wxMenu *menuDebug=new wxMenu;
+  
+  menuDebug->Append(ID_Update,"&Update");
+  menuDebug->Append(ID_Test1,"&Select");
+
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(menuFile, "&File" );
   menuBar->Append(menuInsert, "&Insert");
+  menuBar->Append(menuDebug, "&Debug");
 
   SetMenuBar( menuBar );
   
   CreateStatusBar();
   SetStatusText( "Welcome to edison corda song editor!" );
 
-  tabs=new wxNotebook(this,-1);
+  //  tabs=new wxNotebook(this,-1);
+  tabs=new MyTabs(this,-1);
   canvas=new MyCanvas(tabs,this);
   editor=new MyEditor(tabs,this,wxString());
   editor->Enable(false);
@@ -99,6 +123,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   tabs->AddPage(canvas,"view");
   tabs->AddPage(editor,"edit");
   tabs->AddPage(list,"list");
+
+  list->Update();
 
   //  tabs->AddPage(debug,"debug");
 
@@ -121,7 +147,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 }
 
 void MyFrame::OnLoad(wxCommandEvent & WXUNUSED(event)) {
-  if (AskSave()) return;
+  //  if (AskSave()) return;
   wxFileDialog dia(this,"Load file",
 		   "","","SNG files (*.sng)|*.sng|ChordPro files (*.cho)|*.cho",wxOPEN|wxCHANGE_DIR);
   if (dia.ShowModal()==wxID_OK) {
@@ -159,6 +185,7 @@ void MyFrame::OnExport(wxCommandEvent &event) {
 };
 
 void MyFrame::OnNew(wxCommandEvent &event) {
+  tabs->SetSelection(1); // seleziona l'editor
   list->Load("");
   if (editor->InsertHeader())
     editor->InsertStanza();
@@ -166,6 +193,8 @@ void MyFrame::OnNew(wxCommandEvent &event) {
 };
 
 void MyFrame::OnInsert(wxCommandEvent &event) {
+  tabs->SetSelection(1); // seleziona l'editor
+  Refresh();
   switch(event.GetId()) {
   case ID_InsertHeader: 
     editor->InsertHeader();
@@ -184,6 +213,19 @@ void MyFrame::OnInsert(wxCommandEvent &event) {
   default: assert(false);
   }
   canvas->Refresh();
+};
+
+void MyFrame::OnDebug(wxCommandEvent &event) {
+  switch(event.GetId()) {
+  case ID_Update:
+    list->Update();
+    break;
+  case ID_Test1:
+    editor->SetStyle(editor->XYToPosition(0,10),
+		     editor->XYToPosition(0,11),
+		     wxTextAttr(*wxWHITE,*wxRED));
+    break;
+  }
 };
 
 void MyFrame::resetTitle() {

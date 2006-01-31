@@ -45,30 +45,31 @@ void MyCanvas::OnDraw(wxDC &dc)
   
   SetVirtualSize(w,int(h*1.1));
   
-  frame->SetStatusText("drawing... ");
+  //  frame->SetStatusText("drawing... ");
   wxMedia media(dc,h);
-
-  Item *f=frame->list->CurrentItem();
+ 
   try {
-    if (f) {
-      const Song *song=f->getSong();
-      if (song)
-	PrintSong(song,media,&opt,frame->cursor);
+    const Song* song=frame->list->CurrentSong();
+    if (song) {
+      PrintSong(song,media,&opt,frame->cursor);
+    } else {
+      std::cerr<<"MyCanvas::OnDraw: Error in song to be drawn\n";
+      if (frame->list->CurrentFile() 
+	  && frame->list->CurrentFile()->status==FileItem::COMPILED_ERROR) {
+	PlugError &e=frame->list->CurrentFile()->compilation_error;
+	wxString message;
+	message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
+	std::cerr<<"Canvas: error caught\n";
+	//	frame->tabs->SetSelection(1); // seleziona l'editor
+	//	frame->editor->
+	//	  SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
+	std::cerr<<"Error message: "<<message<<"\n";
+	//	wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
+      }
     }
-    else
-      std::cerr<<"OnDraw: empty song\n";
-  } catch (PlugError &e) {
-    wxString message;
-    message<<"Line: "<<e.line<<" Col: "<<e.col<<"\n"<<e.what();
-    std::cerr<<"Canvas: error caught\n";
-    frame->tabs->SetSelection(1); // seleziona l'editor
-    frame->editor->
-      SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
-    wxMessageBox(message, "error", wxOK|wxICON_INFORMATION);
-    frame->editor->SetInsertionPoint(frame->editor->XYToPosition(e.col,e.line));
   } catch (std::runtime_error &e) {
     wxMessageBox(e.what(), "error", wxOK|wxICON_INFORMATION);
   }
-//  PrintSongs(frame->songlist,media,frame->cursor);
-frame->SetStatusText("drawing... done!");
+  //  PrintSongs(frame->songlist,media,frame->cursor);
+  //  frame->SetStatusText("drawing... done!");
 }

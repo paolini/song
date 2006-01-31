@@ -10,7 +10,7 @@ END_EVENT_TABLE()
 
 MyEditor::MyEditor(wxWindow *parent, MyFrame *f, const wxString &content)
   :wxTextCtrl(parent,-1,content,wxDefaultPosition,
-	      wxDefaultSize, wxTE_MULTILINE),
+	      wxDefaultSize, wxTE_MULTILINE|wxTE_RICH),
    freeze(0)
 {
   std::cerr<<"MyEditor: content="<<GetValue().size()<<"\n";
@@ -18,22 +18,27 @@ MyEditor::MyEditor(wxWindow *parent, MyFrame *f, const wxString &content)
 };
 
 void MyEditor::OnText(wxCommandEvent& event) {
-  //  std::cerr<<"OnText: "<<event.GetString()<<" "<<event.GetInt()<<"\n";
+  std::cerr<<"OnText: [size: "<<event.GetString().size()<<"] "<<event.GetInt()<<"\n";
   OnTextVoid();
 }
 
 void MyEditor::OnTextVoid() {
-  if (freeze) {std::cerr<<"OnText freezed \n";return;}
-  std::cerr<<"OnTextVoid: content="<<GetValue().size()<<"\n";
+  if (freeze) {
+    //  std::cerr<<"OnText freezed \n";
+    return;
+  }
+  //  std::cerr<<"OnTextVoid: content="<<GetValue().size()<<"\n";
   //  std::cerr<<"ONText\n";
   /*  frame->modified=true;
       frame->saved=false;*/
   frame->list->CurrentFile()->setContent(GetValue());
-  frame->resetTitle();
+  //  frame->list->Update();
+  //  frame->resetTitle(); //lo dovrebbe fare Update
 };
 
 void MyEditor::Set(const wxString &val) {
   freeze++;
+  std::cerr<<"MyEditor::Set\n";
   SetValue(val);
   freeze--;
 };
