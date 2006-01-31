@@ -25,6 +25,7 @@ class MyCanvas;
 class Cursor;
 class MyEditor;
 class MyList;
+class MyTabs;
 
 class MyFrame: public wxFrame
 {
@@ -43,11 +44,12 @@ public:
   void OnExport(wxCommandEvent&);
   void OnNew(wxCommandEvent&);
   void OnInsert(wxCommandEvent &);
+  void OnDebug(wxCommandEvent &);
 
   void resetTitle();
   
   Cursor *cursor;
-  wxNotebook *tabs;
+  MyTabs *tabs;
   MyCanvas *canvas;
   MyEditor *editor;
   MyList *list;

@@ -6,6 +6,7 @@ class MyFrame;
 
 class MyEditor: public wxTextCtrl {
   MyFrame *frame;
+ public:
   int freeze;
  public:
   MyEditor(wxWindow *parent,MyFrame *frame,const wxString &content);
