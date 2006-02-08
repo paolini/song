@@ -32,7 +32,8 @@ enum {
     ID_InsertStrum,
     ID_InsertNotes,
     ID_Update,
-    ID_Test1
+    ID_Test1,
+    ID_Notebook
 };
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -51,22 +52,9 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_MENU(ID_InsertNotes, MyFrame::OnInsert)
   EVT_MENU(ID_Update, MyFrame::OnDebug)
   EVT_MENU(ID_Test1, MyFrame::OnDebug)
+  EVT_NOTEBOOK_PAGE_CHANGING(ID_Notebook,MyFrame::OnChangeTab)
 END_EVENT_TABLE()
   
-class MyTabs: public wxNotebook {
-public:
-  MyTabs(wxWindow* parent, wxWindowID id): wxNotebook(parent,id) {};
-  void OnChange() {
-    std::cerr<<"MyTabs: change\n";
-  };
-private:
-  DECLARE_EVENT_TABLE()
-};
-
-BEGIN_EVENT_TABLE(MyTabs, wxNotebook)
-  EVT_NOTEBOOK_PAGE_CHANGING(0,MyTabs::OnChange)
-END_EVENT_TABLE()
-
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   : wxFrame((wxFrame *)NULL, -1, title, pos, size)
 {
@@ -110,7 +98,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
   SetStatusText( "Welcome to edison corda song editor!" );
 
   //  tabs=new wxNotebook(this,-1);
-  tabs=new MyTabs(this,-1);
+  tabs=new wxNotebook(this,ID_Notebook);
   canvas=new MyCanvas(tabs,this);
   editor=new MyEditor(tabs,this,wxString());
   editor->Enable(false);
@@ -226,6 +214,11 @@ void MyFrame::OnDebug(wxCommandEvent &event) {
 		     wxTextAttr(*wxWHITE,*wxRED));
     break;
   }
+};
+
+void MyFrame::OnChangeTab(wxNotebookEvent &e) {
+  std::cerr<<"ChangeTab\n";
+  list->Update();
 };
 
 void MyFrame::resetTitle() {

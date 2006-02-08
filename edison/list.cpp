@@ -227,9 +227,11 @@ void MyList::Update() {
     frame->editor->Set(files[nfile]->getContent());
     if (files[nfile]->status==FileItem::COMPILED_ERROR) {
       PlugError &e=files[nfile]->compilation_error;
+      /*
       frame->editor->SetStyle(frame->editor->XYToPosition(0,e.line-1),
 			      frame->editor->XYToPosition(0,e.line),
 			      wxTextAttr(*wxWHITE,*wxRED));
+      */
     }
     frame->editor->Enable(true);
   } else {
