@@ -10,4 +10,4 @@ int add_utf8_char(unsigned char iso_char, std::string &to);
 
 wchar_t unicode(const std::string &utf8,size_t &i); // estrae un carattere wchar da utf8 e incrementa i
 
-std::wstring unicode(const std::string &utf8); // from utf8 to wstring
+//std::wstring unicode(const std::string &utf8); // from utf8 to wstring

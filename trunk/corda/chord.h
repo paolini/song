@@ -1,5 +1,7 @@
 #include <string>
 
+class Song;
+
 class chord {
  private:
   std::string convert(std::string s);

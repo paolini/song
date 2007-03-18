@@ -40,6 +40,7 @@ char iso(const string &utf8, size_t &i) {
   // IMPLEMENTARE caratteri a piu' di 11 bit...
   cerr<<"char '"<<s[i]<<"'="<<int((unsigned char)s[i])<<" encountered\n";
   assert(false);
+  return 0;
 };
 
 string iso(const string &utf8) {
@@ -98,8 +99,10 @@ wchar_t unicode(const string &utf8, size_t &i) {
   // IMPLEMENTARE caratteri a piu' di 11 bit...
   cerr<<"char '"<<s[i]<<"'="<<int((unsigned char)s[i])<<" encountered\n";
   assert(false);
+  return 0;
 };
 
+/*
 std::wstring unicode(const std::string &utf8) {
   std::wstring ret;
   for (size_t i=0;i<utf8.size();) {
@@ -107,3 +110,4 @@ std::wstring unicode(const std::string &utf8) {
   }
   return ret;
 };
+*/

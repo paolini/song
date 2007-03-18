@@ -1,6 +1,6 @@
 #ifndef _pdfmedia_hh_
 #define _pdfmedia_hh_
-#include <libharu.h>
+//#include <hpdf.h>
 #include "media.h"
 
 // questa classe astrae il formato di stampa
