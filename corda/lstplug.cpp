@@ -35,7 +35,8 @@ public:
 	s+=p->head()->author[j]->Name;
 	out<<iso(s);
       }
-      if (j) out<<")\n";
+      if (j) out<<")";
+      out<<"\n";
     }
   };
 

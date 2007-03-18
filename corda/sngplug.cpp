@@ -40,7 +40,7 @@ static char *commands[]={
 //   "<" " "   " "   " "   " "   " "   " "   " "   " "   " "   " "   "  ""cC",
 //   ""};
 
-struct {
+static struct {
   char c;
   char *name;
 } st_accents[] ={
@@ -53,7 +53,7 @@ struct {
   {'<',"caron"},
   {0,0}};
 
-struct {
+static struct {
   int code;
   char *name;
 } st_unicode_name[]={

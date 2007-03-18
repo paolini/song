@@ -72,6 +72,7 @@ class SongArray { // classe virtuale per gli elenchi di canzoni
 public:
   virtual size_t size() const=0;
   virtual const Song* operator[](size_t n) const=0;
+  virtual ~SongArray() {};
 };
 
 class SongList: public SongVector<Song>, public SongArray {
@@ -200,6 +201,7 @@ public:
   Note(const std::string &s,size_t &off);
   operator std::string() const;
   virtual const Note* notep() const {return this;};
+  virtual ~Note() {};
 };
 
 class Chord: public PhraseItem {

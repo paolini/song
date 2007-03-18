@@ -1,7 +1,9 @@
 #include <fstream>
 #include <cassert>
 #include <libharu.h>
+
 #include <libharu_ISO8859.h>
+
 #include <iostream>
 #include <sstream>
 #include "pdfmedia.h"

@@ -12,6 +12,8 @@
 #include "song.h"
 //#include "chord.h"
 
+#include "cordaweb.h"
+
 using namespace std;
 
 string usage(
@@ -30,6 +32,10 @@ char* supported_lang[]={"txt","lst","ps","pdf","xng",0};
 string format="";
 
 SongList song_list;
+PlugoutOptions opt;
+        
+
+int listenToPort=0; // se diverso da 0 inizia un server alla porta specificata
 
 string extension(const string &filename) {
   string::size_type i;
@@ -45,8 +51,6 @@ int main(int argc, char *argv[]) {
     string output_file=string();
     //    chord chord_mode;
     
-    PlugoutOptions opt;
-        
     for (int i=1;i<argc;++i) {
       OPT0("-ps","forces PostScript output") {lang="ps";continue;}
       OPT0("-pdf","forces PDF output") {lang="pdf";continue;}
@@ -138,6 +142,11 @@ int main(int argc, char *argv[]) {
 	}
 	continue;
       } 
+      OPT1("-port","<number> start web server") {
+	++i;
+	listenToPort=atoi(argv[i]);
+	continue;
+      }
       // -help dev'essere l'ultima opzione, altrimenti
       // le opzioni successive non modificano 'usage'
       OPT0("-help","print this help lines") {
@@ -181,6 +190,18 @@ int main(int argc, char *argv[]) {
     */
 
     // print all songs in song_list
+
+    if (listenToPort) {
+      cerr<<"Starting web server, listening port "<<listenToPort<<"\n";
+      try {
+	CordaWeb engine;
+	WebServer server (listenToPort,engine);
+	server.start(); // non torna piu`,,,
+      } catch (runtime_error e) {
+	cerr<<"ERROR: "<<e.what()<<"\n";
+	abort();
+      }
+    }
     
     {
       if (lang==string()) lang="txt";
