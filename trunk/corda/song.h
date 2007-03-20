@@ -155,6 +155,9 @@ class PhraseList: public SongVector<PhraseItem> {
  public:
 };
 
+
+#define Chord MyChord
+
 class Word;
 class Modifier;
 class Note;

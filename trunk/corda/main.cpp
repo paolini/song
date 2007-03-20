@@ -12,7 +12,7 @@
 #include "song.h"
 //#include "chord.h"
 
-#include "cordaweb.h"
+//#include "cordaweb.h"
 
 using namespace std;
 
@@ -27,14 +27,13 @@ string usage(
 #define OPT1(x,y) usage+=" " x " "  y "\n"; if (!strcmp(argv[i],(x)) && i+1<argc )
 
 string lang=string();
-char* supported_lang[]={"txt","lst","ps","pdf","xng",0};
+char* supported_lang[]={"txt","lst","ps","pdf","xng","html",0};
 
 string format="";
 
 SongList song_list;
 PlugoutOptions opt;
         
-
 int listenToPort=0; // se diverso da 0 inizia un server alla porta specificata
 
 string extension(const string &filename) {
@@ -43,6 +42,8 @@ string extension(const string &filename) {
   if (i>=1) return string(filename,i,string::npos);
   else return string();
 };
+
+extern int start_web(int port);
 
 int main(int argc, char *argv[]) {
   try {
@@ -56,6 +57,7 @@ int main(int argc, char *argv[]) {
       OPT0("-pdf","forces PDF output") {lang="pdf";continue;}
       OPT0("-txt","forces txt output (default)") {lang="txt";continue;}
       OPT0("-xng","forces xml output") {lang="xng";continue;}
+      OPT0("-html","forces html output") {lang="html";continue;}
       OPT0("-list","list titles") {lang="lst";continue;}
       OPT0("-version","show current version") {
 	cout<<SongVersion()<<"\n";exit(0);};
@@ -194,9 +196,10 @@ int main(int argc, char *argv[]) {
     if (listenToPort) {
       cerr<<"Starting web server, listening port "<<listenToPort<<"\n";
       try {
-	CordaWeb engine;
-	WebServer server (listenToPort,engine);
-	server.start(); // non torna piu`,,,
+//	CordaWeb engine;
+//	WebServer server (listenToPort,engine);
+//	server.start(); // non torna piu`,,,
+        start_web(listenToPort);
       } catch (runtime_error e) {
 	cerr<<"ERROR: "<<e.what()<<"\n";
 	abort();
