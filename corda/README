@@ -7,6 +7,20 @@ DESCRIZIONE
 Programma a riga di comando. Stampa in formato TXT, PS e PDF testi e accordi 
 di canzoni scritte nei formati SNG e XNG.
 
+
+PREREQUISITI
+------------
+
+Per il supporto XML:
+
+libiconv
+libxml2
+
+Per il supporto PDF:
+
+libharu 1.2.4
+sockets (google: c++ socket library)
+
 DISTRIBUZIONE
 -------------
 

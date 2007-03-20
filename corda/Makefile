@@ -1,4 +1,4 @@
-## VERSION vedi version.h
+## Version vedi version.h
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug webserve sockstream cordaweb
 
