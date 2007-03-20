@@ -153,6 +153,7 @@ protected:
 
 class PhraseList: public SongVector<PhraseItem> {
  public:
+   bool hasChords() const;
 };
 
 
@@ -172,6 +173,7 @@ class PhraseItem: public SongBase {
   virtual const Note* notep() const {return 0;};
   virtual const Chord* chordp() const {return 0;};
   virtual const Tab* tabp() const {return 0;};
+  virtual bool hasChords() const {return false;};
 //  void copy(const PhraseItem *p);
 };
 
@@ -192,6 +194,7 @@ protected:
   Modifier(Type t, PhraseList *c);
   ~Modifier();
   virtual const Modifier *modifierp() const {return this;};
+  virtual bool hasChords() const {return child->hasChords();};
 };
 
 class Note {
@@ -216,6 +219,7 @@ public:
   Chord(const std::string &s);
   virtual const Chord* chordp() const {return this;};
   operator std::string() const; // utilizzare PlugoutOptions::convert
+  virtual bool hasChords() const {return true;};
 };
 
 class Tab: public PhraseItem {

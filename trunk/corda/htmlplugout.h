@@ -19,13 +19,14 @@ public:
                      
   HtmlPlug(): Plugout("html","html","html format") {};
 
-  void writeSong(const Song *song, const PlugoutOptions *options);
-  void writeHead(const Head *head);
+  void writeSong(std::ostream &out, const Song *song, const PlugoutOptions *options, int n);
+  void writeHead(const Head *head, const PlugoutOptions *options, int n);
   void writeAuthor(const Author *author);
   std::map<const Stanza *,int> ids;
   void writeBody(const Body *body, const PlugoutOptions *options);
   void writeStanza(const Stanza *stanza, const PlugoutOptions *options);
   void writeVerse(const PhraseList *phrase, const PlugoutOptions *options);
-  void writeItem(const PhraseItem *item, const PlugoutOptions *options);
+  void writePhrase(const PhraseList *phrase, const PlugoutOptions *options,int chordmode);
+  void writeItem(const PhraseItem *item, const PlugoutOptions *options,int chordmode);
 };
 

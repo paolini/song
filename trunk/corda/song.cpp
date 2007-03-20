@@ -64,6 +64,14 @@ void Song::setBody(Body *b) {
     b->setParent(this);
   }
 };
+
+bool PhraseList::hasChords() const {
+  for (int i=0;i<size();++i)
+    if ((*this)[i]->hasChords()) return true;
+  return false;  
+};
+ 
+
 void Modifier::removeChild(SongBase *c) {
   assert(false);
   //non posso rimuovere l'unico child

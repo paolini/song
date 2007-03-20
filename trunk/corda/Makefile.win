@@ -7,12 +7,12 @@ WINDRES = windres.exe
 RES  = 
 OBJ  = xngplugout.o choplug.o cursor.o debug.o iso.o layout.o lstplug.o main.o media.o pdfmedia.o pdfplug.o plug.o print.o psmedia.o psplug.o sngplug.o song.o textmedia.o txtplug.o xmlpatch.o xngplugin.o web.o htmlplugout.o $(RES)
 LINKOBJ  = xngplugout.o choplug.o cursor.o debug.o iso.o layout.o lstplug.o main.o media.o pdfmedia.o pdfplug.o plug.o print.o psmedia.o psplug.o sngplug.o song.o textmedia.o txtplug.o xmlpatch.o xngplugin.o web.o htmlplugout.o $(RES)
-LIBS =  -L"C:/Dev-Cpp/lib" -lsockets -lwsock32 -lharu C:/dev-cpp/lib/libxml2.lib  
+LIBS =  -L"C:/Dev-Cpp/lib" -lsockets -lwsock32 -lharu C:/dev-cpp/lib/libxml2.lib  -s 
 INCS =  -I"C:/Dev-Cpp/include" 
 CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
 BIN  = corda.exe
-CXXFLAGS = $(CXXINCS)   -fexceptions
-CFLAGS = $(INCS)   -fexceptions
+CXXFLAGS = $(CXXINCS)   -fexceptions -O1
+CFLAGS = $(INCS)   -fexceptions -O1
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
