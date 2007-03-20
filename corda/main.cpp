@@ -195,6 +195,7 @@ int main(int argc, char *argv[]) {
 
     if (listenToPort) {
       cerr<<"Starting web server, listening port "<<listenToPort<<"\n";
+      opt.base_url="";
       try {
 //	CordaWeb engine;
 //	WebServer server (listenToPort,engine);

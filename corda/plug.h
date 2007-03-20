@@ -77,7 +77,11 @@ class PlugoutOptions {
     minor_mode=MINOR_M;
   };
   std::string convert(const Chord &chord) const;
-  std::string convert(const Note &note) const;
+  std::string convert(const Note &note) const; 
+  // per il web
+  bool links; // mette i link tra le pagine.
+  bool index; // visualizza l'indice delle canzoni
+  std::string base_url; // url del server
 };
 
 class Plugout: public Plug {

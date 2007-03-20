@@ -12,6 +12,22 @@ extern SongList song_list;
 extern PlugoutOptions opt;
  
 
+void decompose(const string &path, string &dir, string &name, string &ext) {
+  int i,slash=0,dot=path.size()-1;
+//  cout<<"decompose ["<<path<<"]\n";
+  for (i=0;i<path.size();i++) {
+     if (path[i]=='/') slash=i;
+     else if (path[i]=='.') dot=i;                         
+  }
+  if (dot<slash) dot=path.size()-1;
+  dir=path.substr(0,slash);
+//  cout<<"dir=["<<dir<<"]\n";
+  name=path.substr(slash+1,dot-slash-1);
+//  cout<<"name=["<<name<<"]\n";
+  ext=path.substr(dot+1);
+//  cout<<"ext=["<<ext<<"]\n";
+}
+
 class ServerSocket : public HTTPSocket
 {
 public:
@@ -117,23 +133,32 @@ void ServerSocket::OnHeaderComplete()
   printf("ONHEADERCOMPLETE\n");
   Send("HTTP/1.0 200 OK\n");
 
-  HtmlPlug *writer=new HtmlPlug;
-  if (writer==0) {
-	cerr<<"Known format HTML not supported.\n";
-	abort();
-      } 
-  
-  Send("Content-type: text/html; encoding: UTF8\n\n");
-#if 0
-  Send("<HTML><body>\n"
-       "<h1>WEB TEST</h1>\n"
-       "GET " + GetUrl() + 
-       "</HTML>\n\n");
-#endif
+  string dir, name, ext;
+  decompose(GetUrl(),dir,name,ext);
   ostringstream buffer;
-  writer->Write(buffer,song_list,opt);
+  
+//  Send("<HTML><BODY>\n"
+//  "DIR=["+dir+"] NAME=["+name+"] EXT=["+ext+"]<br />\n");
+  opt.links=true;
+  if (dir == "") { // INDEX
+    HtmlPlug html;
+  
+    opt.index=true;
+    Send("Content-type: text/html; charset: utf-8\n\n");
+    html.Write(buffer,song_list,opt);
+  } else if (dir == "/song") {
+    opt.index=false;
+    int n=atoi(name.c_str());
+    if (n<0 || n>=song_list.size())
+      throw runtime_error("song number out of range");
+    if (ext=="html") {
+      HtmlPlug html;
+      Send("Content-type: text/html; charset: utf-8\n\n");
+      html.writeSong(buffer,song_list[n],&opt,n);
+    } else if (ext=="pdf") {
+    }
+  }
   Send(buffer.str());
-  delete writer;
 
   SetCloseAndDelete();
   if (!Detach()){
@@ -167,120 +192,3 @@ void ServerSocket::OnAccept()
 	HTTPSocket::OnAccept();
 }
 
-#if 0
-void ServerSocket::Run()
-{
-	// use Socket::MasterHandler because we're now in a detached socket
-	// Handler() will return the local sockethandler driving the socket
-	// MasterHandler() returns the original sockethandler
-	ServerHandler& h = static_cast<ServerHandler&>(m_socket.MasterHandler());
-	std::string url = m_protocol + "://" + m_host + m_url;
-	std::string host;
-	int port;
-	std::string url_ut;
-	std::string file;
-	std::string ext;
-	url_this(url, host, port, url_ut, file, ext);
-	std::string mime_type = h.GetMimetype(ext);
-	Database *db = h.GetDatabase();
-	Query q(*db);
-	std::string safe_host = db -> safestr(m_host);
-	std::string safe_protocol = db -> safestr(m_protocol);
-	std::string safe_method = db -> safestr(m_method);
-	std::string safe_url = db -> safestr(m_url);
-	char sql[1000];
-	sprintf(sql,"select * from url where host='%s' and protocol='%s' and method='%s' and url='%s'",
-		safe_host.c_str(),
-		safe_protocol.c_str(),
-		safe_method.c_str(),
-		safe_url.c_str());
-	db::Url xx(db,sql);
-	if (!xx.num)
-	{
-		xx.host = m_host;
-		xx.protocol = m_protocol;
-		xx.method = m_method;
-		xx.url = m_url;
-		xx.mime_type = mime_type;
-	}
-	xx.access_count++;
-	xx.save();
-
-	// quick'n dirty
-/*
-HTTP/1.1 200 OK
-Date: Wed, 07 Apr 2004 13:15:18 GMT
-Server: Apache/1.3.26 (Unix)
-Last-Modified: Mon, 22 Mar 2004 03:11:56 GMT
-ETag: "1e70c6-27cb-405e597c"
-Accept-Ranges: bytes
-Content-Length: 10187
-Connection: close
-Content-Type: text/html
-
-*/
-	db::Regel regel(*db,xx.regel);
-	if (regel.num)
-	{
-		switch (regel.typ)
-		{
-		case 1: // File
-			{
-				std::string filename = regel.path + m_url;
-				FILE *fil = fopen(filename.c_str(),"rb");
-				if (fil)
-				{
-					char buf[4096];
-					size_t n;
-					m_socket.Send("HTTP/1.0 200 OK\n");
-					m_socket.Send("Server: " + h.GetString("server/identity") + "\n");
-					if (mime_type.size())
-					{
-						std::string str = "Content-type: " + mime_type;
-						m_socket.Send(str + "\n");
-					}
-					m_socket.Send("Connection: close\n");
-					m_socket.Send("\n");
-					n = fread(buf, 1, 4096, fil);
-					while (n > 0)
-					{
-//printf("read %d bytes\n",n);
-						m_socket.SendBuf(buf, n);
-						//
-						n = fread(buf, 1, 4096, fil);
-					}
-					fclose(fil);
-					m_socket.SetCloseAndDelete();
-				}
-				else
-				{
-					m_socket.Send("HTTP/1.0 404 Not Found\n");
-					m_socket.Send("Server: " + h.GetString("server/identity") + "\n");
-					m_socket.Send("Content-type: text/html\n");
-					m_socket.Send("\n<html><body><h1>404 Not Found</h1></html>\n");
-					m_socket.SetCloseAndDelete();
-				}
-			}
-			break;
-		case 2: // Execute
-			break;
-		default:
-			m_socket.Send("HTTP/1.0 404 Not Found\n");
-			m_socket.Send("Server: " + h.GetString("server/identity") + "\n");
-			m_socket.Send("Content-type: text/html\n");
-			m_socket.Send("\n<html><body><h1>404 Not Found - Resource not available</h1></html>\n");
-			m_socket.SetCloseAndDelete();
-		}
-	}
-	else
-	{
-		m_socket.Send("HTTP/1.0 404 Not Found\n");
-		m_socket.Send("Server: " + h.GetString("server/identity") + "\n");
-		m_socket.Send("Content-type: text/html\n");
-		m_socket.Send("\n<html><body><h1>404 Not Found - Resource not available</h1></html>\n");
-		m_socket.SetCloseAndDelete();
-	}
-}
-
-
-#endif
