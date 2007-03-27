@@ -1,3 +1,7 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+
 #include <sstream>
 #include <sockets/HTTPSocket.h>
 #include <sockets/ListenSocket.h>
@@ -10,7 +14,7 @@ using namespace std;
 
 extern SongList song_list;
 extern PlugoutOptions opt;
- 
+
 
 void decompose(const string &path, string &dir, string &name, string &ext) {
   int i,slash=0,dot=path.size()-1;
@@ -45,6 +49,18 @@ public:
 
 };
 
+map<string,string> mime;
+
+void init_mime() {
+  mime["html"]="text/html; charset: utf-8";
+  mime["txt"]="text/plain";
+  mime["pdf"]="application/pdf";
+  mime["ps"]="application/ps";
+  mime["xng"]="text/xml";
+  mime["cho"]="text/plain";
+}
+
+
 
 int start_web(int port=80)
 {
@@ -53,7 +69,8 @@ int start_web(int port=80)
 //ServerHandler h("config.xml");
   ListenSocket<ServerSocket> ll_open(h);
 
-  printf("Starting....\n");
+  cout<<"Songs loaded: "<<song_list.size()<<endl;
+  cout<<"Starting...."<<endl;
 
   if (ll_open.Bind("0.0.0.0",port,20)) {
     printf("bind failed\n");
@@ -68,21 +85,14 @@ int start_web(int port=80)
   }
 }
 
-
-
-
-
-
 ServerSocket::ServerSocket(ISocketHandler& h)
 :HTTPSocket(h)
 {
 }
 
-
 ServerSocket::~ServerSocket()
 {
 }
-
 
 void ServerSocket::OnFirst()
 {
@@ -127,7 +137,6 @@ void ServerSocket::OnData(const char *,size_t)
   printf("ONDATA\n");
 }
 
-
 void ServerSocket::OnHeaderComplete()
 {
   printf("ONHEADERCOMPLETE\n");
@@ -135,7 +144,6 @@ void ServerSocket::OnHeaderComplete()
 
   string dir, name, ext;
   decompose(GetUrl(),dir,name,ext);
-  ostringstream buffer;
   
 //  Send("<HTML><BODY>\n"
 //  "DIR=["+dir+"] NAME=["+name+"] EXT=["+ext+"]<br />\n");
@@ -145,7 +153,9 @@ void ServerSocket::OnHeaderComplete()
   
     opt.index=true;
     Send("Content-type: text/html; charset: utf-8\n\n");
+    ostringstream buffer;
     html.Write(buffer,song_list,opt);
+    Send(buffer.str());
   } else if (dir == "/song") {
     opt.index=false;
     int n=atoi(name.c_str());
@@ -154,11 +164,41 @@ void ServerSocket::OnHeaderComplete()
     if (ext=="html") {
       HtmlPlug html;
       Send("Content-type: text/html; charset: utf-8\n\n");
+      ostringstream buffer;
       html.writeSong(buffer,song_list[n],&opt,n);
-    } else if (ext=="pdf") {
+      Send(buffer.str());
+    } else if (ext=="pdf" || ext=="ps") {
+      string tempfile="cordatmp"+ext;
+      {
+        Plugout *plug=Plugout::Construct(ext);
+        SongCollection list;
+        list.push_back(song_list[n]);
+        cerr<<"Writing "<<ext<<" to file '"<<tempfile<<"'"<<endl;
+        plug->Write(tempfile,list,opt);
+        delete plug;
+      }
+      ifstream tmp(tempfile.c_str(),ios::binary);
+      Send("Content-type: "+mime[ext]+"\n\n");
+      char buffer[1024];
+      do {
+       tmp.read( buffer,1024);
+       std::streamsize n = tmp.gcount();
+       string line(buffer,n);
+       Send(line);
+      } while( tmp.good());
+    } else if (ext=="txt" || ext=="xng" || ext=="cho") {
+      ostringstream buffer;
+      {
+        Plugout *plug=Plugout::Construct(ext);
+        SongCollection list;
+        list.push_back(song_list[n]);
+        plug->Write(buffer,list,opt);
+        delete plug;
+      }
+      Send("Content-type: "+mime[ext]+"\n\n");
+      Send(buffer.str());
     }
   }
-  Send(buffer.str());
 
   SetCloseAndDelete();
   if (!Detach()){

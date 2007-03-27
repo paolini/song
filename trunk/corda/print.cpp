@@ -270,7 +270,11 @@ void PrintSong(const Song *song,
 	       const PlugoutOptions *options,
 	       const Cursor *cur) {
   Box *box=SongBox(m,song,cur,options);
-  DimNBad dim=box->write(Dim(m.page_width(),m.page_height()));
+  try {
+    DimNBad dim=box->write(Dim(m.page_width(),m.page_height()));
+  } catch (runtime_error &e) {
+    throw runtime_error("printing song"+song->head()->title+": "+e.what());
+  }
 };
 
 // helper class: contiene una box, ma quando viene distrutta non distrugge
