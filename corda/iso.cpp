@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <stdexcept>
 
 #include "iso.h"
 
@@ -39,8 +40,9 @@ char iso(const string &utf8, size_t &i) {
   }
   // IMPLEMENTARE caratteri a piu' di 11 bit...
   cerr<<"char '"<<s[i]<<"'="<<int((unsigned char)s[i])<<" encountered\n";
-  assert(false);
-  return 0;
+//  throw runtime_error("not implemented yet");
+    i++;
+    return '?';
 };
 
 string iso(const string &utf8) {
