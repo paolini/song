@@ -197,10 +197,9 @@ int main(int argc, char *argv[]) {
       cerr<<"Starting web server, listening port "<<listenToPort<<"\n";
       opt.base_url="";
       try {
-//	CordaWeb engine;
-//	WebServer server (listenToPort,engine);
-//	server.start(); // non torna piu`,,,
+#ifdef WEB_SUPPORT
         start_web(listenToPort);
+#endif
       } catch (runtime_error e) {
 	cerr<<"ERROR: "<<e.what()<<"\n";
 	abort();
