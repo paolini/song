@@ -1,20 +1,27 @@
 ## Version vedi version.h
 
-OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug webserve sockstream cordaweb
+OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug htmlplugout
 
 sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.cc *.dtd test.sng test.xng test.cho cordalib.dev test2.cho)
 
+CPPFLAGS=$(COMMON_CPPFLAGS)
+
 ## se si dispone della libreria libxml2
-XML_FLAGS=$(LDFLAGS) -lxml2
-XML_OBJECTS=$(OBJECTS) xngplugin
+#LDFLAGS+= -lxml2
+#BJECTS+= xngplugin
+#CPPFLAGS+= -I/usr/include/libxml2
 
 ## se si dispone della libreria libharu (PDF)
-PDF_FLAGS=$(LDFLAGS) -lz -lpng  -lharu
-PDF_OBJECTS=$(OBJECTS) pdfmedia pdfplug
+#LDFLAGS+= -lz -lpng  -lharu
+#OBJECTS+= pdfmedia pdfplug
+
+## se si dispone della libreria socket++ (web support)
+#LDFLAGS+= -lsocket++
+#OBJECTS+= web.cc
+#CPPFLAGS+= -DWEB_SUPPORT
 
 TARGET=corda
 
-CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/include/libxml2 
 all: $(TARGET)
 
 lib: libcorda.a
@@ -40,13 +47,13 @@ clean: clear.common
 
 clear: clean
 
-tarball::
-	mkdir ../$(VERSION)
-	-cp $(sources) ../$(VERSION)
-	mkdir ../$(VERSION)/CVS
-	echo corda > ../$(VERSION)/CVS/Repository
-	echo ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/corda" \
-	> ../$(VERSION)/CVS/Root
-	cd .. && tar czvf $(VERSION).tgz $(VERSION)
-	rm -fr ../$(VERSION)
+# tarball::
+# 	mkdir ../$(VERSION)
+# 	-cp $(sources) ../$(VERSION)
+# 	mkdir ../$(VERSION)/CVS
+# 	echo corda > ../$(VERSION)/CVS/Repository
+# 	echo ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/corda" \
+# 	> ../$(VERSION)/CVS/Root
+# 	cd .. && tar czvf $(VERSION).tgz $(VERSION)
+# 	rm -fr ../$(VERSION)
 

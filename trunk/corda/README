@@ -19,6 +19,9 @@ libxml2
 Per il supporto PDF:
 
 libharu 1.2.4
+
+Per il supporto WEB:
+
 sockets (google: c++ socket library)
 
 DISTRIBUZIONE
@@ -39,6 +42,8 @@ COMPILAZIONE
 Sotto Unix dovrebbe essere sufficiente:
 
 make
+
+Con Dev-Cpp c'e` il progetto 
 
 INSTALLAZIONE
 -------------
