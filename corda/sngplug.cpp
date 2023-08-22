@@ -457,7 +457,7 @@ private:
   };
 
 public:
-  virtual int Read(istream &, SongList &list) throw(PlugError);
+  virtual int Read(istream &, SongList &list);
   SngPlugin(): Plugin("song","sng","song sng TeX-like format [manu-fatto]"),
 	       current_in(0)
   {
@@ -538,7 +538,7 @@ public:
     cerr<<"WARNING: "<<s<<"\n";
   }
 
-  void error(string s) throw (PlugError) {
+  void error(string s) {
     //    int i;
     //ostream &m=cerr;
     stringstream m; 
@@ -814,7 +814,7 @@ public:
 
 };
 
-int SngPlugin::Read(istream &in, SongList &list) throw (PlugError) {
+int SngPlugin::Read(istream &in, SongList &list) {
   Song *q;
   int n=0;
   connect(in);

@@ -48,7 +48,6 @@ public:
   static Plugin* Construct(string ext);
 
   virtual int Read(std::istream &in,  SongList &list) 
-    throw(PlugError)
     {
       throw PlugError("reading "+string(name)+
 		      " from stdin not implemented");

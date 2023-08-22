@@ -226,7 +226,7 @@ int PsMedia::wordWidth(const string &s, font f) const {
 void PsMedia::wordWrite(const string &s, font f) {
   set_font(f);
   OUT<<"(";
-  for (unsigned int i=0;i<s.size();) char_out(iso(s,i));
+  for (size_t i=0;i<s.size();) char_out(iso(s,i));
   OUT<<") s\n";
   x+=wordWidth(s,f);
 }
@@ -234,7 +234,7 @@ void PsMedia::wordWrite(const string &s, font f) {
 void PsMedia::chordWrite(const string &s) {
   set_font(CHORD);
   OUT<<"(";
-  for (unsigned int i=0;i<s.size();) char_out(iso(s,i));
+  for (size_t i=0;i<s.size();) char_out(iso(s,i));
   OUT<<") c\n";
 }
 

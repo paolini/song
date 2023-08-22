@@ -1,6 +1,7 @@
 
 #include <iostream>
-#include <libharu.h>
+//#include <libharu.h>
+#include <hpdf.h>
 
 #include "song.h"
 #include "plug.h"

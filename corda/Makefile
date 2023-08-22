@@ -2,23 +2,23 @@
 
 OBJECTS=main layout media print plug debug song iso sngplug xngplugout psmedia psplug textmedia txtplug lstplug choplug htmlplugout
 
-sources=$(shell ls Makefile Makefile.common Makefile.win song.dev README* *.cpp *.h *.xng *.cc *.dtd test.sng test.xng test.cho cordalib.dev test2.cho)
+sources=$(shell ls Makefile Makefile.common Makefile.win README* *.cpp *.h *.xng *.dtd test.sng test.xng test.cho test2.cho)
 
-CPPFLAGS=$(COMMON_CPPFLAGS)
+CPPFLAGS=$(COMMON_CPPFLAGS) -I/usr/local/include
 
 ## se si dispone della libreria libxml2
-#LDFLAGS+= -lxml2
-#BJECTS+= xngplugin
-#CPPFLAGS+= -I/usr/include/libxml2
+LDFLAGS+= -lxml2
+OBJECTS+= xngplugin
+CPPFLAGS+= -I/usr/include/libxml2
 
 ## se si dispone della libreria libharu (PDF)
-#LDFLAGS+= -lz -lpng  -lharu
-#OBJECTS+= pdfmedia pdfplug
+LDFLAGS+= -lz -lpng  -lhpdf
+OBJECTS+= pdfmedia pdfplug
 
 ## se si dispone della libreria socket++ (web support)
-#LDFLAGS+= -lsocket++
-#OBJECTS+= web.cc
-#CPPFLAGS+= -DWEB_SUPPORT
+# LDFLAGS+= -lsocket++
+# OBJECTS+= web
+# CPPFLAGS+= -DWEB_SUPPORT
 
 TARGET=corda
 
@@ -39,7 +39,7 @@ libcorda.a: choplug.o debug.o iso.o layout.o lstplug.o media.o pdfmedia.o pdfplu
 -include Makefile.common
 
 $(TARGET): $(addsuffix .o, $(OBJECTS) $(PDF_OBJECTS) $(XML_OBJECTS) )
-	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) $^ $(PDF_FLAGS) $(XML_FLAGS) \
+	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) $^ $(PDF_FLAGS) $(XML_FLAGS) $(LDFLAGS) \
 	-o $(TARGET)
 
 clean: clear.common

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory.h>
 #include "textmedia.h"
 #include "iso.h"
 

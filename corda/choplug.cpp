@@ -20,7 +20,7 @@ private:
   static Plugin* Createin() {return new ChoPlugin();};
 public:
 
-  virtual int Read(istream &input, SongList &list) throw (PlugError) {
+  virtual int Read(istream &input, SongList &list) {
     in=&input;
     init();
     while (true) {

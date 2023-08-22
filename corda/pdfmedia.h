@@ -1,10 +1,18 @@
 #ifndef _pdfmedia_hh_
 #define _pdfmedia_hh_
-//#include <hpdf.h>
+#include <hpdf.h>
 #include "media.h"
 
 // questa classe astrae il formato di stampa
 // dovrebbe adattarsi a txt a PS e altro...
+
+class PdfException: public std::exception {
+  std::string msg;
+public:
+  PdfException(const std::string &m): msg(m) {};
+  virtual ~PdfException() throw () {};
+  virtual const char* what() const throw() {return msg.c_str();};
+};
 
 class PdfMedia: public VectorMedia {
 protected:
@@ -12,10 +20,10 @@ protected:
   int x,y,chord_x;
   string filename;
   int page_no;
-  PdfDoc* doc;
-  PdfPage *page;
-  PdfContents *canvas;
-
+  HPDF_Doc doc;
+  HPDF_Page page;
+  //HPDF_Contents *canvas;
+  HPDF_Font font_ptr[4];
 
 public:
   
@@ -32,9 +40,8 @@ public:
   virtual int lineSkip(font f); 
 
   virtual void newPage();
-  void closePage();
 
-  virtual ~PdfMedia()  ;
+  virtual ~PdfMedia();
   PdfMedia(const string &filename, int start_page=1);
   virtual void frame(int dx,int dy) const;
 };

@@ -1,4 +1,4 @@
-CORDA (2005) (manu-fatto) paolini AT math.unifi.it
+CORDA (2005) (manu-fatto) emanuele.paolini@gmail.com
 	(precedentemente chiamato SONG)
 
 DESCRIZIONE
@@ -6,6 +6,10 @@ DESCRIZIONE
 
 Programma a riga di comando. Stampa in formato TXT, PS e PDF testi e accordi 
 di canzoni scritte nei formati SNG e XNG.
+
+Il formato TXT Ã¨ ISO-8859-1. Per convertirlo mettere in pipe il comando iconv:
+
+> corda test.sng | iconv -f ISO-8859-1
 
 
 PREREQUISITI
@@ -27,12 +31,12 @@ sockets (google: c++ socket library)
 DISTRIBUZIONE
 -------------
 
-Lo sviluppo avviene ora su http://www.sourceforge.net/projects/corda/
+Lo sviluppo avviene ora su https://github.com/paolini/song (precedentemente http://www.sourceforge.net/projects/corda/)
 
 Attualmente sono disponibili i sorgenti C++ con Makefile. Testato sotto Linux,
 con gcc, e con DEV-CPP in Windows. 
 
-Opzionalmente può utilizzare le seguenti librerie:
+Opzionalmente puÃ² utilizzare le seguenti librerie:
  - libxml2: http://xmlsoft.org/ per leggere il formato XML
  - libharu 1.2.0 per stampare in PDF
 
@@ -59,10 +63,7 @@ per una descrizione completa.
 XNG e` invece un formato XML, la descrizione formale si trova nel file 
 "song.dtd".
 
-I files test.xng e test.sng sono dati come esempio. Io ho trascritto e
-raccolto molti testi (con accordi) di canzoni italiane e straniere in
-formato SNG. Per rispetto dei diritti d'autore non posso pubblicare
-questi files su internet. 
+I files test.xng e test.sng sono dati come esempio. 
 
 ESEMPI
 ------
@@ -82,11 +83,11 @@ xterm:
 
 Per stampare i files test.sng e test.xng in un file PostScript:
 
-> song test.sng test.xng -o test.ps
+> corda test.sng test.xng -o test.ps
 
 ...su file PDF:
 
-> song test.sng test.xng -o test.pdf
+> corda test.sng test.xng -o test.pdf
 
 Per avere un elenco completo delle opzioni:
 
@@ -95,7 +96,7 @@ Per avere un elenco completo delle opzioni:
 VERSIONE PER DOS
 ----------------
 
-La versione per DOS è stata compilata con DEV-CPP. Attualmente non sono
-riuscito a linkarlo contro le libxml2, e quindi non è possibile utilizzare
+La versione per DOS Ã¨ stata compilata con DEV-CPP. Attualmente non sono
+riuscito a linkarlo contro le libxml2, e quindi non Ã¨ possibile utilizzare
 il formato XNG per l'input. Ovviamente va usato da una finestra di MS-DOS.
 
