@@ -1,0 +1,75 @@
+# Project: song
+# Makefile created by Dev-C++ 4.9.9.2-wx-beta-6.8
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = xngplug.o debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o util.o chord.o xmlpatch.o $(RES)
+LINKOBJ  = xngplug.o debug.o layout.o lstplug.o main.o media.o plug.o print.o psmedia.o psplug.o sngplug.o textmedia.o txtplug.o util.o chord.o xmlpatch.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" ../libxml2.a ../iconv-1.9.1.win32/lib/iconv.lib ../zlib-1.2.3.win32/lib/zlib.lib  
+INCS =  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/wx/msw"  -I"C:/Dev-Cpp/include/wx/generic"  -I"C:/Dev-Cpp/include/wx/animate"  -I"C:/Dev-Cpp/include/wx/fl"  -I"C:/Dev-Cpp/include/wx/gizmos"  -I"C:/Dev-Cpp/include/wx/html"  -I"C:/Dev-Cpp/include/wx/mmedia"  -I"C:/Dev-Cpp/include/wx/net"  -I"C:/Dev-Cpp/include/wx/ogl"  -I"C:/Dev-Cpp/include/wx/plot"  -I"C:/Dev-Cpp/include/wx/protocol"  -I"C:/Dev-Cpp/include/wx/stc"  -I"C:/Dev-Cpp/include/wx/svg"  -I"C:/Dev-Cpp/include/wx/xml"  -I"C:/Dev-Cpp/include/wx/xrc"  -I"C:/Dev-Cpp/include/wx" 
+BIN  = song.exe
+CXXFLAGS = $(CXXINCS)  -fexceptions
+CFLAGS = $(INCS)-DLIBXML2_STATIC   -fexceptions
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before song.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "song.exe" $(LIBS)
+
+xngplug.o: xngplug.cpp C:/Dev-Cpp/include/c++/3.4.2/cstdio   C:/Dev-Cpp/include/c++/3.4.2/vector C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   C:/Dev-Cpp/include/c++/3.4.2/iostream plug.h   C:/Dev-Cpp/include/c++/3.4.2/stdexcept
+	$(CPP) -c xngplug.cpp -o xngplug.o $(CXXFLAGS)
+
+debug.o: debug.cpp 
+	$(CPP) -c debug.cpp -o debug.o $(CXXFLAGS)
+
+layout.o: layout.cpp C:/Dev-Cpp/include/c++/3.4.2/vector layout.h   C:/Dev-Cpp/include/c++/3.4.2/iostream C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   media.h util.h
+	$(CPP) -c layout.cpp -o layout.o $(CXXFLAGS)
+
+lstplug.o: lstplug.cpp C:/Dev-Cpp/include/c++/3.4.2/cstdio   C:/Dev-Cpp/include/c++/3.4.2/vector C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   C:/Dev-Cpp/include/c++/3.4.2/iostream util.h plug.h   C:/Dev-Cpp/include/c++/3.4.2/stdexcept
+	$(CPP) -c lstplug.cpp -o lstplug.o $(CXXFLAGS)
+
+main.o: main.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/libxml/parser.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/SAX.h C:/Dev-Cpp/include/libxml/xlink.h   C:/Dev-Cpp/include/libxml/SAX2.h C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/c++/3.4.2/vector   debug.h plug.h C:/Dev-Cpp/include/c++/3.4.2/stdexcept chord.h
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+media.o: media.cpp media.h C:/Dev-Cpp/include/c++/3.4.2/string
+	$(CPP) -c media.cpp -o media.o $(CXXFLAGS)
+
+plug.o: plug.cpp C:/Dev-Cpp/include/c++/3.4.2/map   C:/Dev-Cpp/include/c++/3.4.2/fstream   C:/Dev-Cpp/include/c++/3.4.2/iostream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h
+	$(CPP) -c plug.cpp -o plug.o $(CXXFLAGS)
+
+print.o: print.cpp C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/libxml/tree.h C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   layout.h C:/Dev-Cpp/include/c++/3.4.2/iostream media.h util.h print.h   debug.h
+	$(CPP) -c print.cpp -o print.o $(CXXFLAGS)
+
+psmedia.o: psmedia.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream psmedia.h   media.h
+	$(CPP) -c psmedia.cpp -o psmedia.o $(CXXFLAGS)
+
+psplug.o: psplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   psmedia.h media.h print.h layout.h
+	$(CPP) -c psplug.cpp -o psplug.o $(CXXFLAGS)
+
+sngplug.o: sngplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   C:/Dev-Cpp/include/c++/3.4.2/sstream   C:/Dev-Cpp/include/c++/3.4.2/vector C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   plug.h C:/Dev-Cpp/include/c++/3.4.2/stdexcept
+	$(CPP) -c sngplug.cpp -o sngplug.o $(CXXFLAGS)
+
+textmedia.o: textmedia.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream   textmedia.h media.h
+	$(CPP) -c textmedia.cpp -o textmedia.o $(CXXFLAGS)
+
+txtplug.o: txtplug.cpp C:/Dev-Cpp/include/c++/3.4.2/iostream plug.h   C:/Dev-Cpp/include/c++/3.4.2/vector   C:/Dev-Cpp/include/c++/3.4.2/stdexcept C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h   C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/parser.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/SAX.h   C:/Dev-Cpp/include/libxml/xlink.h C:/Dev-Cpp/include/libxml/SAX2.h   textmedia.h media.h print.h layout.h
+	$(CPP) -c txtplug.cpp -o txtplug.o $(CXXFLAGS)
+
+util.o: util.cpp C:/Dev-Cpp/include/c++/3.4.2/string
+	$(CPP) -c util.cpp -o util.o $(CXXFLAGS)
+
+chord.o: chord.cpp C:/Dev-Cpp/include/c++/3.4.2/cctype   C:/Dev-Cpp/include/c++/3.4.2/string   C:/Dev-Cpp/include/c++/3.4.2/iostream chord.h   C:/Dev-Cpp/include/libxml/parser.h   C:/Dev-Cpp/include/libxml/xmlversion.h   C:/Dev-Cpp/include/libxml/xmlexports.h C:/Dev-Cpp/include/libxml/tree.h   C:/Dev-Cpp/include/libxml/xmlstring.h   C:/Dev-Cpp/include/libxml/xmlregexp.h C:/Dev-Cpp/include/libxml/dict.h   C:/Dev-Cpp/include/libxml/hash.h C:/Dev-Cpp/include/libxml/valid.h   C:/Dev-Cpp/include/libxml/xmlerror.h C:/Dev-Cpp/include/libxml/list.h   C:/Dev-Cpp/include/libxml/xmlautomata.h   C:/Dev-Cpp/include/libxml/entities.h   C:/Dev-Cpp/include/libxml/encoding.h C:/Dev-Cpp/include/iconv.h   C:/Dev-Cpp/include/libxml/xmlIO.h C:/Dev-Cpp/include/libxml/globals.h   C:/Dev-Cpp/include/libxml/SAX.h C:/Dev-Cpp/include/libxml/xlink.h   C:/Dev-Cpp/include/libxml/SAX2.h C:/Dev-Cpp/include/libxml/xmlmemory.h   C:/Dev-Cpp/include/libxml/threads.h
+	$(CPP) -c chord.cpp -o chord.o $(CXXFLAGS)
+
+xmlpatch.o: xmlpatch.cpp C:/Dev-Cpp/include/stdlib.h   C:/Dev-Cpp/include/_mingw.h   C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include/stddef.h
+	$(CPP) -c xmlpatch.cpp -o xmlpatch.o $(CXXFLAGS)

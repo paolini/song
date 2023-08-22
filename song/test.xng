@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE song PUBLIC "http://www.math.unifi.it/paolini/src/song/xng-0.1.dtd" "">
+<song><head>
+<title>La sposa rubata</title>
+<author>Branduardi, Angelo</author></head>
+<body>
+<stanza id="A">
+<v><strum><c>RE- DO LA- FA DO RE- </c></strum></v></stanza>
+<stanza id="B">
+<v><c>RE-</c>Da tre notti <c>RE-</c>non <c>DO</c>ri<c>LA-</c>poso</v>
+<v><c>FA</c>resto ad ascol<c>DO</c>ta<c>LA-</c>re:</v>
+<v><c>RE-</c>&#xE8; la vipe<c>RE-</c>ra <c>DO</c>che <c>FA</c>soffia,</v>
+<v><c>FA</c>soffia <c>DO</c>presso <c>RE-</c>l'acqua.</v></stanza>
+<stanza copy="B">
+<v>Ho composto un canto nuovo</v>
+<v>vieni ad ascoltare</v>
+<v>della sposa che al banchetto</v>
+<v>mai pi&#xF9; ritorno fece.</v></stanza>
+<stanza type="refrain" id="C">
+<v><c>FA</c>C'era un invi<c>DO</c>tato in pi&#xF9;</v>
+<v><c>RE-</c>che la rimi<c>LA-</c>rava:</v>
+<v>"<c>SIb</c>alla mia gente vor<c>LA-</c>rei mostrare</v>
+<v>il tuo <c>SIb</c>abi<c>DO</c>to da <c>RE-</c>sposa".</v></stanza>
+<stanza type="refrain" copy="C">
+<v>Lei ingenua lo segu&#xEC;</v>
+<v>certa di tornare,</v>
+<v>fino a notte attesa,</v>
+<v>lei non ritorn&#xF2;</v></stanza>
+<stanza copy="B">
+<v>Se ne andava in piena notte</v>
+<v>da solo un suonatore,</v>
+<v>ma davanti gli si par&#xF2;</v>
+<v>il signore sconosciuto:</v></stanza>
+<stanza copy="B">
+<v>"forse tu cerchi la sposa</v>
+<v>che and&#xF2; perduta,</v>
+<v>se hai cuore di seguirmi</v>
+<v>da lei ti condurr&#xF2;".</v></stanza>
+<stanza type="refrain" copy="C">
+<v>E una barca lo port&#xF2;</v>
+<v>lungo un'acqua scura,</v>
+<v>ritrov&#xF2; la sposa</v>
+<v>e aveva vesti d'oro</v></stanza>
+<stanza type="refrain" copy="C">
+<v>"il mio anello ti dar&#xF2;</v>
+<v>portalo al mio uomo,</v>
+<v>qui non soffro pi&#xF9;</v>
+<v>n&#xE9; male n&#xE9; desiderio".</v></stanza>
+<stanza>
+<v><strum><c>RE- DO LA- FA DO RE- </c></strum></v></stanza>
+<stanza copy="B">
+<v>Il suonatore si gir&#xF2;,</v>
+<v>fece un solo passo</v>
+<v>poi gridare la sent&#xEC;</v>
+<v>nell'acqua che la soffocava.</v></stanza>
+<stanza type="refrain" copy="C">
+<v>Come luce lei brillava</v>
+<v>quando sposa and&#xF2;,</v>
+<v>dove mai l'avr&#xE0; portata</v>
+<v>il signore che la rub&#xF2;?</v></stanza>
+<stanza copy="B">
+<v>Da tre notti non riposo</v>
+<v>resto ad ascoltare:</v>
+<v>&#xC8; la vipera che soffia,</v>
+<v>soffia presso l'acqua.</v></stanza>
+<stanza>
+<v><strum><c>RE- DO LA- FA DO RE-</c></strum></v>
+<v><strum><c>RE</c></strum></v></stanza></body>
+</song>

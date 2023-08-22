@@ -1,0 +1,70 @@
+SONG (1990?-2005) (manu-fatto) paolini AT math.unifi.it
+
+DESCRIZIONE
+-----------
+
+Programma a riga di comando. Stampa in formato TXT, PS e PDF testi e accordi 
+di canzoni scritte nei formati SNG e XNG.
+
+DISTRIBUZIONE
+-------------
+
+Attualmente sono disponibili i sorgenti C++ con Makefile. Testato sotto Linux,
+con gcc, dovrebbe ugualmente compilare con qualunque compilatore moderno.
+Richiede le seguenti librerie:
+ - libxml2: http://xmlsoft.org/
+ - libharu 1.2.0 per il supporto PDF
+
+COMPILAZIONE
+------------
+
+Sotto Unix dovrebbe essere sufficiente:
+
+make
+
+INSTALLAZIONE
+-------------
+
+cp song /usr/local/bin
+
+FORMATO SNG e XNG
+-----------------
+
+I file di input attualmente supportati sono i formati SNG e XNG.
+SNG e` un formato con sintassi simile al TeX. Si veda il file README.sng-format
+per una descrizione completa.
+XNG e` invece un formato XML, la descrizione formale si trova nel file 
+"song.dtd".
+
+I files test.xng e test.sng sono dati come esempio.
+
+ESEMPI
+------
+
+Per visualizzare il file test.sng come testo semplice:
+
+$ song test.sng
+
+Per visualizzare il file test.xng come testo semplice:
+
+$ song test.xng
+
+Per visualizzare il file test.sng facendolo stare nella corrente finestra di 
+xterm:
+
+$ song test.sng -width $COLUMNS -height $LINES
+
+Per stampare i files test.sng e test.xng in un file PostScript:
+
+$ song test.sng test.xng -o test.ps
+
+...su file PDF:
+
+$ song test.sng test.xng -o test.pdf
+
+Per avere un elenco completo delle opzioni:
+
+$ song -help
+
+
+
